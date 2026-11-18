@@ -1,0 +1,11 @@
+{
+  "label": "SYNTHETIC — fictional Acme India demonstration only; not legal advice",
+  "version": "0.1-draft",
+  "scope": "internal fictional policy",
+  "workweek": {"section": "1", "working_days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], "holidays_excluded": true},
+  "annual_leave": {"section": "2", "entitlement_days_per_year": 20, "carry_forward_max_days": 5, "carry_forward_deadline": "March 31 of the following year", "approval_required": true},
+  "sick_leave": {"section": "3", "entitlement_days_per_year": 10, "carry_forward_days": 0},
+  "request_process": {"section": "4", "draft_before_confirmation": true, "submission_is_approval": false},
+  "holidays": {"section": "5", "state": "Karnataka", "year": 2027, "dates": [{"date": "2027-01-26", "label": "Synthetic demonstration holiday"}, {"date": "2027-08-16", "label": "Synthetic demonstration holiday"}]},
+  "limits": "Illustrative rules only. Rules do not establish statutory compliance. No proration, negative balances, medical documentation or other rules are specified. Escalate or clarify where needed."
+}

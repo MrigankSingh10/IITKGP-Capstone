@@ -1,0 +1,44 @@
+{
+  "zero_shot": {
+    "attempted": 80,
+    "successes": 80,
+    "schema_valid": 66,
+    "mean_latency_seconds": 1.803,
+    "usage_reported_sum": {
+      "prompt_tokens": 5796,
+      "total_tokens": 12142,
+      "completion_tokens": 6346
+    },
+    "correctness": "pending human review",
+    "refusal_correctness": "pending human review",
+    "cost": "unknown; price not provided"
+  },
+  "few_shot": {
+    "attempted": 80,
+    "successes": 80,
+    "schema_valid": 80,
+    "mean_latency_seconds": 1.05,
+    "usage_reported_sum": {
+      "prompt_tokens": 9876,
+      "total_tokens": 13432,
+      "completion_tokens": 3556
+    },
+    "correctness": "pending human review",
+    "refusal_correctness": "pending human review",
+    "cost": "unknown; price not provided"
+  },
+  "decomposition": {
+    "attempted": 80,
+    "successes": 80,
+    "schema_valid": 80,
+    "mean_latency_seconds": 0.966,
+    "usage_reported_sum": {
+      "prompt_tokens": 6676,
+      "total_tokens": 9905,
+      "completion_tokens": 3229
+    },
+    "correctness": "pending human review",
+    "refusal_correctness": "pending human review",
+    "cost": "unknown; price not provided"
+  }
+}

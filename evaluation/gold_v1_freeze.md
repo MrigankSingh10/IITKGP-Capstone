@@ -1,0 +1,3 @@
+# Gold set v1 freeze
+
+Frozen 2026-11-18 after user approval in the project conversation. The file is document-only and contains 80 cases including six with supplied earlier user context. The adjacent SHA256 file identifies the exact frozen content. Existing `review_status` fields preserve the draft's original case-level status; user approval applies to the set as a whole and is not a claim of individual legal expert review. The cases span 10 PDFs and 21 page pairs. The set's concentration and legal applicability limitations remain visible in the Phase 1 report. Do not edit the frozen file; use a separately versioned set for corrections and never tune against this set.

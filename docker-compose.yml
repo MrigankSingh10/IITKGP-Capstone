@@ -1,0 +1,9 @@
+# Phase 0 skeleton; application services are intentionally not implemented yet.
+services:
+  audit:
+    build: .
+    volumes:
+      - ./inputs:/app/inputs:ro
+      - ./reports:/app/reports
+      - ./data/raw:/app/data/raw
+    command: ["python", "scripts/audit_corpus.py", "inputs/Labour_Codes_Corpus(1).zip"]
