@@ -1,32 +1,75 @@
-# HR Policy Navigator — Phase 0
+# HR Policy Navigator
 
-This repository is a Phase 0 foundation for a five-person Track B capstone. The corpus contains public legal references, not Acme policy. No agent graph or retrieval chunks have been implemented. Page-as-document counting is conditional on written faculty confirmation; source PDFs, page documents and chunks are distinct.
+An IIT Kharagpur Track B capstone prototype for finding evidence in a collection of Indian Labour Codes documents. The intended system will distinguish statutory references from a fictional company's internal HR policy, cite original sources, and support controlled HR workflows. The current implementation focuses on corpus ingestion, evaluation and experimental document retrieval; it is not a production HR assistant or legal advice.
 
-Python 3.11+: `python -m venv .venv`, activate it, then `pip install -e '.[dev]'`. Run `make test` and `make lint`. Place the supplied corpus ZIP in ignored `inputs/` and run `make audit`. The importer rejects unsafe paths and size limits, preserves original archive paths and matching manifest rows in an immutable registry, stores PDFs by SHA256, and reports every extractable page. Inspect unmatched manifest rows and extraction errors before relying on metadata. The registry refuses changed inputs; use a separate report directory for a new corpus version. Review redistribution rights before sharing corpus or reports.
+## Current progress
 
-Set local environment variables using `.env.example` as a template; the application does not automatically load `.env`. Use the matching provided CA file and separate chat and embedding credentials. Never disable TLS verification. `APIConfig.from_env('CHAT')` and `APIConfig.from_env('EMBEDDING')` configure the adapter. The VM04 certificate suggests, but does not prove, assignment to groups 046–065; verify assignment before live use. API limits must be confirmed before relying on them. Seeds in `hr_navigator.db` are fictional and do not define an actual leave policy.
+- **Corpus audit:** Imported 126 source PDFs (1,767 pages), matched them to the supplied manifest, and recorded source IDs, titles, URLs and extraction results. Twenty-five pages had sparse extracted text. Source dates, legal applicability and redistribution rights still require verification.
+- **Evaluation and baselines:** Froze 80 document-only questions in `evaluation/gold_v1.jsonl` and saved 240 closed-book responses across three prompting strategies. Human scoring and case-level review remain outstanding; no baseline accuracy or improvement is claimed.
+- **Retrieval prototype:** Extracts page-contained chunks at two sizes, searches with BM25, dense FAISS or hybrid ranking, and returns source and page metadata. Dense indexing currently covers pages heuristically classified as Latin script; lexical search covers extractable chunks across scripts.
+- **Review work:** Added queues for sparse-page OCR, source dates and possible versions, plus a template for independent retrieval relevance review. OCR candidates require human approval and are not automatically indexed. See `docs/phase_2_review_guide.md`.
+- **Grounded answers:** A prototype checks source identity and exact quotations, but a live test produced an incorrect answer with genuine, irrelevant quotes. It therefore escalates to human review rather than presenting an unverified answer.
 
-The Docker Compose audit service is a skeleton. It requires the corpus ZIP and writes reports and raw data to local bind mounts. The project deliberately has no live service or agent implementation at this stage.
+No agent graph, production service or real HR integration has been implemented. Faculty confirmation of how pages count toward the document requirement is pending. See `reports/phase_2_summary.md` and `reports/retrieval_v1_report.md` for results and limitations; earlier phase reports describe the project at the time they were written.
 
-## Phase 2 document retrieval (experimental)
+## Project layout
 
-After placing the original corpus ZIP locally and running `make audit`, run `.venv/bin/python scripts/build_pages.py` to create ignored `data/processed/pages.jsonl` and 200/350-token page-contained chunk files. The tokenizer in `configs/bge-small-en-v1.5-tokenizer.json` is the public BAAI BGE-small-en-v1.5 tokenizer (downloaded from the model's Hugging Face repository; SHA256 `d241a60d5e8f04cc1b2b3e9ef7a4921b27bf526d9f6050ab90f9267a1f9e5c66`). Its licensing and redistribution terms, like those of the corpus, should be checked before distribution.
+| Path | Purpose |
+| --- | --- |
+| `src/hr_navigator/` | Corpus ingestion, API client, retrieval and prototype data model |
+| `scripts/` | Audit, page/chunk generation, baseline evaluation, retrieval and review utilities |
+| `configs/` | BGE tokenizer used to measure chunk sizes |
+| `evaluation/` | Frozen document-only questions and review templates |
+| `docs/` | Product specification, fictional handbook and review guides |
+| `reports/` | Audit, baseline and retrieval results and review worksheets |
+| `data/synthetic/` | Fictional Acme handbook data |
 
-To populate the ignored local embedding cache with the supplied course endpoint:
+The public legal corpus is separate from the synthetic Acme policy. Employee records and handbook examples are fictional; they do not establish actual entitlements.
+
+## Setup
+
+Requires Python 3.11 or newer:
 
 ```bash
-.venv/bin/python scripts/build_embeddings.py \
+python -m venv .venv
+source .venv/bin/activate
+pip install -e '.[dev]'
+make test
+make lint
+```
+
+For the optional local OCR review workflow, install `pip install -e '.[ocr]'`. The OCR model's output must be checked against the original page before use.
+
+The original corpus ZIP, credentials, certificates, generated pages and embedding cache are local-only and excluded by `.gitignore`. Place the supplied corpus ZIP in `inputs/` and run the audit with its actual filename:
+
+```bash
+python scripts/audit_corpus.py 'inputs/<corpus-archive>.zip'
+python scripts/build_pages.py
+```
+
+Alternatively, `make audit` expects the specific filename shown in the `Makefile`. The audit rejects unsafe archive paths and size limits, stores PDFs by SHA256, and preserves manifest matches in a source registry. Inspect extraction errors and unmatched metadata before relying on it. The registry refuses changed inputs; use a separate report directory for a different corpus version. Page and chunk files are written under `data/processed/` and remain local.
+
+## Search and embeddings
+
+BM25 search runs locally after the pages and chunks are built:
+
+```bash
+python scripts/search_corpus.py 'Does State include a Union territory?' --mode bm25 --code 'Code on Wages'
+```
+
+Results include the original title, PDF page number, source URL and matching text. Build the local embedding cache to use dense or hybrid search. Set `EMBEDDING_BASE_URL` to the authorized endpoint and supply the course-provided key and CA certificate locally:
+
+```bash
+python scripts/build_embeddings.py \
   --key-file VM02_Embeddings_Access/shared-embedding-key.txt \
   --ca-file VM02_Embeddings_Access/vm02-ca.crt \
   --base-url "$EMBEDDING_BASE_URL" --model bge-small-en-v1.5
 ```
 
-The cache resumes without repeating already embedded texts. Only Latin-script heuristic pages are densely indexed; all extractable text remains available to BM25. Script detection is imperfect, including for legacy encoded Hindi. Sparse pages remain present in the registry; no OCR is installed. Date filters fail closed until dates are verified.
+Use `python scripts/search_corpus.py --help` for dense and hybrid options. The cache resumes without re-embedding saved text. The included BGE-small tokenizer is from the public model repository; check its redistribution terms and those of the corpus before sharing. Language detection is heuristic and mixed-language coverage is not validated. Date filters fail closed until source dates are verified.
 
-Search without any endpoint call:
+## Review and next steps
 
-```bash
-.venv/bin/python scripts/search_corpus.py 'Does State include a Union territory?' --mode bm25 --code 'Code on Wages'
-```
+Review sparse pages and proposed OCR against the original PDFs, verify source dates and version relationships, and independently annotate retrieval relevance using `docs/phase_2_review_guide.md`. The optional `scripts/apply_reviewed_ocr.py` creates a separate page file from explicitly approved rows; it does not update indexes. Complete human scoring of the saved baseline responses before claiming improvement or beginning agent development. Reliable answer support checks, adversarial evaluation, legal applicability and faculty clarification remain open.
 
-The output provides matched text with original PDF title, page and URL. Hybrid search additionally requires the embedding flags shown in `scripts/search_corpus.py --help`. The local scorer builds a filtered FAISS index from cached vectors in memory per query; BM25 is calculated locally. The prototype `scripts/ask_documents.py --help` uses both course APIs, but currently escalates instead of presenting an unverified generated answer: a live test found an incorrect answer with genuine but irrelevant quotations. Citation validation checks identity and quote presence, not whether the answer follows. Treat source text as untrusted and check applicability independently. See `reports/phase_2_summary.md` and `reports/retrieval_v1_report.md` before using results.
+For API-backed experiments, use `.env.example` as a template for local environment variables; the application does not automatically load `.env`. Keep keys and certificates out of the repository, use the appropriate separate chat and embedding credentials, and retain TLS verification. Confirm endpoint assignment and operational limits before live use. Docker Compose provides an audit skeleton, not a running application.

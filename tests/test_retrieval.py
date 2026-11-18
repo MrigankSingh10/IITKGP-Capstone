@@ -83,3 +83,21 @@ def test_grounded_answer_rejects_fabricated_quote():
 def test_date_filter_is_not_faked():
     with pytest.raises(ValueError, match='Date filtering unavailable'):
         search('test', [], mode='bm25', date_filter='2026-01-01')
+
+
+def test_generated_quote_must_appear_on_original_page():
+    import json
+    from hr_navigator.retrieval.grounded import answer_with_evidence
+
+    original = page('Original verified page text')
+    fake = {**original, 'chunk_id': 'forged', 'text': 'Forged supporting passage'}
+    class Client:
+        def chat(self, *args, **kwargs):
+            return {'choices': [{'message': {'content': json.dumps({
+                'answer': 'False answer',
+                'citations': [{'chunk_id': 'forged', 'quote': 'Forged supporting passage'}],
+            })}}]}
+    result = answer_with_evidence(Client(), 'Question?', [fake], {original['page_id']: original})
+    assert result['decision'] == 'escalate' and result['sources'] == []
+    assert not validate_citation({**original, 'pdf_page_number': '1'}, {original['page_id']: original})
+    assert not validate_citation({**original, 'original_title': 'Forged title'}, {original['page_id']: original})

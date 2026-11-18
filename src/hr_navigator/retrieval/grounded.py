@@ -31,6 +31,12 @@ def answer_with_evidence(client, question, evidence, pages):
                 raise ValueError
             if not validate_citation(chunk, pages):
                 raise ValueError
+            expected_id = f"{chunk['source_pdf_id']}:page_{chunk['pdf_page_number']:04d}"
+            if chunk['page_id'] != expected_id:
+                raise ValueError
+            original_page = pages[expected_id]
+            if quote not in original_page.get('text', ''):
+                raise ValueError
             sources.append({'source_pdf_id': chunk['source_pdf_id'], 'original_title': chunk['original_title'],
                             'page_number': chunk['pdf_page_number'], 'source_url': chunk['source_url'],
                             'quote_or_section': quote, 'scope': chunk['scope']})

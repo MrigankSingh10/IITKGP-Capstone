@@ -90,7 +90,12 @@ def search(query, chunks, vectors=None, query_vector=None, source_scope='statuto
 
 
 def validate_citation(citation, pages):
-    page_id = f"{citation.get('source_pdf_id', '')}:page_{citation.get('pdf_page_number', 0):04d}"
+    source_id = citation.get('source_pdf_id')
+    page_number = citation.get('pdf_page_number')
+    if not isinstance(source_id, str) or not isinstance(page_number, int) or isinstance(page_number, bool) or page_number < 1:
+        return False
+    page_id = f"{source_id}:page_{page_number:04d}"
     page = pages.get(page_id)
     return bool(page and citation.get('source_url') == page['source_url']
-                and citation.get('scope') == page['scope'])
+                and citation.get('scope') == page['scope']
+                and citation.get('original_title') == page['original_title'])
