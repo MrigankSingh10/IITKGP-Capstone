@@ -1,241 +1,241 @@
 case_id,strategy,correct,refusal_correct,failure_category,reviewer,notes
-draft-001,zero_shot,,,,,
-draft-001,few_shot,,,,,
-draft-001,decomposition,,,,,
-draft-002,zero_shot,,,,,
-draft-002,few_shot,,,,,
-draft-002,decomposition,,,,,
-draft-003,zero_shot,,,,,
-draft-003,few_shot,,,,,
-draft-003,decomposition,,,,,
-draft-004,zero_shot,,,,,
-draft-004,few_shot,,,,,
-draft-004,decomposition,,,,,
-draft-005,zero_shot,,,,,
-draft-005,few_shot,,,,,
-draft-005,decomposition,,,,,
-draft-006,zero_shot,,,,,
-draft-006,few_shot,,,,,
-draft-006,decomposition,,,,,
-draft-007,zero_shot,,,,,
-draft-007,few_shot,,,,,
-draft-007,decomposition,,,,,
-draft-008,zero_shot,,,,,
-draft-008,few_shot,,,,,
-draft-008,decomposition,,,,,
-draft-009,zero_shot,,,,,
-draft-009,few_shot,,,,,
-draft-009,decomposition,,,,,
-draft-010,zero_shot,,,,,
-draft-010,few_shot,,,,,
-draft-010,decomposition,,,,,
-draft-011,zero_shot,,,,,
-draft-011,few_shot,,,,,
-draft-011,decomposition,,,,,
-draft-012,zero_shot,,,,,
-draft-012,few_shot,,,,,
-draft-012,decomposition,,,,,
-draft-013,zero_shot,,,,,
-draft-013,few_shot,,,,,
-draft-013,decomposition,,,,,
-draft-014,zero_shot,,,,,
-draft-014,few_shot,,,,,
-draft-014,decomposition,,,,,
-draft-015,zero_shot,,,,,
-draft-015,few_shot,,,,,
-draft-015,decomposition,,,,,
-draft-016,zero_shot,,,,,
-draft-016,few_shot,,,,,
-draft-016,decomposition,,,,,
-draft-017,zero_shot,,,,,
-draft-017,few_shot,,,,,
-draft-017,decomposition,,,,,
-draft-018,zero_shot,,,,,
-draft-018,few_shot,,,,,
-draft-018,decomposition,,,,,
-draft-019,zero_shot,,,,,
-draft-019,few_shot,,,,,
-draft-019,decomposition,,,,,
-draft-020,zero_shot,,,,,
-draft-020,few_shot,,,,,
-draft-020,decomposition,,,,,
-draft-021,zero_shot,,,,,
-draft-021,few_shot,,,,,
-draft-021,decomposition,,,,,
-draft-022,zero_shot,,,,,
-draft-022,few_shot,,,,,
-draft-022,decomposition,,,,,
-draft-023,zero_shot,,,,,
-draft-023,few_shot,,,,,
-draft-023,decomposition,,,,,
-draft-024,zero_shot,,,,,
-draft-024,few_shot,,,,,
-draft-024,decomposition,,,,,
-draft-025,zero_shot,,,,,
-draft-025,few_shot,,,,,
-draft-025,decomposition,,,,,
-draft-026,zero_shot,,,,,
-draft-026,few_shot,,,,,
-draft-026,decomposition,,,,,
-draft-027,zero_shot,,,,,
-draft-027,few_shot,,,,,
-draft-027,decomposition,,,,,
-draft-028,zero_shot,,,,,
-draft-028,few_shot,,,,,
-draft-028,decomposition,,,,,
-draft-029,zero_shot,,,,,
-draft-029,few_shot,,,,,
-draft-029,decomposition,,,,,
-draft-030,zero_shot,,,,,
-draft-030,few_shot,,,,,
-draft-030,decomposition,,,,,
-draft-031,zero_shot,,,,,
-draft-031,few_shot,,,,,
-draft-031,decomposition,,,,,
-draft-032,zero_shot,,,,,
-draft-032,few_shot,,,,,
-draft-032,decomposition,,,,,
-draft-033,zero_shot,,,,,
-draft-033,few_shot,,,,,
-draft-033,decomposition,,,,,
-draft-034,zero_shot,,,,,
-draft-034,few_shot,,,,,
-draft-034,decomposition,,,,,
-draft-035,zero_shot,,,,,
-draft-035,few_shot,,,,,
-draft-035,decomposition,,,,,
-draft-036,zero_shot,,,,,
-draft-036,few_shot,,,,,
-draft-036,decomposition,,,,,
-draft-037,zero_shot,,,,,
-draft-037,few_shot,,,,,
-draft-037,decomposition,,,,,
-draft-038,zero_shot,,,,,
-draft-038,few_shot,,,,,
-draft-038,decomposition,,,,,
-draft-039,zero_shot,,,,,
-draft-039,few_shot,,,,,
-draft-039,decomposition,,,,,
-draft-040,zero_shot,,,,,
-draft-040,few_shot,,,,,
-draft-040,decomposition,,,,,
-draft-041,zero_shot,,,,,
-draft-041,few_shot,,,,,
-draft-041,decomposition,,,,,
-draft-042,zero_shot,,,,,
-draft-042,few_shot,,,,,
-draft-042,decomposition,,,,,
-draft-043,zero_shot,,,,,
-draft-043,few_shot,,,,,
-draft-043,decomposition,,,,,
-draft-044,zero_shot,,,,,
-draft-044,few_shot,,,,,
-draft-044,decomposition,,,,,
-draft-045,zero_shot,,,,,
-draft-045,few_shot,,,,,
-draft-045,decomposition,,,,,
-draft-046,zero_shot,,,,,
-draft-046,few_shot,,,,,
-draft-046,decomposition,,,,,
-draft-047,zero_shot,,,,,
-draft-047,few_shot,,,,,
-draft-047,decomposition,,,,,
-draft-048,zero_shot,,,,,
-draft-048,few_shot,,,,,
-draft-048,decomposition,,,,,
-draft-049,zero_shot,,,,,
-draft-049,few_shot,,,,,
-draft-049,decomposition,,,,,
-draft-050,zero_shot,,,,,
-draft-050,few_shot,,,,,
-draft-050,decomposition,,,,,
-draft-051,zero_shot,,,,,
-draft-051,few_shot,,,,,
-draft-051,decomposition,,,,,
-draft-052,zero_shot,,,,,
-draft-052,few_shot,,,,,
-draft-052,decomposition,,,,,
-draft-053,zero_shot,,,,,
-draft-053,few_shot,,,,,
-draft-053,decomposition,,,,,
-draft-054,zero_shot,,,,,
-draft-054,few_shot,,,,,
-draft-054,decomposition,,,,,
-draft-055,zero_shot,,,,,
-draft-055,few_shot,,,,,
-draft-055,decomposition,,,,,
-draft-056,zero_shot,,,,,
-draft-056,few_shot,,,,,
-draft-056,decomposition,,,,,
-draft-057,zero_shot,,,,,
-draft-057,few_shot,,,,,
-draft-057,decomposition,,,,,
-draft-058,zero_shot,,,,,
-draft-058,few_shot,,,,,
-draft-058,decomposition,,,,,
-draft-059,zero_shot,,,,,
-draft-059,few_shot,,,,,
-draft-059,decomposition,,,,,
-draft-060,zero_shot,,,,,
-draft-060,few_shot,,,,,
-draft-060,decomposition,,,,,
-draft-061,zero_shot,,,,,
-draft-061,few_shot,,,,,
-draft-061,decomposition,,,,,
-draft-062,zero_shot,,,,,
-draft-062,few_shot,,,,,
-draft-062,decomposition,,,,,
-draft-063,zero_shot,,,,,
-draft-063,few_shot,,,,,
-draft-063,decomposition,,,,,
-draft-064,zero_shot,,,,,
-draft-064,few_shot,,,,,
-draft-064,decomposition,,,,,
-draft-065,zero_shot,,,,,
-draft-065,few_shot,,,,,
-draft-065,decomposition,,,,,
-draft-066,zero_shot,,,,,
-draft-066,few_shot,,,,,
-draft-066,decomposition,,,,,
-draft-067,zero_shot,,,,,
-draft-067,few_shot,,,,,
-draft-067,decomposition,,,,,
-draft-068,zero_shot,,,,,
-draft-068,few_shot,,,,,
-draft-068,decomposition,,,,,
-draft-069,zero_shot,,,,,
-draft-069,few_shot,,,,,
-draft-069,decomposition,,,,,
-draft-070,zero_shot,,,,,
-draft-070,few_shot,,,,,
-draft-070,decomposition,,,,,
-draft-071,zero_shot,,,,,
-draft-071,few_shot,,,,,
-draft-071,decomposition,,,,,
-draft-072,zero_shot,,,,,
-draft-072,few_shot,,,,,
-draft-072,decomposition,,,,,
-draft-073,zero_shot,,,,,
-draft-073,few_shot,,,,,
-draft-073,decomposition,,,,,
-draft-074,zero_shot,,,,,
-draft-074,few_shot,,,,,
-draft-074,decomposition,,,,,
-draft-075,zero_shot,,,,,
-draft-075,few_shot,,,,,
-draft-075,decomposition,,,,,
-draft-076,zero_shot,,,,,
-draft-076,few_shot,,,,,
-draft-076,decomposition,,,,,
-draft-077,zero_shot,,,,,
-draft-077,few_shot,,,,,
-draft-077,decomposition,,,,,
-draft-078,zero_shot,,,,,
-draft-078,few_shot,,,,,
-draft-078,decomposition,,,,,
-draft-079,zero_shot,,,,,
-draft-079,few_shot,,,,,
-draft-079,decomposition,,,,,
-draft-080,zero_shot,,,,,
-draft-080,few_shot,,,,,
-draft-080,decomposition,,,,,
+draft-001,zero_shot,0,,reasoning error,AI-suggested; confirmed by Hrishikesh,"Central Govt + Gazette correct, but misses that different provisions can have different dates"
+draft-001,few_shot,0,,evidence unavailable,AI-suggested; confirmed by Hrishikesh,Only says s.1 'provides for commencement'; no substance
+draft-001,decomposition,0,,reasoning error,AI-suggested; confirmed by Hrishikesh,Says 'appropriate government' (should be Central Govt); misses different dates
+draft-002,zero_shot,1,,,AI-suggested; confirmed by Hrishikesh,Entire territory of India' = whole of India; no employer claim
+draft-002,few_shot,1,,,AI-suggested; confirmed by Hrishikesh,Whole of India; no employer claim
+draft-002,decomposition,1,,,AI-suggested; confirmed by Hrishikesh,Entire territory of India; no employer claim
+draft-003,zero_shot,0,,reasoning error,AI-suggested; confirmed by Hrishikesh,"No Central Govt, no different dates; overclaims 'applies to all persons and employers'"
+draft-003,few_shot,0,,evidence unavailable,AI-suggested; confirmed by Hrishikesh,No substance
+draft-003,decomposition,0,,reasoning error,AI-suggested; confirmed by Hrishikesh,Gazette only; misses Central Govt and different dates
+draft-004,zero_shot,1,,,AI-suggested; confirmed by Hrishikesh,Entire territory of India
+draft-004,few_shot,1,,,AI-suggested; confirmed by Hrishikesh,Entire territory of India
+draft-004,decomposition,1,,,AI-suggested; confirmed by Hrishikesh,Entire territory of India
+draft-005,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,"Claims s.1 is about purpose, not commencement"
+draft-005,few_shot,0,,evidence unavailable,AI-suggested; confirmed by Hrishikesh,No substance
+draft-005,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Invents rule: in force on date of publication (it is appointed by notification)
+draft-006,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says whole of Australia
+draft-006,few_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says whole of Australia
+draft-006,decomposition,1,,,AI-suggested; confirmed by Hrishikesh,Entire territory of India
+draft-007,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Defines as 12 months of accounts; gold = year commencing 1 April
+draft-007,few_shot,0,,reasoning error,AI-suggested; confirmed by Hrishikesh,Financial year' is close but never states 1 April; also doubts a definition exists
+draft-007,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,12 months of accounts; no 1 April
+draft-008,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says Minimum Wages Act 1948
+draft-008,few_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says National Wages Code 1948
+draft-008,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says Payment of Wages Act 1936
+draft-009,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims no law number (it is No. 29 of 2019)
+draft-009,few_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims no law number
+draft-009,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims no law number
+draft-010,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Generic topics; misses 'amend and consolidate laws on wages and bonus'
+draft-010,few_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Generic topics; no wages-and-bonus consolidation
+draft-010,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Generic topics; no wages-and-bonus consolidation
+draft-011,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says 2023 (gold 8 Aug 2019)
+draft-011,few_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says 2023
+draft-011,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says 2023-06-20
+draft-012,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,US Social Security Act 1935
+draft-012,few_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says 1935
+draft-012,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,US Social Security Act 1935
+draft-013,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Talks about US SSN card; gold No. 36 of 2020
+draft-013,few_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims no law number
+draft-013,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims no law number
+draft-014,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,"Generic welfare aims (elderly, disabled); misses organised/unorganised sectors"
+draft-014,few_shot,0,,evidence unavailable,AI-suggested; confirmed by Hrishikesh,Vague non-answer; defers to missing document
+draft-014,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Generic aims; misses organised/unorganised sectors
+draft-015,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says 1 Jan 1935 (gold 28 Sep 2020)
+draft-015,few_shot,0,,evidence unavailable,AI-suggested; confirmed by Hrishikesh,Declined: document not provided
+draft-015,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says 5 Apr 1935
+draft-016,zero_shot,1,,,AI-suggested; confirmed by Hrishikesh,"Industrial Relations Code, 2020"
+draft-016,few_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says 1957
+draft-016,decomposition,1,,,AI-suggested; confirmed by Hrishikesh,"Industrial Relations Code, 2020"
+draft-017,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims it is a compilation with no number (gold No. 35 of 2020)
+draft-017,few_shot,0,,evidence unavailable,AI-suggested; confirmed by Hrishikesh,Declined: document not provided
+draft-017,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims no single law number
+draft-018,zero_shot,0,,reasoning error,AI-suggested; confirmed by Hrishikesh,Has employment conditions and dispute resolution; misses trade unions
+draft-018,few_shot,0,,reasoning error,AI-suggested; confirmed by Hrishikesh,Has dispute resolution; misses trade unions and employment conditions
+draft-018,decomposition,0,,reasoning error,AI-suggested; confirmed by Hrishikesh,Has employment conditions; misses trade unions and disputes
+draft-019,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says 23 Apr 1947 (gold 28 Sep 2020)
+draft-019,few_shot,0,,evidence unavailable,AI-suggested; confirmed by Hrishikesh,Declined
+draft-019,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says 1946
+draft-020,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Stopping operations / suspension; gold = PERMANENT closing down
+draft-020,few_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says TEMPORARY suspension; opposite of gold
+draft-020,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says suspension of work; gold = permanent closing down
+draft-021,zero_shot,0,,reasoning error,AI-suggested; confirmed by Hrishikesh,Officer appointed under the Code; misses 'under section 43'
+draft-021,few_shot,0,,reasoning error,AI-suggested; confirmed by Hrishikesh,Generic; misses section 43
+draft-021,decomposition,0,,reasoning error,AI-suggested; confirmed by Hrishikesh,Generic; misses section 43
+draft-022,zero_shot,0,,reasoning error,AI-suggested; confirmed by Hrishikesh,Mentions conciliation officer but adds 'initiated by appropriate authority'; borderline
+draft-022,few_shot,0,,reasoning error,AI-suggested; confirmed by Hrishikesh,Never mentions a conciliation officer
+draft-022,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Invents 'initiated by the Labour Department'; no conciliation officer
+draft-023,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Talks about strikes/lockouts commencing; off-topic
+draft-023,few_shot,0,,reasoning error,AI-suggested; confirmed by Hrishikesh,Gets 'different dates for provisions' but not Central Govt notification
+draft-023,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims the Code does not address different dates
+draft-024,zero_shot,1,,,AI-suggested; confirmed by Hrishikesh,No' with correct reason: provisions can have different effective dates
+draft-024,few_shot,1,,,AI-suggested; confirmed by Hrishikesh,No' plus one-line reason; no mention of notification
+draft-024,decomposition,1,,,AI-suggested; confirmed by Hrishikesh,"Bare 'No'; correct polarity, no explanation - reviewer decide"
+draft-025,zero_shot,1,,,AI-suggested; confirmed by Hrishikesh,1 April
+draft-025,few_shot,1,,,AI-suggested; confirmed by Hrishikesh,1 April
+draft-025,decomposition,1,,,AI-suggested; confirmed by Hrishikesh,1 April
+draft-026,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,"Claims Advisory Board not defined (gold: Central/State Advisory Board, s.42)"
+draft-026,few_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims not defined
+draft-026,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims not defined; invents Wage Board
+draft-027,zero_shot,0,,reasoning error,AI-suggested; confirmed by Hrishikesh,Points to Companies Act 2013 but wrongly says the Code has no definition
+draft-027,few_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Invents definition (industrial entity)
+draft-027,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims no definition
+draft-028,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says sub-contractor not included (gold: included)
+draft-028,few_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says not included
+draft-028,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says No
+draft-029,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Misses company and co-operative society exclusion
+draft-029,few_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Generic
+draft-029,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Talks about informal sector
+draft-030,zero_shot,0,,reasoning error,AI-suggested; confirmed by Hrishikesh,Generic definition; misses 'wage fixed under section 6'. Also invalid JSON
+draft-030,few_shot,0,,reasoning error,AI-suggested; confirmed by Hrishikesh,Generic; misses section 6
+draft-030,decomposition,0,,reasoning error,AI-suggested; confirmed by Hrishikesh,Generic; misses section 6
+draft-031,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims not defined (gold: published in Gazette)
+draft-031,few_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Invents employer communication
+draft-031,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Invents employer communication
+draft-032,zero_shot,0,,reasoning error,AI-suggested; confirmed by Hrishikesh,Vague; misses 'rules made by appropriate Government'
+draft-032,few_shot,0,,reasoning error,AI-suggested; confirmed by Hrishikesh,Vague; misses rules by appropriate Government
+draft-032,decomposition,0,,reasoning error,AI-suggested; confirmed by Hrishikesh,Vague; misses rules by appropriate Government
+draft-033,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says No (gold Yes). Also invalid JSON
+draft-033,few_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says not included (gold Yes)
+draft-033,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says No (gold Yes)
+draft-034,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,"Says HRA (gold: basic pay, DA, retaining allowance)"
+draft-034,few_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says HRA
+draft-034,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says HRA
+draft-035,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims term not used (gold: digital intermediary)
+draft-035,few_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Invents contribution collector
+draft-035,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims not defined
+draft-036,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says 30 days (gold: not less than two months)
+draft-036,few_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Invents notice to Parliament
+draft-036,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says 30 days
+draft-037,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims Code does not address it (s.1(8) does). Also invalid JSON
+draft-037,few_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims not addressed
+draft-037,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims not addressed
+draft-038,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims no list exists
+draft-038,few_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims no list
+draft-038,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims no list
+draft-039,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims not defined
+draft-039,few_shot,0,,reasoning error,AI-suggested; confirmed by Hrishikesh,Generic 'appropriate authority'; misses Central Board/Corporation
+draft-039,decomposition,0,,reasoning error,AI-suggested; confirmed by Hrishikesh,Central Govt partly right; misses Central Board/Corporation; adds powers
+draft-040,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims term not used; cites Industrial Disputes Act
+draft-040,few_shot,0,,reasoning error,AI-suggested; confirmed by Hrishikesh,Appeals body; misses 'appointed by appropriate Govt by notification for an area'
+draft-040,decomposition,0,,reasoning error,AI-suggested; confirmed by Hrishikesh,Appeals body; misses appointment by notification
+draft-041,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Appointed by appropriate Govt (right) but for disputes (wrong; Chapter IV standing orders)
+draft-041,few_shot,0,,reasoning error,AI-suggested; confirmed by Hrishikesh,Generic; misses appointment and Chapter IV
+draft-041,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Appointed by appropriate Govt but invents dispute inquiries
+draft-042,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Generic invented criteria; misses Union control declared by Central Act
+draft-042,few_shot,0,,reasoning error,AI-suggested; confirmed by Hrishikesh,Vague; no substance
+draft-042,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Generic invented criteria; misses Central Act declaration
+draft-043,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says No (gold Yes)
+draft-043,few_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says does not mention bonus
+draft-043,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says No
+draft-044,zero_shot,1,,,AI-suggested; confirmed by Hrishikesh,Correct 'Yes' but no s.1(4) / First Schedule detail - reviewer decide
+draft-044,few_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says No (gold Yes)
+draft-044,decomposition,1,,,AI-suggested; confirmed by Hrishikesh,Bare 'Yes' - reviewer decide
+draft-045,zero_shot,1,,,AI-suggested; confirmed by Hrishikesh,No; non-digital routes allowed (US-flavoured wording)
+draft-045,few_shot,1,,,AI-suggested; confirmed by Hrishikesh,Bare 'No'
+draft-045,decomposition,1,,,AI-suggested; confirmed by Hrishikesh,Bare 'No'
+draft-046,zero_shot,0,,evidence unavailable,AI-suggested; confirmed by Hrishikesh,Declined (no such document as of its cutoff)
+draft-046,few_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims FAQ has no info on it
+draft-046,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims FAQ has no info
+draft-047,zero_shot,0,,evidence unavailable,AI-suggested; confirmed by Hrishikesh,Declined
+draft-047,few_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Invents SSA rulemaking
+draft-047,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Invents Congress
+draft-048,zero_shot,0,,evidence unavailable,AI-suggested; confirmed by Hrishikesh,Declined
+draft-048,few_shot,0,,evidence unavailable,AI-suggested; confirmed by Hrishikesh,Declined
+draft-048,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims FAQ does not address it
+draft-049,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims not addressed; implies forms required
+draft-049,few_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims not addressed
+draft-049,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims not mentioned
+draft-050,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,"Midwife + hospital; misses ASHAs, ANMs, local authorities"
+draft-050,few_shot,0,,reasoning error,AI-suggested; confirmed by Hrishikesh,"Midwife only (partial overlap with ANM); misses ASHAs, local authorities"
+draft-050,decomposition,0,,reasoning error,AI-suggested; confirmed by Hrishikesh,"Midwife only; misses ASHAs, local authorities"
+draft-051,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,"Answer 'No' is right, but says the document does not exist - reviewer decide"
+draft-051,few_shot,1,,,AI-suggested; confirmed by Hrishikesh,No' correct; uncertainty wrongly says details absent
+draft-051,decomposition,1,,,AI-suggested; confirmed by Hrishikesh,Bare 'No'
+draft-052,zero_shot,0,,evidence unavailable,AI-suggested; confirmed by Hrishikesh,Declined
+draft-052,few_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims FAQ has no info
+draft-052,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims not addressed
+draft-053,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims no info; US federal framing
+draft-053,few_shot,1,,,AI-suggested; confirmed by Hrishikesh,Higher state wage stays - matches gold; 'federal' wording is US-flavoured
+draft-053,decomposition,1,,,AI-suggested; confirmed by Hrishikesh,Higher state wage stays - matches gold
+draft-054,zero_shot,0,,evidence unavailable,AI-suggested; confirmed by Hrishikesh,Declined
+draft-054,few_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims no limit stated (gold 50%)
+draft-054,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims no limit stated
+draft-055,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Federal/state/local (US); gold = central and state govts. Also invalid JSON
+draft-055,few_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Federal/state/local
+draft-055,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Federal/state/local
+draft-056,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims no info
+draft-056,few_shot,0,,reasoning error,AI-suggested; confirmed by Hrishikesh,Guidance to employers (compliance) only; misses awareness of rights
+draft-056,decomposition,1,,,AI-suggested; confirmed by Hrishikesh,Guidance and support to employers and employees - roughly both parts; reviewer decide
+draft-057,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says 1.5x over 40 hrs (gold: not less than twice)
+draft-057,few_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says 1.5x
+draft-057,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says 1.5x
+draft-058,zero_shot,1,,,AI-suggested; confirmed by Hrishikesh,"Labour Code takes precedence; omits 'informational, not legal'"
+draft-058,few_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Invents legal-advice disclaimer; no precedence
+draft-058,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says not intended to conflict; no precedence
+draft-059,zero_shot,0,,evidence unavailable,AI-suggested; confirmed by Hrishikesh,Declined
+draft-059,few_shot,1,,,AI-suggested; confirmed by Hrishikesh,"Yes, retained; omits Chapter III"
+draft-059,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims document does not exist
+draft-060,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims FAQ is not an official document. Also invalid JSON
+draft-060,few_shot,1,,,AI-suggested; confirmed by Hrishikesh,14 days
+draft-060,decomposition,1,,,AI-suggested; confirmed by Hrishikesh,14 days
+draft-061,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims document does not exist
+draft-061,few_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims none mentioned
+draft-061,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims document does not exist
+draft-062,zero_shot,0,,evidence unavailable,AI-suggested; confirmed by Hrishikesh,Declined. Also invalid JSON
+draft-062,few_shot,0,,evidence unavailable,AI-suggested; confirmed by Hrishikesh,Declined
+draft-062,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims no info on conciliation
+draft-063,zero_shot,0,,evidence unavailable,AI-suggested; confirmed by Hrishikesh,Declined (not in provided context)
+draft-063,few_shot,0,,evidence unavailable,AI-suggested; confirmed by Hrishikesh,Declined
+draft-063,decomposition,0,,evidence unavailable,AI-suggested; confirmed by Hrishikesh,Declined
+draft-064,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims none mentioned (gold Works/Grievance Committees)
+draft-064,few_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Invents works councils etc.
+draft-064,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims none mentioned
+draft-065,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims no info (gold State Govt)
+draft-065,few_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says local government
+draft-065,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says local government
+draft-066,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims document not recognised/does not exist. Also invalid JSON
+draft-066,few_shot,0,,evidence unavailable,AI-suggested; confirmed by Hrishikesh,Declined
+draft-066,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims no info
+draft-067,zero_shot,0,,evidence unavailable,AI-suggested; confirmed by Hrishikesh,Declined. Also invalid JSON
+draft-067,few_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says not mentioned (gold Yes)
+draft-067,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says No (gold Yes)
+draft-068,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims document not recognised. Also invalid JSON
+draft-068,few_shot,0,,evidence unavailable,AI-suggested; confirmed by Hrishikesh,Declined
+draft-068,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims no info
+draft-069,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,"Says no limitation, then contradicts itself. Also invalid JSON"
+draft-069,few_shot,0,,reasoning error,AI-suggested; confirmed by Hrishikesh,Informational / not legal = half of gold; misses 'Labour Code prevails' - reviewer decide
+draft-069,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says no limitation
+draft-070,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims document does not exist; OSHA framing
+draft-070,few_shot,0,,evidence unavailable,AI-suggested; confirmed by Hrishikesh,Declined
+draft-070,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims no info
+draft-071,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims no info (gold: toll-free helpline)
+draft-071,few_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims no info
+draft-071,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims not mentioned
+draft-072,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims document not recognised. Also invalid JSON
+draft-072,few_shot,0,,evidence unavailable,AI-suggested; confirmed by Hrishikesh,Declined
+draft-072,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims no info
+draft-073,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,"Claims no info, then generic definition. Also invalid JSON"
+draft-073,few_shot,0,,reasoning error,AI-suggested; confirmed by Hrishikesh,"Generic; 'legally mandated' close to govt-fixed, misses 'terms of employment'"
+draft-073,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims no info
+draft-074,zero_shot,1,,,AI-suggested; confirmed by Hrishikesh,Ministry of Labour and Employment
+draft-074,few_shot,1,,,AI-suggested; confirmed by Hrishikesh,Ministry of Labour and Employment
+draft-074,decomposition,1,,,AI-suggested; confirmed by Hrishikesh,Ministry of Labour and Employment
+draft-075,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says physical submissions no longer accepted (opposite)
+draft-075,few_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Opposite of gold
+draft-075,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Opposite of gold
+draft-076,zero_shot,0,,evidence unavailable,AI-suggested; confirmed by Hrishikesh,Declined (cutoff). Also invalid JSON
+draft-076,few_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims no info
+draft-076,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Claims no info
+draft-077,zero_shot,0,,reasoning error,AI-suggested; confirmed by Hrishikesh,Consult the Code' - never says the Code prevails
+draft-077,few_shot,0,,reasoning error,AI-suggested; confirmed by Hrishikesh,May differ' - never says the Code prevails
+draft-077,decomposition,1,,,AI-suggested; confirmed by Hrishikesh,Code takes precedence
+draft-078,zero_shot,0,,evidence unavailable,AI-suggested; confirmed by Hrishikesh,Declined. Also invalid JSON
+draft-078,few_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,"Trade unions ~ negotiating union, but adds employer orgs; misses council"
+draft-078,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,"Invents NIRC, NCBC, NTC"
+draft-079,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says federal government (gold State Govt)
+draft-079,few_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says federal
+draft-079,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says federal
+draft-080,zero_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says no helpline (gold Yes)
+draft-080,few_shot,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says no helpline
+draft-080,decomposition,0,,hallucination,AI-suggested; confirmed by Hrishikesh,Says No
