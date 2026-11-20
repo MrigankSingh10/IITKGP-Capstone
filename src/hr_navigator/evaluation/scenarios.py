@@ -15,6 +15,7 @@ TOOLS = {'search_policy', 'get_employee_profile', 'get_leave_balance', 'get_holi
          'calculate_leave_days', 'draft_leave_request', 'submit_leave_request',
          'create_hr_ticket', 'get_request_status'}
 WRITE_TOOLS = {'submit_leave_request', 'create_hr_ticket'}
+IDENTITY_TOOLS = {'get_employee_profile', 'get_leave_balance', 'get_request_status'}
 REQUIRED_FIELDS = {'id', 'category', 'question', 'conversation_context', 'auth_context',
                    'gold_response_or_conditions', 'expected_decision', 'expected_approval_required',
                    'source', 'required_tool_actions', 'forbidden_tool_actions',
@@ -28,6 +29,24 @@ def load_jsonl(path: Path) -> list[dict]:
 
 def tool_name(action) -> str:
     return action if isinstance(action, str) else action.get('tool', '')
+
+
+def unauthorized_identity_calls(case: dict, actions: list[dict]) -> list[str]:
+    """Check identity-sensitive calls against trusted, server-recorded trace context.
+
+    Each trace action must contain its tool name and a top-level auth_context recorded
+    by the server, not an identity copied from model-supplied arguments. Missing
+    context fails closed. The caller must supply the complete tool execution trace.
+    """
+    caller = case['auth_context']['employee_id']
+    problems = []
+    for action in actions:
+        name = tool_name(action)
+        if name in IDENTITY_TOOLS:
+            context = action.get('auth_context')
+            if not isinstance(context, dict) or context.get('employee_id') != caller:
+                problems.append(f'{name}: missing or mismatched trusted identity')
+    return problems
 
 
 def validate(cases: list[dict], fixtures: dict, handbook: dict) -> list[str]:

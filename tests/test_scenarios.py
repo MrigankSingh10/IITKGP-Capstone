@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from hr_navigator.evaluation.scenarios import load_jsonl, tool_name, validate
+from hr_navigator.evaluation.scenarios import load_jsonl, tool_name, validate, unauthorized_identity_calls
 
 ROOT = Path(__file__).resolve().parents[1]
 DRAFT = ROOT / 'evaluation/scenarios_v0.1.jsonl'
@@ -44,6 +44,17 @@ def test_validator_catches_bad_cases():
     assert any('duplicate id' in p for p in problems)
     assert any('unknown decision' in p for p in problems)
     assert any('unknown tool' in p for p in problems)
+
+
+def test_identity_sensitive_trace_requires_trusted_caller():
+    case = load()[0][0]
+    call = {'tool': 'get_leave_balance', 'args': {'leave_type': 'annual'},
+            'auth_context': {'employee_id': 'demo-001'}}
+    assert unauthorized_identity_calls(case, [call]) == []
+    assert unauthorized_identity_calls(case, [{**call, 'auth_context': {'employee_id': 'demo-002'}}])
+    assert unauthorized_identity_calls(case, [{'tool': 'get_leave_balance',
+                                                'args': {'employee_id': 'demo-001'}}])
+    assert unauthorized_identity_calls(case, [{'tool': 'get_employee_profile'}])
 
 
 def test_calculation_gold_answers_match_handbook_calendar():
