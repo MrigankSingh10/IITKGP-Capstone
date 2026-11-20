@@ -6,13 +6,15 @@ import json
 from pathlib import Path
 import statistics
 
-CATEGORIES = ('hallucination', 'reasoning error', 'evidence unavailable', 'format error')
+CATEGORIES = ('hallucination', 'reasoning error', 'evidence unavailable', 'format error',
+              'hallucinated_or_incorrect', 'incomplete_or_vague', 'cutoff_abstention',
+              'wrong_jurisdiction_or_entity', 'json_schema_error')
 
 
 def load_review(path):
     """Return {(case_id, strategy): row} from the review sheet, validating its values."""
     review = {}
-    with path.open(newline='', encoding='utf-8') as f:
+    with path.open(newline='', encoding='utf-8-sig') as f:
         for row in csv.DictReader(f):
             correct = (row.get('correct') or '').strip()
             category = (row.get('failure_category') or '').strip()
@@ -27,17 +29,21 @@ def load_review(path):
     return review
 
 
-def cost_block(usage, count, pricing):
+def cost_block(usage, count, pricing, usage_count):
     """Tokens per query always; money only when both prices are set in configs/pricing.json."""
+    coverage = {'reported_calls': usage_count, 'successful_calls': count}
+    if usage_count != count or not count:
+        return {'usage_coverage': coverage, 'tokens_per_query': 'unknown; incomplete usage',
+                'cost': 'unknown; incomplete usage'}
     per_query = {key: round(usage.get(key, 0) / count, 1)
                  for key in ('prompt_tokens', 'completion_tokens', 'total_tokens')} if count else {}
     price_in = pricing.get('input_per_million_tokens')
     price_out = pricing.get('output_per_million_tokens')
     if price_in is None or price_out is None or not count:
-        return {'tokens_per_query': per_query, 'cost': 'unknown; price not provided'}
+        return {'usage_coverage': coverage, 'tokens_per_query': per_query, 'cost': 'unknown; price not provided'}
     total = (usage.get('prompt_tokens', 0) * price_in
              + usage.get('completion_tokens', 0) * price_out) / 1_000_000
-    return {'tokens_per_query': per_query,
+    return {'usage_coverage': coverage, 'tokens_per_query': per_query,
             'cost': {'currency': pricing.get('currency'), 'total': round(total, 6),
                      'per_query': round(total / count, 6), 'price_source': pricing.get('source')}}
 
@@ -72,7 +78,12 @@ result = {}
 for name, group in groups.items():
     successful = [x for x in group if x['status'] == 'ok']
     usage = collections.Counter()
+    usage_count = 0
     for row in successful:
+        reported = row.get('usage') or {}
+        if all(isinstance(reported.get(k), int) and not isinstance(reported.get(k), bool)
+               and reported[k] >= 0 for k in ('prompt_tokens', 'completion_tokens', 'total_tokens')):
+            usage_count += 1
         for key, value in (row.get('usage') or {}).items():
             if isinstance(value, int) and not isinstance(value, bool):
                 usage[key] += value
@@ -81,7 +92,7 @@ for name, group in groups.items():
                     'mean_latency_seconds': round(statistics.mean(x['latency_seconds'] for x in group), 3),
                     'usage_reported_sum': dict(usage),
                     **accuracy_block(group, review),
-                    **cost_block(usage, len(successful), pricing),
+                    **cost_block(usage, len(successful), pricing, usage_count),
                     'refusal_correctness': 'not applicable: the frozen set has no refusal cases'}
 args.output.write_text(json.dumps(result, indent=2) + '\n')
 if not args.review.exists():
