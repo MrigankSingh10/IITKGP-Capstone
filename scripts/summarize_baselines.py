@@ -5,10 +5,10 @@ import csv
 import json
 from pathlib import Path
 import statistics
+import sys
 
-CATEGORIES = ('hallucination', 'reasoning error', 'evidence unavailable', 'format error',
-              'hallucinated_or_incorrect', 'incomplete_or_vague', 'cutoff_abstention',
-              'wrong_jurisdiction_or_entity', 'json_schema_error')
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
+from hr_navigator.evaluation import taxonomy  # noqa: E402
 
 
 def load_review(path):
@@ -20,8 +20,10 @@ def load_review(path):
             category = (row.get('failure_category') or '').strip()
             if correct not in ('', '0', '1'):
                 raise SystemExit(f"{row['case_id']} {row['strategy']}: correct must be 0, 1 or blank")
-            if category and category not in CATEGORIES:
-                raise SystemExit(f"{row['case_id']} {row['strategy']}: unknown category {category!r}")
+            try:
+                taxonomy.normalize(category)
+            except ValueError as exc:
+                raise SystemExit(f"{row['case_id']} {row['strategy']}: {exc}") from None
             if correct == '1' and category:
                 raise SystemExit(f"{row['case_id']} {row['strategy']}: correct answer has a category")
             review[(row['case_id'], row['strategy'])] = {**row, 'correct': correct,
@@ -57,9 +59,12 @@ def accuracy_block(group, review):
     reviewers = sorted({m.get('reviewer', '').strip() for m in scored if m.get('reviewer', '').strip()})
     failures = collections.Counter(m['failure_category'] or 'uncategorised'
                                    for m in scored if m['correct'] == '0')
+    official = collections.Counter(taxonomy.normalize(m['failure_category']) or 'uncategorised'
+                                   for m in scored if m['correct'] == '0')
     return {'scored': len(scored), 'unscored': len(group) - len(scored), 'correct': correct,
             'accuracy': round(correct / len(scored), 4),
-            'failure_categories': dict(sorted(failures.items())), 'reviewers': reviewers}
+            'failure_categories': dict(sorted(failures.items())),
+            'failure_categories_taxonomy': dict(sorted(official.items())), 'reviewers': reviewers}
 
 
 parser = argparse.ArgumentParser()

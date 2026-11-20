@@ -18,9 +18,18 @@
       "hallucination": 51,
       "reasoning error": 9
     },
+    "failure_categories_taxonomy": {
+      "abstention": 11,
+      "hallucination": 51,
+      "reasoning_error": 9
+    },
     "reviewers": [
       "AI-suggested; confirmed by Hrishikesh"
     ],
+    "usage_coverage": {
+      "reported_calls": 80,
+      "successful_calls": 80
+    },
     "tokens_per_query": {
       "prompt_tokens": 72.5,
       "completion_tokens": 79.3,
@@ -48,9 +57,18 @@
       "hallucination": 40,
       "reasoning error": 16
     },
+    "failure_categories_taxonomy": {
+      "abstention": 14,
+      "hallucination": 40,
+      "reasoning_error": 16
+    },
     "reviewers": [
       "AI-suggested; confirmed by Hrishikesh"
     ],
+    "usage_coverage": {
+      "reported_calls": 80,
+      "successful_calls": 80
+    },
     "tokens_per_query": {
       "prompt_tokens": 123.5,
       "completion_tokens": 44.5,
@@ -78,9 +96,18 @@
       "hallucination": 56,
       "reasoning error": 9
     },
+    "failure_categories_taxonomy": {
+      "abstention": 1,
+      "hallucination": 56,
+      "reasoning_error": 9
+    },
     "reviewers": [
       "AI-suggested; confirmed by Hrishikesh"
     ],
+    "usage_coverage": {
+      "reported_calls": 80,
+      "successful_calls": 80
+    },
     "tokens_per_query": {
       "prompt_tokens": 83.5,
       "completion_tokens": 40.4,
