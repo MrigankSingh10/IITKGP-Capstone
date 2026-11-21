@@ -1,36 +1,54 @@
 # HR Policy Navigator
 
-An IIT Kharagpur Track B capstone prototype for finding evidence in a collection of Indian Labour Codes documents. The intended system will distinguish statutory references from a fictional company's internal HR policy, cite original sources, and support controlled HR workflows. The current implementation focuses on corpus ingestion, evaluation and experimental document retrieval; it is not a production HR assistant or legal advice.
+An IIT Kharagpur Track B capstone prototype for finding and citing information in Indian Labour Codes documents. The current document-focused scope answers questions about the supplied PDFs without needing employee details or external HR actions. The repository also contains a separate fictional Acme handbook and early UI/API scaffolding; these do not establish real employee entitlements.
 
-## Current progress
+The retrieval workflow is experimental. Generated answers are drafts for review, and citation checks do not establish legal applicability or guarantee correctness. The FastAPI and Streamlit prototype is not yet connected to the retrieval workflow or a LangGraph agent.
 
-- **Corpus audit:** Imported 126 source PDFs (1,767 pages), matched them to the supplied manifest, and recorded source IDs, titles, URLs and extraction results. Twenty-five pages had sparse extracted text. Source dates, legal applicability and redistribution rights still require verification.
-- **Evaluation and baselines:** Froze 80 document-only questions in `evaluation/gold_v1.jsonl` and saved 240 closed-book responses across three prompting strategies. A user-provided evaluation covers 240 rows; scoring discrepancies and independent review remain unresolved, so no verified baseline accuracy or improvement is claimed.
-- **Retrieval prototype:** Extracts page-contained chunks at two sizes, searches with BM25, dense FAISS or hybrid ranking, and returns source and page metadata. Dense indexing currently covers pages heuristically classified as Latin script; lexical search covers extractable chunks across scripts.
-- **Review work:** Added queues for sparse-page OCR, source dates and possible versions, plus a template for independent retrieval relevance review. Eleven user-accepted OCR pages are included in a separate versioned search corpus; OCR transcription and source warnings remain visible. See `docs/phase_2_review_guide.md`.
-- **Grounded answers:** A prototype checks source identity and exact quotations, but a live test produced an incorrect answer with genuine, irrelevant quotes. It therefore escalates to human review rather than presenting an unverified answer.
+## What is implemented
 
-The team has added a FastAPI and Streamlit prototype with security and tracing components; its agent integration remains a stub. No LangGraph or production HR integration has been implemented. The user reports faculty acceptance of page counting; written evidence and its exact scope remain to be attached. See `reports/phase_2_summary.md` and `reports/retrieval_v1_report.md` for results and limitations; earlier phase reports describe the project at the time they were written.
+### Corpus, OCR and provenance
 
-Two baseline reviews are retained: `reports/baseline_v1_review.csv` contains the later user-provided strict adjudication, and `reports/baseline_v1_review_team.csv` preserves the team review. Their scores differ, so the team should reconcile the rubric and reviewer provenance before using either as a verified comparison.
+- Audited **126 original source PDFs** comprising **1,767 PDF pages**. Each page record retains the source PDF ID, title, original page number, URL and extraction information. Source-document, page-document and retrieval-chunk counts are distinct.
+- Identified 25 pages with sparse native text. Eleven user-accepted OCR transcriptions are included in a separate indexed corpus with source warnings; 14 pages remain sparse or low-content, including two that appeared blank. Original PDF pages remain the source of truth.
+- The accepted-OCR corpus contains **9,615 chunks** with the 200-token configuration and **5,605 chunks** with the 350-token configuration. These are two alternative indexes, not additional source documents.
+- Document-status notes for the five sources used in the fresh evaluation are in [`reports/evaluation_document_status_2026-11-20.md`](reports/evaluation_document_status_2026-11-20.md). They do not establish the current status of every provision or document.
 
-## Project layout
+### Search and grounded drafts
 
-| Path | Purpose |
+- Page-contained chunks support BM25 keyword search, dense search using the hosted BGE embeddings API, hybrid rank fusion and lexical reranking. FAISS is used for vector search; a local SQLite cache stores embeddings.
+- Search results include original PDF/page provenance. The review-only drafting workflow checks quote existence and applies source, subsection and selected wording checks; uncertain results escalate. Model support and alignment checks can still be wrong, so successful drafts remain labelled `review_required`.
+- Dense indexing was built for text heuristically classified as Latin script; multilingual coverage has not been validated. Source dates and legal applicability remain incompletely verified.
+
+### Evaluation
+
+- [`evaluation/gold_v1.jsonl`](evaluation/gold_v1.jsonl) contains 80 frozen document-only questions. Three closed-book prompting strategies generated 240 saved baseline responses.
+- Two reviews of those responses are retained: [`baseline_v1_review.csv`](reports/baseline_v1_review.csv) contains later user-provided strict adjudication, and [`baseline_v1_review_team.csv`](reports/baseline_v1_review_team.csv) contains the team review. Their scores differ and require rubric and reviewer-provenance reconciliation before an accuracy claim.
+- A separate 20-question grounding set was used to develop and test the retrieval checks. The recorded regression runs are **development results**, not independent accuracy estimates. The latest full run preceded two later targeted fixes; see [`reports/grounding_v3_regression.md`](reports/grounding_v3_regression.md).
+- Eight further document-only question candidates are in [`evaluation/grounding_holdout_candidates_v0.1.jsonl`](evaluation/grounding_holdout_candidates_v0.1.jsonl). They are drafts, have not been independently reviewed and have not been evaluated. A separate behaviour scenario set is also a draft and must be reconciled with the document-focused scope before use.
+
+### API and interface prototype
+
+The repository includes a FastAPI service (`src/hr_navigator/server.py`), a Streamlit interface (`app.py`), basic input checks, rate limiting and trace logging. The service's agent hook currently returns a stub response and a placeholder citation. **It does not answer from the PDF retrieval pipeline.** LangGraph, durable workflow state and real HR integrations are not implemented.
+
+The prototype UI currently displays an employee-ID field and the API logs queries and the supplied ID to `reports/agent_traces.jsonl`. For the agreed document-only scope, use fictional test values and do not enter employee details. Trace files may contain what was entered and should not be shared or committed as project data.
+
+## Repository layout
+
+| Path | Contents |
 | --- | --- |
-| `src/hr_navigator/` | Corpus ingestion, API client, retrieval and prototype data model |
-| `scripts/` | Audit, page/chunk generation, baseline evaluation, retrieval and review utilities |
-| `configs/` | BGE tokenizer used to measure chunk sizes |
-| `evaluation/` | Frozen document-only questions and review templates |
-| `docs/` | Product specification, fictional handbook and review guides |
-| `reports/` | Audit, baseline and retrieval results and review worksheets |
-| `data/synthetic/` | Fictional Acme handbook data |
+| `src/hr_navigator/ingestion/` | Corpus audit and page extraction |
+| `src/hr_navigator/retrieval/` | Embeddings, search, citation checks and review-only drafts |
+| `src/hr_navigator/clients/` | Hosted model and embedding API adapters |
+| `src/hr_navigator/server.py`, `app.py` | FastAPI and Streamlit prototypes |
+| `scripts/` | Corpus, indexing, search and evaluation commands |
+| `evaluation/` | Frozen questions, draft candidates and review worksheets |
+| `reports/` | Corpus audit, evaluation results and review notes |
+| `docs/` | Product specification and review guides |
+| `data/synthetic/` | Fictional handbook data |
 
-The public legal corpus is separate from the synthetic Acme policy. Employee records and handbook examples are fictional; they do not establish actual entitlements.
+## Setup and tests
 
-## Setup
-
-Requires Python 3.11 or newer:
+Python 3.11 or newer is required. From the repository root:
 
 ```bash
 python -m venv .venv
@@ -40,72 +58,68 @@ make test
 make lint
 ```
 
-For the optional local OCR review workflow, install `pip install -e '.[ocr]'`. The OCR model's output must be checked against the original page before use.
+For OCR tooling, install `pip install -e '.[ocr]'`. The current package metadata does not include the UI/API packages; to run that prototype, separately install `fastapi`, `uvicorn`, `streamlit`, `pandas` and `requests` in the environment.
 
-The original corpus ZIP, credentials, certificates, generated pages and embedding cache are local-only and excluded by `.gitignore`. Place the supplied corpus ZIP in `inputs/` and run the audit with its actual filename:
+At the last recorded merge check, **58 tests passed and one was skipped** because the scenario set was not frozen. The current local test result may differ as the project changes.
+
+## Build the corpus and search
+
+The input corpus ZIP, raw PDFs, credentials, certificates, generated pages and embedding caches are local files excluded from version control. Obtain the supplied files separately, place the corpus ZIP in `inputs/`, then run:
 
 ```bash
 python scripts/audit_corpus.py 'inputs/<corpus-archive>.zip'
 python scripts/build_pages.py
 ```
 
-Alternatively, `make audit` expects the specific filename shown in the `Makefile`. The audit rejects unsafe archive paths and size limits, stores PDFs by SHA256, and preserves manifest matches in a source registry. Inspect extraction errors and unmatched metadata before relying on it. The registry refuses changed inputs; use a separate report directory for a different corpus version. Page and chunk files are written under `data/processed/` and remain local.
+Replace the placeholder with the real ZIP filename. The audit stores PDFs by SHA256 and records source metadata; inspect extraction and manifest errors before use. Generated files are written under `data/processed/`.
 
-## Search and embeddings
-
-BM25 search runs locally after the pages and chunks are built:
+To search the original extracted corpus locally with BM25:
 
 ```bash
-python scripts/search_corpus.py 'Does State include a Union territory?' --mode bm25 --code 'Code on Wages'
+python scripts/search_corpus.py \
+  'Does State include a Union territory?' \
+  --mode bm25 --code 'Code on Wages' \
+  --data-dir data/processed
 ```
 
-The search commands default to `data/processed/accepted_ocr/` and `data/indexes/accepted_ocr.sqlite`; they require the accepted-OCR build below. Results include the original title, PDF page, URL, text and source warnings. To search the original non-OCR corpus, pass `--data-dir data/processed --cache-file data/indexes/embeddings.sqlite`. Build the local embedding cache to use dense or hybrid search. Set `EMBEDDING_BASE_URL` to the authorized endpoint and supply the course-provided key and CA certificate locally:
+Search defaults to the separately built accepted-OCR corpus at `data/processed/accepted_ocr/`. To build its embedding cache and index, use the course-provided key and CA files and set the authorized endpoint locally:
 
 ```bash
+export EMBEDDING_BASE_URL='<authorized-embedding-base-url>'
 python scripts/build_embeddings.py \
   --key-file VM02_Embeddings_Access/shared-embedding-key.txt \
   --ca-file VM02_Embeddings_Access/vm02-ca.crt \
   --base-url "$EMBEDDING_BASE_URL" --model bge-small-en-v1.5
-```
-
-To build the accepted-OCR search corpus from the existing approved review sheet and caches, after `build_pages.py` and `build_embeddings.py`, run:
-
-```bash
 python scripts/apply_reviewed_ocr.py
 python scripts/build_ocr_candidate.py
-python scripts/embed_ocr_candidate.py --key-file VM02_Embeddings_Access/shared-embedding-key.txt \
+python scripts/embed_ocr_candidate.py \
+  --key-file VM02_Embeddings_Access/shared-embedding-key.txt \
   --ca-file VM02_Embeddings_Access/vm02-ca.crt \
   --base-url "$EMBEDDING_BASE_URL" --model bge-small-en-v1.5
 python scripts/build_accepted_ocr_index.py
 ```
 
-The accepted cache is regenerated from the original cache and isolated OCR cache; existing source files and original indexes remain available. `scripts/review_evidence.py` returns excerpts for review, not a generated legal answer. Use `python scripts/search_corpus.py --help` for dense and hybrid options. The cache resumes without re-embedding saved text. The included BGE-small tokenizer is from the public model repository; check its redistribution terms and those of the corpus before sharing. Language detection is heuristic and mixed-language coverage is not validated. Date filters fail closed until source dates are verified.
+Run `python scripts/search_corpus.py --help` for dense and hybrid options. Those modes require the embedding API configuration; BM25 does not. Run `python scripts/ask_documents.py --help` for the experimental question workflow. Its `--draft-for-review` option needs both hosted APIs and returns a draft or escalation, not a verified final answer. `scripts/review_evidence.py` can display source excerpts for review.
 
-## Review and next steps
+Keep API keys and certificates local, use the appropriate credentials for each service and retain TLS verification. `.env.example` documents configuration names; the application does not automatically load `.env`.
 
-Review sparse pages and proposed OCR against the original PDFs, verify source dates and version relationships, and independently annotate retrieval relevance using `docs/phase_2_review_guide.md`. The reviewed-OCR workflow preserves original page text and source conflict warnings in a separate indexed version. Adjudicate the supplied baseline scores and complete independent review before claiming improvement or beginning agent development. Reliable answer support checks, adversarial evaluation, legal applicability and faculty clarification remain open.
+## Run the UI/API prototype
 
-For API-backed experiments, use `.env.example` as a template for local environment variables; the application does not automatically load `.env`. Keep keys and certificates out of the repository, use the appropriate separate chat and embedding credentials, and retain TLS verification. Confirm endpoint assignment and operational limits before live use. Docker Compose provides an audit skeleton, not a running application.
-
-## API and Streamlit prototype
-
-The team prototype includes a FastAPI service in `src/hr_navigator/server.py`, a Streamlit app in `app.py`, and security and tracing modules. The service's agent hook is a stub; its responses should not be mistaken for the grounded retrieval workflow.
+After installing the separate UI/API dependencies, start the API and Streamlit in separate terminals:
 
 ```bash
 PYTHONPATH=src uvicorn hr_navigator.server:app --reload --host 127.0.0.1 --port 8000
+```
+
+```bash
 streamlit run app.py
 ```
 
-### Isolated OCR-candidate evidence test
+The API exposes `GET /health` and `POST /chat`. The UI shows chat and a trace dashboard. As noted above, `/chat` currently calls a stub, not retrieval or LangGraph; use fictional test values only.
 
-A separate candidate corpus includes 11 OCR draft pages for testing only. It does not change the normal index and is not approved for legal answers. To see source passages without generating an answer:
+## Remaining work
 
-```bash
-.venv/bin/python scripts/review_evidence.py \
-  'annexure appropriate government rules nomination fresh nomination' \
-  --code 'Code on Social Security' --include-ocr-candidates
-```
-
-The output labels unverified OCR and source conflicts. A passage matching a question is not proof of legal applicability or answer entailment. Run `scripts/build_ocr_candidate.py` to rebuild the isolated candidate files and `scripts/smoke_ocr_candidate.py` for the internal, non-independent integration check. See `reports/ocr_candidate_smoke.json` for results. The separate candidate embedding cache is in `data/indexes/ocr_candidate.sqlite`.
-
-The experimental `scripts/ask_documents.py --draft-for-review` mode asks the permitted chat model for a cited draft and an additional model support check. Even a passing draft requires human review. This development workflow has demonstrated prompt-injection and citation-validation failures; the guards are incomplete. See `reports/grounding_dev_report.md`. The default continues to fail closed.
+- Reconcile the two baseline reviews and independently assess the draft holdout questions before using them to measure performance.
+- Improve and evaluate retrieval, source matching and grounded answers on questions not used to tune the workflow. Keep generated answers review-only until the evaluation supports a change.
+- Continue source-date, version, legal-status, sparse-page and redistribution checks. The user reported faculty acceptance of page counting; written confirmation and its scope are not attached.
+- Align the API/UI with the document-only scope, address trace handling and connect the retrieval workflow. Implement LangGraph and document-focused task completion in a later phase.
