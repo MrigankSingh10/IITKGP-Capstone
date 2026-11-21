@@ -104,6 +104,12 @@ class RagSystem:
 
     def answer(self, case):
         from hr_navigator.retrieval import draft_review, search
+        if search.unsupported_query(case['question']):
+            response = normalize_rag_response(
+                {'decision': 'unsupported_language', 'answer': 'Please ask your question in English.',
+                 'sources': []}, [], self.top_k)
+            response['tool_actions'] = []
+            return response
         data = self.embed.embed([case['question']])['data']
         if len(data) != 1 or data[0]['index'] != 0:
             raise ValueError('Invalid embedding response')

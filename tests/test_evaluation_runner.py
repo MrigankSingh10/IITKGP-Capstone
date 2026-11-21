@@ -404,3 +404,16 @@ def test_rag_system_uses_current_pipeline_and_retrieval_check(monkeypatch):
     assert response['decision'] == 'answer' and response['pipeline_decision'] == 'review_required'
     assert runner.auto_check(case, {'status': 'ok', 'response': response}) == []
     assert system.usage == {'embedding_prompt_tokens': 3}
+
+
+def test_rag_rejects_devanagari_before_external_calls():
+    from hr_navigator.evaluation.systems import RagSystem
+
+    class NoCalls:
+        def embed(self, *_args):
+            raise AssertionError('Unexpected embedding call')
+
+    system = RagSystem(None, NoCalls(), [], {}, {})
+    result = system.answer({'question': 'मजदूरी क्या है?'})
+    assert result['decision'] == 'unsupported_language'
+    assert result['tool_actions'] == []

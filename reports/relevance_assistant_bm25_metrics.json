@@ -1,0 +1,65 @@
+{
+  "frozen_sha256": "90d9e6b16405e8572748ecaec8f1595de344fbd243e5754f04e362e10c39d1b5",
+  "provenance": "Assistant-reviewed focused judgments; not independent human review; incomplete labels may understate performance",
+  "latency_scope": "local search only, includes per-query ranking setup; excludes embeddings and end-to-end costs",
+  "results": {
+    "200_bm25": {
+      "queries": 10,
+      "hit_at_10": 0.5,
+      "page_recall_at_10": 0.5,
+      "mrr_at_10": 0.5,
+      "mean_local_search_seconds": 0.41969559990247945,
+      "language_slices": {
+        "Bilingual": {
+          "queries": 1,
+          "hit_at_10": 0,
+          "page_recall_at_10": 0.0,
+          "mrr_at_10": 0
+        },
+        "English": {
+          "queries": 7,
+          "hit_at_10": 0.5714285714285714,
+          "page_recall_at_10": 0.5714285714285714,
+          "mrr_at_10": 0.5714285714285714
+        },
+        "Hindi": {
+          "queries": 2,
+          "hit_at_10": 0.5,
+          "page_recall_at_10": 0.5,
+          "mrr_at_10": 0.5
+        }
+      }
+    },
+    "350_bm25": {
+      "queries": 10,
+      "hit_at_10": 0.6,
+      "page_recall_at_10": 0.55,
+      "mrr_at_10": 0.46111111111111114,
+      "mean_local_search_seconds": 0.3770169915005681,
+      "language_slices": {
+        "Bilingual": {
+          "queries": 1,
+          "hit_at_10": 0,
+          "page_recall_at_10": 0.0,
+          "mrr_at_10": 0
+        },
+        "English": {
+          "queries": 7,
+          "hit_at_10": 0.5714285714285714,
+          "page_recall_at_10": 0.5714285714285714,
+          "mrr_at_10": 0.5
+        },
+        "Hindi": {
+          "queries": 2,
+          "hit_at_10": 1,
+          "page_recall_at_10": 0.75,
+          "mrr_at_10": 0.5555555555555556
+        }
+      }
+    }
+  },
+  "chunk_sha256": {
+    "200": "b2862e00622ad110f5a5fa5e91a0657d4348fb43ec2c9c154eef1f5d4d18d6ee",
+    "350": "71a97c1db5d981fa3bb9688078bce321b9dcb8dde768342e6f26608f3968497a"
+  }
+}

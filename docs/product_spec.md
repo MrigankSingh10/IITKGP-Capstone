@@ -4,6 +4,8 @@ Acme India is fictional. Its handbook, employees and transactions are synthetic 
 
 ## Intents and correct behavior
 
+The adopted [Member 1 domain rules](member_1_domain_rules.md) specify decision boundaries, source authority and version handling.
+
 1. Statutory reference: route to the public corpus, optionally filter by code, cite actual original PDF and PDF page, distinguish the quoted text from current applicability, and escalate where commencement, jurisdiction or subsequent changes are unverified.
 2. Company policy: use only the versioned synthetic handbook for Acme's rules; cite its section and version. Never substitute statutory text or another organisation's policy.
 3. Own balance/profile: obtain the employee identity from authenticated server context, then use a scoped database tool; never infer identity from the user's text.
@@ -14,7 +16,7 @@ Acme India is fictional. Its handbook, employees and transactions are synthetic 
 
 ## Evidence and source hierarchy
 
-Authentication and authorisation govern all actions. Synthetic Acme rules govern fictional internal decisions; verified applicable official sources support statutory summaries. These are distinct scopes and cannot be blended into an unattributed answer. Each statutory citation identifies registry SHA256, original title, source URL and 1-based PDF page; displayed printed page is separate when known. Failed, scanned, ambiguous or missing evidence is visible. A dated source is not proof of current applicability. Faculty approval for counting pages as documents is pending.
+Authentication and authorisation govern all actions. Synthetic Acme rules govern fictional internal decisions; verified applicable official sources support statutory summaries. These are distinct scopes and cannot be blended into an unattributed answer. Each statutory citation identifies registry SHA256, original title, source URL and 1-based PDF page; displayed printed page is separate when known. Failed, scanned, ambiguous or missing evidence is visible. A dated source is not proof of current applicability. Faculty acceptance was reported by the user. See [faculty clarification](faculty_clarification.md) for the remaining evidence and scope questions.
 
 ## Interfaces and safety
 
@@ -29,3 +31,7 @@ Freeze 80 reviewed cases before agent development, including statutory, internal
 ## Evaluation scope revision
 
 At the user's direction, the gold evaluation set is restricted to questions about the supplied Labour Codes PDFs, with a registry-backed source and PDF page for every case. It excludes employee-specific information, balances, simulated company policy, HR actions, and operational scenarios. This changes the evaluation scope; it does not by itself remove the Track B requirements for tools, persistent state, security, human-in-the-loop boundaries, or evaluation of the resulting system. Agree on an appropriate separate evaluation approach with the team/faculty before claiming those requirements are met. Do not reintroduce employee-detail questions into the gold set without direction.
+
+## Language scope — 2026-11-21
+
+The active product scope is English-only. Registered originals and historical evaluation records are retained as provenance; non-English questions and evidence are outside supported scope. Current passage filtering is a script heuristic, not certified language detection: mixed-script chunks and sparse chunks without sufficient Latin letters are excluded, even when they contain English, while Romanized Hindi, other Latin-script languages and legacy-font encodings may pass. Ask users to submit English questions; Devanagari input is rejected by the document CLIs before embedding. A qualified review remains necessary for source language and evidence.

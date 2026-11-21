@@ -1,0 +1,1669 @@
+{
+  "seed": 20261121,
+  "sample_size": 20,
+  "pool_size": 74,
+  "gold_sha256": "00945556195f2403b17a7a4078b642f4fe1c3eb8b68109ed0a04a92b3a2238bf",
+  "prior_question_files_sha256": {
+    "evaluation/grounding_fresh_v1.jsonl": "3ef74cde9409c40beda04e6016b0235d7e051b56f1a046e84376061fafade8ea",
+    "evaluation/relevance_assistant_v1.jsonl": "90d9e6b16405e8572748ecaec8f1595de344fbd243e5754f04e362e10c39d1b5"
+  },
+  "pool_ids": [
+    "draft-001",
+    "draft-002",
+    "draft-003",
+    "draft-004",
+    "draft-005",
+    "draft-006",
+    "draft-007",
+    "draft-008",
+    "draft-009",
+    "draft-010",
+    "draft-011",
+    "draft-012",
+    "draft-013",
+    "draft-014",
+    "draft-015",
+    "draft-016",
+    "draft-017",
+    "draft-018",
+    "draft-019",
+    "draft-020",
+    "draft-021",
+    "draft-022",
+    "draft-023",
+    "draft-024",
+    "draft-025",
+    "draft-026",
+    "draft-027",
+    "draft-028",
+    "draft-029",
+    "draft-030",
+    "draft-031",
+    "draft-032",
+    "draft-033",
+    "draft-034",
+    "draft-035",
+    "draft-036",
+    "draft-037",
+    "draft-038",
+    "draft-039",
+    "draft-040",
+    "draft-041",
+    "draft-042",
+    "draft-043",
+    "draft-044",
+    "draft-045",
+    "draft-046",
+    "draft-047",
+    "draft-048",
+    "draft-049",
+    "draft-050",
+    "draft-051",
+    "draft-052",
+    "draft-053",
+    "draft-054",
+    "draft-055",
+    "draft-056",
+    "draft-057",
+    "draft-058",
+    "draft-059",
+    "draft-060",
+    "draft-061",
+    "draft-062",
+    "draft-063",
+    "draft-064",
+    "draft-065",
+    "draft-066",
+    "draft-067",
+    "draft-068",
+    "draft-069",
+    "draft-070",
+    "draft-071",
+    "draft-072",
+    "draft-073",
+    "draft-074"
+  ],
+  "sample_ids": [
+    "draft-068",
+    "draft-023",
+    "draft-036",
+    "draft-045",
+    "draft-011",
+    "draft-044",
+    "draft-010",
+    "draft-001",
+    "draft-024",
+    "draft-021",
+    "draft-047",
+    "draft-073",
+    "draft-070",
+    "draft-062",
+    "draft-039",
+    "draft-066",
+    "draft-026",
+    "draft-063",
+    "draft-057",
+    "draft-060"
+  ],
+  "method": "statutory, English-supported, source-page labeled gold cases without conversation_context or exact casefolded whitespace-normalized prior development/pilot question; sample before scoring; same search top_k=10, English filter, page deduplication and instrument boost",
+  "label_limitations": "One cited target page per question, not exhaustive relevance judgments; frozen set approved as a whole, case review_status unreviewed, no individual legal expert review; concentrated sources/pages.",
+  "latency_scope": "local search only, includes filtering and BM25 tokenization; excludes corpus loading; alternating order; single run per query, no network",
+  "results": {
+    "200": {
+      "chunk_sha256": "b2862e00622ad110f5a5fa5e91a0657d4348fb43ec2c9c154eef1f5d4d18d6ee",
+      "previous": {
+        "hit_at_3": 0.5,
+        "hit_at_5": 0.5,
+        "hit_at_10": 0.5,
+        "mrr_at_10": 0.45,
+        "mean_local_search_seconds": 0.5559695499992813
+      },
+      "shipped": {
+        "hit_at_3": 0.55,
+        "hit_at_5": 0.55,
+        "hit_at_10": 0.55,
+        "mrr_at_10": 0.45833333333333337,
+        "mean_local_search_seconds": 0.5540997144977154
+      },
+      "paired": {
+        "hit_at_3": {
+          "gains": 2,
+          "losses": 1
+        },
+        "hit_at_5": {
+          "gains": 2,
+          "losses": 1
+        },
+        "hit_at_10": {
+          "gains": 2,
+          "losses": 1
+        },
+        "reciprocal_rank": {
+          "improved": 2,
+          "worsened": 1,
+          "unchanged": 17
+        }
+      },
+      "cases": [
+        {
+          "id": "draft-068",
+          "question": "What does the March 2026 occupational safety FAQ say about welfare facilities for contract labour?",
+          "target_page": "aa0357bbe410d7533e7dfaff6d14d935acb6f730b5fbe53750d5012fea92542c:page_0002",
+          "previous": {
+            "rank": 2,
+            "pages": [
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0053",
+              "aa0357bbe410d7533e7dfaff6d14d935acb6f730b5fbe53750d5012fea92542c:page_0002",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0055",
+              "e6c7b3b716ce5bbdced0e2eb487950fed6dcf3343eced2d5389db675989ecb3f:page_0003",
+              "e6c7b3b716ce5bbdced0e2eb487950fed6dcf3343eced2d5389db675989ecb3f:page_0001",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0046",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0048",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0038",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0056",
+              "3d94a0c291cce2dfbfcc3a5c7c3a5c80d1de9b69b55408309e66b5775cbefe39:page_0004"
+            ],
+            "seconds": 0.5583923340018373
+          },
+          "shipped": {
+            "rank": 2,
+            "pages": [
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0053",
+              "aa0357bbe410d7533e7dfaff6d14d935acb6f730b5fbe53750d5012fea92542c:page_0002",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0055",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0046",
+              "3d94a0c291cce2dfbfcc3a5c7c3a5c80d1de9b69b55408309e66b5775cbefe39:page_0004",
+              "e6c7b3b716ce5bbdced0e2eb487950fed6dcf3343eced2d5389db675989ecb3f:page_0003",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0199",
+              "db6912b54ba8f1aac89966feb7734b27557c815df0472caf642190a2e2951d7c:page_0002",
+              "9ce8f68b88f725fbce4fadfb45d9ddc3ed7a5f59d92a2ebd3d5bd7ebb1c83891:page_0042",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0048"
+            ],
+            "seconds": 0.5575060420087539
+          }
+        },
+        {
+          "id": "draft-023",
+          "question": "What does the industrial relations code say about different commencement dates?",
+          "target_page": "43cadbd9ed08dd00dfba43571253eaf63d655f9fc411df5b9a1059de8d40ce09:page_0001",
+          "shipped": {
+            "rank": 1,
+            "pages": [
+              "43cadbd9ed08dd00dfba43571253eaf63d655f9fc411df5b9a1059de8d40ce09:page_0001",
+              "0d17b967a528da2d6b827655ba9a701dc15d78b4d4f58b9bbc21d6789a680c85:page_0001",
+              "9ce8f68b88f725fbce4fadfb45d9ddc3ed7a5f59d92a2ebd3d5bd7ebb1c83891:page_0001",
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0001",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0031",
+              "0d17b967a528da2d6b827655ba9a701dc15d78b4d4f58b9bbc21d6789a680c85:page_0009",
+              "368c4a4836deb7d1a23d424412ff039254b51327b14361a7d69ea959336f7d32:page_0051",
+              "368c4a4836deb7d1a23d424412ff039254b51327b14361a7d69ea959336f7d32:page_0085",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0030",
+              "bbc851624beb6011c550fa6b8c6b6f29f0c5add6be6b8f5be5e9bc2f3b0288ec:page_0002"
+            ],
+            "seconds": 0.5784029169881251
+          },
+          "previous": {
+            "rank": 1,
+            "pages": [
+              "43cadbd9ed08dd00dfba43571253eaf63d655f9fc411df5b9a1059de8d40ce09:page_0001",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0031",
+              "0d17b967a528da2d6b827655ba9a701dc15d78b4d4f58b9bbc21d6789a680c85:page_0001",
+              "9ce8f68b88f725fbce4fadfb45d9ddc3ed7a5f59d92a2ebd3d5bd7ebb1c83891:page_0001",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0032",
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0001",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0030",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0035",
+              "0d17b967a528da2d6b827655ba9a701dc15d78b4d4f58b9bbc21d6789a680c85:page_0009",
+              "368c4a4836deb7d1a23d424412ff039254b51327b14361a7d69ea959336f7d32:page_0051"
+            ],
+            "seconds": 0.5577970419981284
+          }
+        },
+        {
+          "id": "draft-036",
+          "question": "According to the Code on Social Security, what notice must the Central Government give under section 1(6)?",
+          "target_page": "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0002",
+          "previous": {
+            "rank": null,
+            "pages": [
+              "bbc851624beb6011c550fa6b8c6b6f29f0c5add6be6b8f5be5e9bc2f3b0288ec:page_0027",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0025",
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0012",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0215",
+              "3be0f7485f6e8981399b7b0bb2252f5d55e39a247b71931c8856e9441f5303cc:page_0015",
+              "3be0f7485f6e8981399b7b0bb2252f5d55e39a247b71931c8856e9441f5303cc:page_0028",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0150",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0023",
+              "bbc851624beb6011c550fa6b8c6b6f29f0c5add6be6b8f5be5e9bc2f3b0288ec:page_0024",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0008"
+            ],
+            "seconds": 0.5548375829966972
+          },
+          "shipped": {
+            "rank": null,
+            "pages": [
+              "bbc851624beb6011c550fa6b8c6b6f29f0c5add6be6b8f5be5e9bc2f3b0288ec:page_0027",
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0012",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0215",
+              "3be0f7485f6e8981399b7b0bb2252f5d55e39a247b71931c8856e9441f5303cc:page_0015",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0150",
+              "bbc851624beb6011c550fa6b8c6b6f29f0c5add6be6b8f5be5e9bc2f3b0288ec:page_0024",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0008",
+              "9ce8f68b88f725fbce4fadfb45d9ddc3ed7a5f59d92a2ebd3d5bd7ebb1c83891:page_0064",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0258",
+              "d7d9516acb49ecfa04cf111de95fd600689e5859fb20020c36e2c06cb6e22cb5:page_0008"
+            ],
+            "seconds": 0.5586977079947246
+          }
+        },
+        {
+          "id": "draft-045",
+          "question": "According to the January 2026 Social Security FAQ, must every procedure be digital?",
+          "target_page": "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0001",
+          "shipped": {
+            "rank": 1,
+            "pages": [
+              "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0001",
+              "d7d9516acb49ecfa04cf111de95fd600689e5859fb20020c36e2c06cb6e22cb5:page_0001",
+              "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0005",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0019",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0033",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0001",
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0020",
+              "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0004",
+              "bbc851624beb6011c550fa6b8c6b6f29f0c5add6be6b8f5be5e9bc2f3b0288ec:page_0027",
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0017"
+            ],
+            "seconds": 0.5504497919901041
+          },
+          "previous": {
+            "rank": 1,
+            "pages": [
+              "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0001",
+              "d7d9516acb49ecfa04cf111de95fd600689e5859fb20020c36e2c06cb6e22cb5:page_0001",
+              "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0005",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0019",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0033",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0001",
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0020",
+              "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0004",
+              "bbc851624beb6011c550fa6b8c6b6f29f0c5add6be6b8f5be5e9bc2f3b0288ec:page_0027",
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0017"
+            ],
+            "seconds": 0.547762333007995
+          }
+        },
+        {
+          "id": "draft-011",
+          "question": "What date is printed in brackets under the title of the Code on Wages?",
+          "target_page": "0d17b967a528da2d6b827655ba9a701dc15d78b4d4f58b9bbc21d6789a680c85:page_0001",
+          "previous": {
+            "rank": null,
+            "pages": [
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0013",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0008",
+              "39fd8e7c94ea7515c285f1a5e35fe77697adce4a0f557fe0f1393bb82d9b91aa:page_0039",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0002",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0025",
+              "b3b416e4dbcc8c8401d5af563daaaecb70c5f191edee67eefa658dcabbe90316:page_0002",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0004",
+              "9ce8f68b88f725fbce4fadfb45d9ddc3ed7a5f59d92a2ebd3d5bd7ebb1c83891:page_0010",
+              "39fd8e7c94ea7515c285f1a5e35fe77697adce4a0f557fe0f1393bb82d9b91aa:page_0060",
+              "19b5fd49f2264433bd2d29c26ea104f33e776a4f55b4de4f59c16bfc9c6bb2a2:page_0006"
+            ],
+            "seconds": 0.5525185829901602
+          },
+          "shipped": {
+            "rank": 3,
+            "pages": [
+              "39fd8e7c94ea7515c285f1a5e35fe77697adce4a0f557fe0f1393bb82d9b91aa:page_0039",
+              "19b5fd49f2264433bd2d29c26ea104f33e776a4f55b4de4f59c16bfc9c6bb2a2:page_0006",
+              "0d17b967a528da2d6b827655ba9a701dc15d78b4d4f58b9bbc21d6789a680c85:page_0001",
+              "9ce8f68b88f725fbce4fadfb45d9ddc3ed7a5f59d92a2ebd3d5bd7ebb1c83891:page_0010",
+              "39fd8e7c94ea7515c285f1a5e35fe77697adce4a0f557fe0f1393bb82d9b91aa:page_0060",
+              "43cadbd9ed08dd00dfba43571253eaf63d655f9fc411df5b9a1059de8d40ce09:page_0050",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0002",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0206",
+              "368c4a4836deb7d1a23d424412ff039254b51327b14361a7d69ea959336f7d32:page_0051",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0008"
+            ],
+            "seconds": 0.5542757910006912
+          }
+        },
+        {
+          "id": "draft-044",
+          "question": "Does the Code on Social Security describe applicability of specified chapters by reference to a schedule?",
+          "target_page": "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0002",
+          "shipped": {
+            "rank": 1,
+            "pages": [
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0002",
+              "bbc851624beb6011c550fa6b8c6b6f29f0c5add6be6b8f5be5e9bc2f3b0288ec:page_0024",
+              "bbc851624beb6011c550fa6b8c6b6f29f0c5add6be6b8f5be5e9bc2f3b0288ec:page_0037",
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0001",
+              "bbc851624beb6011c550fa6b8c6b6f29f0c5add6be6b8f5be5e9bc2f3b0288ec:page_0002",
+              "6c2fc1818ab86858d87579f30036e1545977238995a162d64d1a0d9636b9255a:page_0054",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0014",
+              "d7d9516acb49ecfa04cf111de95fd600689e5859fb20020c36e2c06cb6e22cb5:page_0001",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0023",
+              "e70b1398caedc1f28f0e135bbed9fd942d5435669eeffdef04ef2050b3665fae:page_0143"
+            ],
+            "seconds": 0.5612867919990094
+          },
+          "previous": {
+            "rank": 1,
+            "pages": [
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0002",
+              "bbc851624beb6011c550fa6b8c6b6f29f0c5add6be6b8f5be5e9bc2f3b0288ec:page_0024",
+              "bbc851624beb6011c550fa6b8c6b6f29f0c5add6be6b8f5be5e9bc2f3b0288ec:page_0037",
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0001",
+              "bbc851624beb6011c550fa6b8c6b6f29f0c5add6be6b8f5be5e9bc2f3b0288ec:page_0002",
+              "bbc851624beb6011c550fa6b8c6b6f29f0c5add6be6b8f5be5e9bc2f3b0288ec:page_0038",
+              "6c2fc1818ab86858d87579f30036e1545977238995a162d64d1a0d9636b9255a:page_0054",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0001",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0014",
+              "d7d9516acb49ecfa04cf111de95fd600689e5859fb20020c36e2c06cb6e22cb5:page_0001"
+            ],
+            "seconds": 0.552525708990288
+          }
+        },
+        {
+          "id": "draft-010",
+          "question": "What topics does the opening description of the Code on Wages identify?",
+          "target_page": "0d17b967a528da2d6b827655ba9a701dc15d78b4d4f58b9bbc21d6789a680c85:page_0001",
+          "previous": {
+            "rank": null,
+            "pages": [
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0002",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0001",
+              "b3b416e4dbcc8c8401d5af563daaaecb70c5f191edee67eefa658dcabbe90316:page_0002",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0001",
+              "c7ac8b5f23d5b545fea2ce54268c50ecf9e4271b6494e5bf4e75f5fbfb14b584:page_0002",
+              "c7ac8b5f23d5b545fea2ce54268c50ecf9e4271b6494e5bf4e75f5fbfb14b584:page_0001",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0016",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0041",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0002",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0013"
+            ],
+            "seconds": 0.5517512079968583
+          },
+          "shipped": {
+            "rank": null,
+            "pages": [
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0213",
+              "9ce8f68b88f725fbce4fadfb45d9ddc3ed7a5f59d92a2ebd3d5bd7ebb1c83891:page_0063",
+              "e70b1398caedc1f28f0e135bbed9fd942d5435669eeffdef04ef2050b3665fae:page_0204",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0209",
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0108",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0014",
+              "e70b1398caedc1f28f0e135bbed9fd942d5435669eeffdef04ef2050b3665fae:page_0196",
+              "fef11b13f67875d70e7273a097318b7dfdb6ef01f5afb6cb85ed63ba0e18fe94:page_0002",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0251",
+              "e70b1398caedc1f28f0e135bbed9fd942d5435669eeffdef04ef2050b3665fae:page_0230"
+            ],
+            "seconds": 0.5498549170006299
+          }
+        },
+        {
+          "id": "draft-001",
+          "question": "What does section 1 of the Code on Wages say about commencement?",
+          "target_page": "0d17b967a528da2d6b827655ba9a701dc15d78b4d4f58b9bbc21d6789a680c85:page_0001",
+          "shipped": {
+            "rank": 3,
+            "pages": [
+              "bbc851624beb6011c550fa6b8c6b6f29f0c5add6be6b8f5be5e9bc2f3b0288ec:page_0002",
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0047",
+              "0d17b967a528da2d6b827655ba9a701dc15d78b4d4f58b9bbc21d6789a680c85:page_0001",
+              "39fd8e7c94ea7515c285f1a5e35fe77697adce4a0f557fe0f1393bb82d9b91aa:page_0039",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0013",
+              "19b5fd49f2264433bd2d29c26ea104f33e776a4f55b4de4f59c16bfc9c6bb2a2:page_0006",
+              "0d17b967a528da2d6b827655ba9a701dc15d78b4d4f58b9bbc21d6789a680c85:page_0009",
+              "9ce8f68b88f725fbce4fadfb45d9ddc3ed7a5f59d92a2ebd3d5bd7ebb1c83891:page_0050",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0199",
+              "e70b1398caedc1f28f0e135bbed9fd942d5435669eeffdef04ef2050b3665fae:page_0201"
+            ],
+            "seconds": 0.5508323329995619
+          },
+          "previous": {
+            "rank": null,
+            "pages": [
+              "c7ac8b5f23d5b545fea2ce54268c50ecf9e4271b6494e5bf4e75f5fbfb14b584:page_0001",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0001",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0001",
+              "bbc851624beb6011c550fa6b8c6b6f29f0c5add6be6b8f5be5e9bc2f3b0288ec:page_0002",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0041",
+              "c7ac8b5f23d5b545fea2ce54268c50ecf9e4271b6494e5bf4e75f5fbfb14b584:page_0002",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0013",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0002",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0047",
+              "b3b416e4dbcc8c8401d5af563daaaecb70c5f191edee67eefa658dcabbe90316:page_0002"
+            ],
+            "seconds": 0.5588257920026081
+          }
+        },
+        {
+          "id": "draft-024",
+          "question": "Can the date on the first page of the social security code alone establish when every provision began?",
+          "target_page": "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0001",
+          "previous": {
+            "rank": 1,
+            "pages": [
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0001",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0023",
+              "3be0f7485f6e8981399b7b0bb2252f5d55e39a247b71931c8856e9441f5303cc:page_0015",
+              "3be0f7485f6e8981399b7b0bb2252f5d55e39a247b71931c8856e9441f5303cc:page_0019",
+              "bbc851624beb6011c550fa6b8c6b6f29f0c5add6be6b8f5be5e9bc2f3b0288ec:page_0002",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0206",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0024",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0009",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0014",
+              "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0001"
+            ],
+            "seconds": 0.5551983329933137
+          },
+          "shipped": {
+            "rank": 1,
+            "pages": [
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0001",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0023",
+              "3be0f7485f6e8981399b7b0bb2252f5d55e39a247b71931c8856e9441f5303cc:page_0015",
+              "3be0f7485f6e8981399b7b0bb2252f5d55e39a247b71931c8856e9441f5303cc:page_0019",
+              "bbc851624beb6011c550fa6b8c6b6f29f0c5add6be6b8f5be5e9bc2f3b0288ec:page_0002",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0206",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0024",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0009",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0014",
+              "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0001"
+            ],
+            "seconds": 0.5628855419927277
+          }
+        },
+        {
+          "id": "draft-021",
+          "question": "How does the Industrial Relations Code define a conciliation officer?",
+          "target_page": "43cadbd9ed08dd00dfba43571253eaf63d655f9fc411df5b9a1059de8d40ce09:page_0003",
+          "shipped": {
+            "rank": null,
+            "pages": [
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0033",
+              "368c4a4836deb7d1a23d424412ff039254b51327b14361a7d69ea959336f7d32:page_0092",
+              "43cadbd9ed08dd00dfba43571253eaf63d655f9fc411df5b9a1059de8d40ce09:page_0030",
+              "43cadbd9ed08dd00dfba43571253eaf63d655f9fc411df5b9a1059de8d40ce09:page_0024",
+              "43cadbd9ed08dd00dfba43571253eaf63d655f9fc411df5b9a1059de8d40ce09:page_0025",
+              "368c4a4836deb7d1a23d424412ff039254b51327b14361a7d69ea959336f7d32:page_0083",
+              "43cadbd9ed08dd00dfba43571253eaf63d655f9fc411df5b9a1059de8d40ce09:page_0029",
+              "bbc851624beb6011c550fa6b8c6b6f29f0c5add6be6b8f5be5e9bc2f3b0288ec:page_0015",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0036",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0026"
+            ],
+            "seconds": 0.5473501669912366
+          },
+          "previous": {
+            "rank": null,
+            "pages": [
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0033",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0030",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0034",
+              "368c4a4836deb7d1a23d424412ff039254b51327b14361a7d69ea959336f7d32:page_0092",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0031",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0026",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0032",
+              "43cadbd9ed08dd00dfba43571253eaf63d655f9fc411df5b9a1059de8d40ce09:page_0030",
+              "4cd16d6b6e60245869da7d97b1d4620e42b2143690d35e8927d92a39d74b2103:page_0001",
+              "43cadbd9ed08dd00dfba43571253eaf63d655f9fc411df5b9a1059de8d40ce09:page_0024"
+            ],
+            "seconds": 0.5543167499999981
+          }
+        },
+        {
+          "id": "draft-047",
+          "question": "According to the January 2026 Social Security FAQ, how may the rules be modified?",
+          "target_page": "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0001",
+          "previous": {
+            "rank": 1,
+            "pages": [
+              "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0001",
+              "d7d9516acb49ecfa04cf111de95fd600689e5859fb20020c36e2c06cb6e22cb5:page_0001",
+              "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0002",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0003",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0019",
+              "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0005",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0212",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0001",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0025",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0021"
+            ],
+            "seconds": 0.550060665991623
+          },
+          "shipped": {
+            "rank": 1,
+            "pages": [
+              "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0001",
+              "d7d9516acb49ecfa04cf111de95fd600689e5859fb20020c36e2c06cb6e22cb5:page_0001",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0019",
+              "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0005",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0212",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0001",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0025",
+              "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0004",
+              "2ec1f6205be9baa74a108ba6ca35773d650e7fd2531f31e3b278edf5f6fdb265:page_0002",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0228"
+            ],
+            "seconds": 0.5520697079919046
+          }
+        },
+        {
+          "id": "draft-073",
+          "question": "According to the March 2026 additional FAQ, how do minimum wages differ from wages?",
+          "target_page": "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0002",
+          "shipped": {
+            "rank": 1,
+            "pages": [
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0002",
+              "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0002",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0001",
+              "43cadbd9ed08dd00dfba43571253eaf63d655f9fc411df5b9a1059de8d40ce09:page_0024",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0006",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0016",
+              "b69218566ea54d960f33e63df96f0c8e22dceb32cff44790d7ebaafe4de7a443:page_0002",
+              "e70b1398caedc1f28f0e135bbed9fd942d5435669eeffdef04ef2050b3665fae:page_0303",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0009",
+              "39fd8e7c94ea7515c285f1a5e35fe77697adce4a0f557fe0f1393bb82d9b91aa:page_0039"
+            ],
+            "seconds": 0.5488343750039348
+          },
+          "previous": {
+            "rank": 1,
+            "pages": [
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0002",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0007",
+              "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0002",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0016",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0001",
+              "43cadbd9ed08dd00dfba43571253eaf63d655f9fc411df5b9a1059de8d40ce09:page_0024",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0003",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0006",
+              "b3b416e4dbcc8c8401d5af563daaaecb70c5f191edee67eefa658dcabbe90316:page_0002",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0012"
+            ],
+            "seconds": 0.5521769170009065
+          }
+        },
+        {
+          "id": "draft-070",
+          "question": "What does the December 2025 occupational safety FAQ say about state rule-making?",
+          "target_page": "e6c7b3b716ce5bbdced0e2eb487950fed6dcf3343eced2d5389db675989ecb3f:page_0002",
+          "previous": {
+            "rank": null,
+            "pages": [
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0053",
+              "e70b1398caedc1f28f0e135bbed9fd942d5435669eeffdef04ef2050b3665fae:page_0139",
+              "3d94a0c291cce2dfbfcc3a5c7c3a5c80d1de9b69b55408309e66b5775cbefe39:page_0004",
+              "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0001",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0001",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0050",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0003",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0006",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0051",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0005"
+            ],
+            "seconds": 0.5491880420013331
+          },
+          "shipped": {
+            "rank": null,
+            "pages": [
+              "e70b1398caedc1f28f0e135bbed9fd942d5435669eeffdef04ef2050b3665fae:page_0139",
+              "3d94a0c291cce2dfbfcc3a5c7c3a5c80d1de9b69b55408309e66b5775cbefe39:page_0004",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0006",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0005",
+              "e70b1398caedc1f28f0e135bbed9fd942d5435669eeffdef04ef2050b3665fae:page_0150",
+              "7f8f90a85cb678c3a66c2e45c124230a2285dee845fa975418c497e6f3bffe00:page_0004",
+              "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0001",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0134",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0055",
+              "c7ac8b5f23d5b545fea2ce54268c50ecf9e4271b6494e5bf4e75f5fbfb14b584:page_0002"
+            ],
+            "seconds": 0.5495085409929743
+          }
+        },
+        {
+          "id": "draft-062",
+          "question": "What does the December 2025 industrial relations FAQ say about conciliation?",
+          "target_page": "4cd16d6b6e60245869da7d97b1d4620e42b2143690d35e8927d92a39d74b2103:page_0002",
+          "shipped": {
+            "rank": null,
+            "pages": [
+              "368c4a4836deb7d1a23d424412ff039254b51327b14361a7d69ea959336f7d32:page_0051",
+              "4cd16d6b6e60245869da7d97b1d4620e42b2143690d35e8927d92a39d74b2103:page_0001",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0016",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0033",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0005",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0006",
+              "368c4a4836deb7d1a23d424412ff039254b51327b14361a7d69ea959336f7d32:page_0092",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0134",
+              "c7ac8b5f23d5b545fea2ce54268c50ecf9e4271b6494e5bf4e75f5fbfb14b584:page_0002",
+              "e4aa7849df8b5ea7084cec5e3f74fe3a1fecea0577733df840aa94f956bf8358:page_0002"
+            ],
+            "seconds": 0.5487609999981942
+          },
+          "previous": {
+            "rank": null,
+            "pages": [
+              "4cd16d6b6e60245869da7d97b1d4620e42b2143690d35e8927d92a39d74b2103:page_0001",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0032",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0033",
+              "368c4a4836deb7d1a23d424412ff039254b51327b14361a7d69ea959336f7d32:page_0051",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0030",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0026",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0004",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0003",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0016",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0005"
+            ],
+            "seconds": 0.5618174170085695
+          }
+        },
+        {
+          "id": "draft-039",
+          "question": "How does the Code on Social Security describe an authorised officer?",
+          "target_page": "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0003",
+          "previous": {
+            "rank": null,
+            "pages": [
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0021",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0034",
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0088",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0003",
+              "e70b1398caedc1f28f0e135bbed9fd942d5435669eeffdef04ef2050b3665fae:page_0278",
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0080",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0021",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0217",
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0079",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0026"
+            ],
+            "seconds": 0.5566581250022864
+          },
+          "shipped": {
+            "rank": null,
+            "pages": [
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0021",
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0088",
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0080",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0217",
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0079",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0136",
+              "e70b1398caedc1f28f0e135bbed9fd942d5435669eeffdef04ef2050b3665fae:page_0234",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0216",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0205",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0192"
+            ],
+            "seconds": 0.5494901659985771
+          }
+        },
+        {
+          "id": "draft-066",
+          "question": "What does the March 2026 occupational safety FAQ say about amending central OSH standards?",
+          "target_page": "aa0357bbe410d7533e7dfaff6d14d935acb6f730b5fbe53750d5012fea92542c:page_0001",
+          "shipped": {
+            "rank": 1,
+            "pages": [
+              "aa0357bbe410d7533e7dfaff6d14d935acb6f730b5fbe53750d5012fea92542c:page_0001",
+              "db6912b54ba8f1aac89966feb7734b27557c815df0472caf642190a2e2951d7c:page_0002",
+              "bacbfd354167459237cda683028a38e37a82ca0a30130cb590a100b966cf2b3e:page_0002",
+              "3d94a0c291cce2dfbfcc3a5c7c3a5c80d1de9b69b55408309e66b5775cbefe39:page_0004",
+              "e5873b53fb80cd7b81a3e5b23468d18a09da36f29f138c422749b929f5b88eef:page_0006",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0199",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0041",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0053",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0051",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0046"
+            ],
+            "seconds": 0.5471741249930346
+          },
+          "previous": {
+            "rank": 1,
+            "pages": [
+              "aa0357bbe410d7533e7dfaff6d14d935acb6f730b5fbe53750d5012fea92542c:page_0001",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0053",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0041",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0051",
+              "db6912b54ba8f1aac89966feb7734b27557c815df0472caf642190a2e2951d7c:page_0002",
+              "bacbfd354167459237cda683028a38e37a82ca0a30130cb590a100b966cf2b3e:page_0002",
+              "3d94a0c291cce2dfbfcc3a5c7c3a5c80d1de9b69b55408309e66b5775cbefe39:page_0004",
+              "e5873b53fb80cd7b81a3e5b23468d18a09da36f29f138c422749b929f5b88eef:page_0006",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0199",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0056"
+            ],
+            "seconds": 0.551870791008696
+          }
+        },
+        {
+          "id": "draft-026",
+          "question": "Which boards are included in the Code on Wages definition of Advisory Board?",
+          "target_page": "0d17b967a528da2d6b827655ba9a701dc15d78b4d4f58b9bbc21d6789a680c85:page_0002",
+          "previous": {
+            "rank": null,
+            "pages": [
+              "0d17b967a528da2d6b827655ba9a701dc15d78b4d4f58b9bbc21d6789a680c85:page_0018",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0013",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0008",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0002",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0030",
+              "39fd8e7c94ea7515c285f1a5e35fe77697adce4a0f557fe0f1393bb82d9b91aa:page_0039",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0012",
+              "19b5fd49f2264433bd2d29c26ea104f33e776a4f55b4de4f59c16bfc9c6bb2a2:page_0005",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0005",
+              "19b5fd49f2264433bd2d29c26ea104f33e776a4f55b4de4f59c16bfc9c6bb2a2:page_0006"
+            ],
+            "seconds": 0.5888388329913141
+          },
+          "shipped": {
+            "rank": null,
+            "pages": [
+              "0d17b967a528da2d6b827655ba9a701dc15d78b4d4f58b9bbc21d6789a680c85:page_0018",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0013",
+              "39fd8e7c94ea7515c285f1a5e35fe77697adce4a0f557fe0f1393bb82d9b91aa:page_0039",
+              "19b5fd49f2264433bd2d29c26ea104f33e776a4f55b4de4f59c16bfc9c6bb2a2:page_0005",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0008",
+              "19b5fd49f2264433bd2d29c26ea104f33e776a4f55b4de4f59c16bfc9c6bb2a2:page_0006",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0003",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0002",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0012",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0003"
+            ],
+            "seconds": 0.5621710410050582
+          }
+        },
+        {
+          "id": "draft-063",
+          "question": "What tribunal structure is described in the December 2025 industrial relations FAQ?",
+          "target_page": "4cd16d6b6e60245869da7d97b1d4620e42b2143690d35e8927d92a39d74b2103:page_0002",
+          "shipped": {
+            "rank": null,
+            "pages": [
+              "368c4a4836deb7d1a23d424412ff039254b51327b14361a7d69ea959336f7d32:page_0051",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0006",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0016",
+              "43cadbd9ed08dd00dfba43571253eaf63d655f9fc411df5b9a1059de8d40ce09:page_0050",
+              "368c4a4836deb7d1a23d424412ff039254b51327b14361a7d69ea959336f7d32:page_0092",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0005",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0134",
+              "c7ac8b5f23d5b545fea2ce54268c50ecf9e4271b6494e5bf4e75f5fbfb14b584:page_0002",
+              "e4aa7849df8b5ea7084cec5e3f74fe3a1fecea0577733df840aa94f956bf8358:page_0002",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0032"
+            ],
+            "seconds": 0.5489554170053452
+          },
+          "previous": {
+            "rank": null,
+            "pages": [
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0006",
+              "368c4a4836deb7d1a23d424412ff039254b51327b14361a7d69ea959336f7d32:page_0051",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0030",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0004",
+              "43cadbd9ed08dd00dfba43571253eaf63d655f9fc411df5b9a1059de8d40ce09:page_0025",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0016",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0031",
+              "43cadbd9ed08dd00dfba43571253eaf63d655f9fc411df5b9a1059de8d40ce09:page_0050",
+              "368c4a4836deb7d1a23d424412ff039254b51327b14361a7d69ea959336f7d32:page_0092",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0035"
+            ],
+            "seconds": 0.55279495799914
+          }
+        },
+        {
+          "id": "draft-057",
+          "question": "What minimum overtime rate is stated in the December 2025 wages FAQ?",
+          "target_page": "b3b416e4dbcc8c8401d5af563daaaecb70c5f191edee67eefa658dcabbe90316:page_0002",
+          "previous": {
+            "rank": 2,
+            "pages": [
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0002",
+              "b3b416e4dbcc8c8401d5af563daaaecb70c5f191edee67eefa658dcabbe90316:page_0002",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0012",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0001",
+              "39fd8e7c94ea7515c285f1a5e35fe77697adce4a0f557fe0f1393bb82d9b91aa:page_0042",
+              "0d17b967a528da2d6b827655ba9a701dc15d78b4d4f58b9bbc21d6789a680c85:page_0008",
+              "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0005",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0013",
+              "c7ac8b5f23d5b545fea2ce54268c50ecf9e4271b6494e5bf4e75f5fbfb14b584:page_0004",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0041"
+            ],
+            "seconds": 0.554052874998888
+          },
+          "shipped": {
+            "rank": null,
+            "pages": [
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0002",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0012",
+              "39fd8e7c94ea7515c285f1a5e35fe77697adce4a0f557fe0f1393bb82d9b91aa:page_0042",
+              "0d17b967a528da2d6b827655ba9a701dc15d78b4d4f58b9bbc21d6789a680c85:page_0008",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0013",
+              "bbc851624beb6011c550fa6b8c6b6f29f0c5add6be6b8f5be5e9bc2f3b0288ec:page_0009",
+              "39fd8e7c94ea7515c285f1a5e35fe77697adce4a0f557fe0f1393bb82d9b91aa:page_0038",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0001",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0005",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0006"
+            ],
+            "seconds": 0.5540154160116799
+          }
+        },
+        {
+          "id": "draft-060",
+          "question": "What strike notice period does the December 2025 industrial relations FAQ describe?",
+          "target_page": "4cd16d6b6e60245869da7d97b1d4620e42b2143690d35e8927d92a39d74b2103:page_0001",
+          "shipped": {
+            "rank": 1,
+            "pages": [
+              "4cd16d6b6e60245869da7d97b1d4620e42b2143690d35e8927d92a39d74b2103:page_0001",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0026",
+              "368c4a4836deb7d1a23d424412ff039254b51327b14361a7d69ea959336f7d32:page_0051",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0006",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0134",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0035",
+              "368c4a4836deb7d1a23d424412ff039254b51327b14361a7d69ea959336f7d32:page_0083",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0016",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0005",
+              "368c4a4836deb7d1a23d424412ff039254b51327b14361a7d69ea959336f7d32:page_0085"
+            ],
+            "seconds": 0.5494724999880418
+          },
+          "previous": {
+            "rank": 1,
+            "pages": [
+              "4cd16d6b6e60245869da7d97b1d4620e42b2143690d35e8927d92a39d74b2103:page_0001",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0026",
+              "368c4a4836deb7d1a23d424412ff039254b51327b14361a7d69ea959336f7d32:page_0051",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0006",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0032",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0033",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0030",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0058",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0134",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0035"
+            ],
+            "seconds": 0.5580067090049852
+          }
+        }
+      ]
+    },
+    "350": {
+      "chunk_sha256": "71a97c1db5d981fa3bb9688078bce321b9dcb8dde768342e6f26608f3968497a",
+      "previous": {
+        "hit_at_3": 0.45,
+        "hit_at_5": 0.5,
+        "hit_at_10": 0.55,
+        "mrr_at_10": 0.39249999999999996,
+        "mean_local_search_seconds": 0.4814939771000354
+      },
+      "shipped": {
+        "hit_at_3": 0.5,
+        "hit_at_5": 0.55,
+        "hit_at_10": 0.55,
+        "mrr_at_10": 0.4625,
+        "mean_local_search_seconds": 0.4821754312499252
+      },
+      "paired": {
+        "hit_at_3": {
+          "gains": 1,
+          "losses": 0
+        },
+        "hit_at_5": {
+          "gains": 2,
+          "losses": 1
+        },
+        "hit_at_10": {
+          "gains": 2,
+          "losses": 2
+        },
+        "reciprocal_rank": {
+          "improved": 4,
+          "worsened": 2,
+          "unchanged": 14
+        }
+      },
+      "cases": [
+        {
+          "id": "draft-068",
+          "question": "What does the March 2026 occupational safety FAQ say about welfare facilities for contract labour?",
+          "target_page": "aa0357bbe410d7533e7dfaff6d14d935acb6f730b5fbe53750d5012fea92542c:page_0002",
+          "previous": {
+            "rank": 2,
+            "pages": [
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0053",
+              "aa0357bbe410d7533e7dfaff6d14d935acb6f730b5fbe53750d5012fea92542c:page_0002",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0055",
+              "e6c7b3b716ce5bbdced0e2eb487950fed6dcf3343eced2d5389db675989ecb3f:page_0003",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0048",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0056",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0199",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0038",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0039",
+              "e6c7b3b716ce5bbdced0e2eb487950fed6dcf3343eced2d5389db675989ecb3f:page_0001"
+            ],
+            "seconds": 0.4811314999969909
+          },
+          "shipped": {
+            "rank": 2,
+            "pages": [
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0053",
+              "aa0357bbe410d7533e7dfaff6d14d935acb6f730b5fbe53750d5012fea92542c:page_0002",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0048",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0055",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0199",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0046",
+              "e6c7b3b716ce5bbdced0e2eb487950fed6dcf3343eced2d5389db675989ecb3f:page_0003",
+              "db6912b54ba8f1aac89966feb7734b27557c815df0472caf642190a2e2951d7c:page_0002",
+              "3d94a0c291cce2dfbfcc3a5c7c3a5c80d1de9b69b55408309e66b5775cbefe39:page_0004",
+              "9ce8f68b88f725fbce4fadfb45d9ddc3ed7a5f59d92a2ebd3d5bd7ebb1c83891:page_0042"
+            ],
+            "seconds": 0.4782279580103932
+          }
+        },
+        {
+          "id": "draft-023",
+          "question": "What does the industrial relations code say about different commencement dates?",
+          "target_page": "43cadbd9ed08dd00dfba43571253eaf63d655f9fc411df5b9a1059de8d40ce09:page_0001",
+          "shipped": {
+            "rank": 1,
+            "pages": [
+              "43cadbd9ed08dd00dfba43571253eaf63d655f9fc411df5b9a1059de8d40ce09:page_0001",
+              "0d17b967a528da2d6b827655ba9a701dc15d78b4d4f58b9bbc21d6789a680c85:page_0001",
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0001",
+              "9ce8f68b88f725fbce4fadfb45d9ddc3ed7a5f59d92a2ebd3d5bd7ebb1c83891:page_0001",
+              "bbc851624beb6011c550fa6b8c6b6f29f0c5add6be6b8f5be5e9bc2f3b0288ec:page_0002",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0031",
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0045",
+              "6c2fc1818ab86858d87579f30036e1545977238995a162d64d1a0d9636b9255a:page_0054",
+              "368c4a4836deb7d1a23d424412ff039254b51327b14361a7d69ea959336f7d32:page_0051",
+              "0d17b967a528da2d6b827655ba9a701dc15d78b4d4f58b9bbc21d6789a680c85:page_0009"
+            ],
+            "seconds": 0.48331250000046566
+          },
+          "previous": {
+            "rank": 1,
+            "pages": [
+              "43cadbd9ed08dd00dfba43571253eaf63d655f9fc411df5b9a1059de8d40ce09:page_0001",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0030",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0031",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0032",
+              "0d17b967a528da2d6b827655ba9a701dc15d78b4d4f58b9bbc21d6789a680c85:page_0001",
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0001",
+              "9ce8f68b88f725fbce4fadfb45d9ddc3ed7a5f59d92a2ebd3d5bd7ebb1c83891:page_0001",
+              "bbc851624beb6011c550fa6b8c6b6f29f0c5add6be6b8f5be5e9bc2f3b0288ec:page_0002",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0033",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0035"
+            ],
+            "seconds": 0.47461758300778456
+          }
+        },
+        {
+          "id": "draft-036",
+          "question": "According to the Code on Social Security, what notice must the Central Government give under section 1(6)?",
+          "target_page": "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0002",
+          "previous": {
+            "rank": null,
+            "pages": [
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0025",
+              "bbc851624beb6011c550fa6b8c6b6f29f0c5add6be6b8f5be5e9bc2f3b0288ec:page_0024",
+              "bbc851624beb6011c550fa6b8c6b6f29f0c5add6be6b8f5be5e9bc2f3b0288ec:page_0027",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0008",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0058",
+              "3be0f7485f6e8981399b7b0bb2252f5d55e39a247b71931c8856e9441f5303cc:page_0028",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0002",
+              "e70b1398caedc1f28f0e135bbed9fd942d5435669eeffdef04ef2050b3665fae:page_0232",
+              "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0005",
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0012"
+            ],
+            "seconds": 0.48180370799673256
+          },
+          "shipped": {
+            "rank": null,
+            "pages": [
+              "bbc851624beb6011c550fa6b8c6b6f29f0c5add6be6b8f5be5e9bc2f3b0288ec:page_0024",
+              "bbc851624beb6011c550fa6b8c6b6f29f0c5add6be6b8f5be5e9bc2f3b0288ec:page_0027",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0025",
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0012",
+              "3be0f7485f6e8981399b7b0bb2252f5d55e39a247b71931c8856e9441f5303cc:page_0015",
+              "bbc851624beb6011c550fa6b8c6b6f29f0c5add6be6b8f5be5e9bc2f3b0288ec:page_0015",
+              "bbc851624beb6011c550fa6b8c6b6f29f0c5add6be6b8f5be5e9bc2f3b0288ec:page_0014",
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0085",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0216",
+              "bbc851624beb6011c550fa6b8c6b6f29f0c5add6be6b8f5be5e9bc2f3b0288ec:page_0017"
+            ],
+            "seconds": 0.4822072079987265
+          }
+        },
+        {
+          "id": "draft-045",
+          "question": "According to the January 2026 Social Security FAQ, must every procedure be digital?",
+          "target_page": "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0001",
+          "shipped": {
+            "rank": 1,
+            "pages": [
+              "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0001",
+              "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0005",
+              "d7d9516acb49ecfa04cf111de95fd600689e5859fb20020c36e2c06cb6e22cb5:page_0001",
+              "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0004",
+              "7f221ce47f608e0a54d253dcf5da7a930bf3cc28e6fe198ced52e4966cb906d5:page_0002",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0033",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0019",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0001",
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0020",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0025"
+            ],
+            "seconds": 0.47960695800429676
+          },
+          "previous": {
+            "rank": 1,
+            "pages": [
+              "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0001",
+              "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0005",
+              "d7d9516acb49ecfa04cf111de95fd600689e5859fb20020c36e2c06cb6e22cb5:page_0001",
+              "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0004",
+              "7f221ce47f608e0a54d253dcf5da7a930bf3cc28e6fe198ced52e4966cb906d5:page_0002",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0033",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0019",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0001",
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0020",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0025"
+            ],
+            "seconds": 0.4795139170018956
+          }
+        },
+        {
+          "id": "draft-011",
+          "question": "What date is printed in brackets under the title of the Code on Wages?",
+          "target_page": "0d17b967a528da2d6b827655ba9a701dc15d78b4d4f58b9bbc21d6789a680c85:page_0001",
+          "previous": {
+            "rank": null,
+            "pages": [
+              "9ce8f68b88f725fbce4fadfb45d9ddc3ed7a5f59d92a2ebd3d5bd7ebb1c83891:page_0010",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0013",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0002",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0008",
+              "39fd8e7c94ea7515c285f1a5e35fe77697adce4a0f557fe0f1393bb82d9b91aa:page_0039",
+              "b3b416e4dbcc8c8401d5af563daaaecb70c5f191edee67eefa658dcabbe90316:page_0002",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0002",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0025",
+              "39fd8e7c94ea7515c285f1a5e35fe77697adce4a0f557fe0f1393bb82d9b91aa:page_0060",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0058"
+            ],
+            "seconds": 0.4881794999964768
+          },
+          "shipped": {
+            "rank": 4,
+            "pages": [
+              "9ce8f68b88f725fbce4fadfb45d9ddc3ed7a5f59d92a2ebd3d5bd7ebb1c83891:page_0010",
+              "39fd8e7c94ea7515c285f1a5e35fe77697adce4a0f557fe0f1393bb82d9b91aa:page_0039",
+              "19b5fd49f2264433bd2d29c26ea104f33e776a4f55b4de4f59c16bfc9c6bb2a2:page_0006",
+              "0d17b967a528da2d6b827655ba9a701dc15d78b4d4f58b9bbc21d6789a680c85:page_0001",
+              "39fd8e7c94ea7515c285f1a5e35fe77697adce4a0f557fe0f1393bb82d9b91aa:page_0060",
+              "6c2fc1818ab86858d87579f30036e1545977238995a162d64d1a0d9636b9255a:page_0054",
+              "e70b1398caedc1f28f0e135bbed9fd942d5435669eeffdef04ef2050b3665fae:page_0140",
+              "43cadbd9ed08dd00dfba43571253eaf63d655f9fc411df5b9a1059de8d40ce09:page_0050",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0206",
+              "39fd8e7c94ea7515c285f1a5e35fe77697adce4a0f557fe0f1393bb82d9b91aa:page_0059"
+            ],
+            "seconds": 0.5088910420017783
+          }
+        },
+        {
+          "id": "draft-044",
+          "question": "Does the Code on Social Security describe applicability of specified chapters by reference to a schedule?",
+          "target_page": "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0002",
+          "shipped": {
+            "rank": 1,
+            "pages": [
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0002",
+              "bbc851624beb6011c550fa6b8c6b6f29f0c5add6be6b8f5be5e9bc2f3b0288ec:page_0037",
+              "bbc851624beb6011c550fa6b8c6b6f29f0c5add6be6b8f5be5e9bc2f3b0288ec:page_0024",
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0072",
+              "d7d9516acb49ecfa04cf111de95fd600689e5859fb20020c36e2c06cb6e22cb5:page_0001",
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0001",
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0080",
+              "bbc851624beb6011c550fa6b8c6b6f29f0c5add6be6b8f5be5e9bc2f3b0288ec:page_0002",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0025",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0023"
+            ],
+            "seconds": 0.4868167090025963
+          },
+          "previous": {
+            "rank": 1,
+            "pages": [
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0002",
+              "bbc851624beb6011c550fa6b8c6b6f29f0c5add6be6b8f5be5e9bc2f3b0288ec:page_0037",
+              "bbc851624beb6011c550fa6b8c6b6f29f0c5add6be6b8f5be5e9bc2f3b0288ec:page_0024",
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0072",
+              "d7d9516acb49ecfa04cf111de95fd600689e5859fb20020c36e2c06cb6e22cb5:page_0001",
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0001",
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0080",
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0009",
+              "bbc851624beb6011c550fa6b8c6b6f29f0c5add6be6b8f5be5e9bc2f3b0288ec:page_0002",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0025"
+            ],
+            "seconds": 0.4854963329999009
+          }
+        },
+        {
+          "id": "draft-010",
+          "question": "What topics does the opening description of the Code on Wages identify?",
+          "target_page": "0d17b967a528da2d6b827655ba9a701dc15d78b4d4f58b9bbc21d6789a680c85:page_0001",
+          "previous": {
+            "rank": null,
+            "pages": [
+              "b3b416e4dbcc8c8401d5af563daaaecb70c5f191edee67eefa658dcabbe90316:page_0002",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0002",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0001",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0002",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0034",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0030",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0001",
+              "c7ac8b5f23d5b545fea2ce54268c50ecf9e4271b6494e5bf4e75f5fbfb14b584:page_0002",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0041",
+              "c7ac8b5f23d5b545fea2ce54268c50ecf9e4271b6494e5bf4e75f5fbfb14b584:page_0001"
+            ],
+            "seconds": 0.48293875000672415
+          },
+          "shipped": {
+            "rank": null,
+            "pages": [
+              "9ce8f68b88f725fbce4fadfb45d9ddc3ed7a5f59d92a2ebd3d5bd7ebb1c83891:page_0063",
+              "e70b1398caedc1f28f0e135bbed9fd942d5435669eeffdef04ef2050b3665fae:page_0292",
+              "e70b1398caedc1f28f0e135bbed9fd942d5435669eeffdef04ef2050b3665fae:page_0204",
+              "e70b1398caedc1f28f0e135bbed9fd942d5435669eeffdef04ef2050b3665fae:page_0230",
+              "e70b1398caedc1f28f0e135bbed9fd942d5435669eeffdef04ef2050b3665fae:page_0242",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0213",
+              "e70b1398caedc1f28f0e135bbed9fd942d5435669eeffdef04ef2050b3665fae:page_0196",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0206",
+              "e70b1398caedc1f28f0e135bbed9fd942d5435669eeffdef04ef2050b3665fae:page_0280",
+              "e70b1398caedc1f28f0e135bbed9fd942d5435669eeffdef04ef2050b3665fae:page_0254"
+            ],
+            "seconds": 0.482009500003187
+          }
+        },
+        {
+          "id": "draft-001",
+          "question": "What does section 1 of the Code on Wages say about commencement?",
+          "target_page": "0d17b967a528da2d6b827655ba9a701dc15d78b4d4f58b9bbc21d6789a680c85:page_0001",
+          "shipped": {
+            "rank": 2,
+            "pages": [
+              "bbc851624beb6011c550fa6b8c6b6f29f0c5add6be6b8f5be5e9bc2f3b0288ec:page_0002",
+              "0d17b967a528da2d6b827655ba9a701dc15d78b4d4f58b9bbc21d6789a680c85:page_0001",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0013",
+              "19b5fd49f2264433bd2d29c26ea104f33e776a4f55b4de4f59c16bfc9c6bb2a2:page_0006",
+              "9ce8f68b88f725fbce4fadfb45d9ddc3ed7a5f59d92a2ebd3d5bd7ebb1c83891:page_0050",
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0047",
+              "0d17b967a528da2d6b827655ba9a701dc15d78b4d4f58b9bbc21d6789a680c85:page_0009",
+              "39fd8e7c94ea7515c285f1a5e35fe77697adce4a0f557fe0f1393bb82d9b91aa:page_0039",
+              "6c2fc1818ab86858d87579f30036e1545977238995a162d64d1a0d9636b9255a:page_0054",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0258"
+            ],
+            "seconds": 0.48159212499740534
+          },
+          "previous": {
+            "rank": null,
+            "pages": [
+              "b3b416e4dbcc8c8401d5af563daaaecb70c5f191edee67eefa658dcabbe90316:page_0002",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0002",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0013",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0001",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0002",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0001",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0055",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0030",
+              "aa0357bbe410d7533e7dfaff6d14d935acb6f730b5fbe53750d5012fea92542c:page_0002",
+              "c7ac8b5f23d5b545fea2ce54268c50ecf9e4271b6494e5bf4e75f5fbfb14b584:page_0001"
+            ],
+            "seconds": 0.48080291600490455
+          }
+        },
+        {
+          "id": "draft-024",
+          "question": "Can the date on the first page of the social security code alone establish when every provision began?",
+          "target_page": "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0001",
+          "previous": {
+            "rank": 2,
+            "pages": [
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0024",
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0001",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0023",
+              "e70b1398caedc1f28f0e135bbed9fd942d5435669eeffdef04ef2050b3665fae:page_0182",
+              "3be0f7485f6e8981399b7b0bb2252f5d55e39a247b71931c8856e9441f5303cc:page_0019",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0206",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0009",
+              "3be0f7485f6e8981399b7b0bb2252f5d55e39a247b71931c8856e9441f5303cc:page_0015",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0014",
+              "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0001"
+            ],
+            "seconds": 0.4850137920002453
+          },
+          "shipped": {
+            "rank": 1,
+            "pages": [
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0001",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0024",
+              "e70b1398caedc1f28f0e135bbed9fd942d5435669eeffdef04ef2050b3665fae:page_0182",
+              "3be0f7485f6e8981399b7b0bb2252f5d55e39a247b71931c8856e9441f5303cc:page_0019",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0023",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0206",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0009",
+              "3be0f7485f6e8981399b7b0bb2252f5d55e39a247b71931c8856e9441f5303cc:page_0015",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0014",
+              "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0001"
+            ],
+            "seconds": 0.4842351669940399
+          }
+        },
+        {
+          "id": "draft-021",
+          "question": "How does the Industrial Relations Code define a conciliation officer?",
+          "target_page": "43cadbd9ed08dd00dfba43571253eaf63d655f9fc411df5b9a1059de8d40ce09:page_0003",
+          "shipped": {
+            "rank": null,
+            "pages": [
+              "368c4a4836deb7d1a23d424412ff039254b51327b14361a7d69ea959336f7d32:page_0092",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0033",
+              "368c4a4836deb7d1a23d424412ff039254b51327b14361a7d69ea959336f7d32:page_0084",
+              "43cadbd9ed08dd00dfba43571253eaf63d655f9fc411df5b9a1059de8d40ce09:page_0024",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0036",
+              "43cadbd9ed08dd00dfba43571253eaf63d655f9fc411df5b9a1059de8d40ce09:page_0025",
+              "43cadbd9ed08dd00dfba43571253eaf63d655f9fc411df5b9a1059de8d40ce09:page_0029",
+              "43cadbd9ed08dd00dfba43571253eaf63d655f9fc411df5b9a1059de8d40ce09:page_0030",
+              "43cadbd9ed08dd00dfba43571253eaf63d655f9fc411df5b9a1059de8d40ce09:page_0044",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0032"
+            ],
+            "seconds": 0.47988895799790043
+          },
+          "previous": {
+            "rank": 10,
+            "pages": [
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0033",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0030",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0031",
+              "368c4a4836deb7d1a23d424412ff039254b51327b14361a7d69ea959336f7d32:page_0092",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0032",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0034",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0026",
+              "368c4a4836deb7d1a23d424412ff039254b51327b14361a7d69ea959336f7d32:page_0084",
+              "43cadbd9ed08dd00dfba43571253eaf63d655f9fc411df5b9a1059de8d40ce09:page_0024",
+              "43cadbd9ed08dd00dfba43571253eaf63d655f9fc411df5b9a1059de8d40ce09:page_0003"
+            ],
+            "seconds": 0.4801850420044502
+          }
+        },
+        {
+          "id": "draft-047",
+          "question": "According to the January 2026 Social Security FAQ, how may the rules be modified?",
+          "target_page": "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0001",
+          "previous": {
+            "rank": 1,
+            "pages": [
+              "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0001",
+              "d7d9516acb49ecfa04cf111de95fd600689e5859fb20020c36e2c06cb6e22cb5:page_0001",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0003",
+              "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0002",
+              "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0005",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0019",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0021",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0212",
+              "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0004",
+              "7f221ce47f608e0a54d253dcf5da7a930bf3cc28e6fe198ced52e4966cb906d5:page_0002"
+            ],
+            "seconds": 0.48139379199710675
+          },
+          "shipped": {
+            "rank": 1,
+            "pages": [
+              "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0001",
+              "d7d9516acb49ecfa04cf111de95fd600689e5859fb20020c36e2c06cb6e22cb5:page_0001",
+              "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0005",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0019",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0212",
+              "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0004",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0003",
+              "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0002",
+              "7f221ce47f608e0a54d253dcf5da7a930bf3cc28e6fe198ced52e4966cb906d5:page_0002",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0001"
+            ],
+            "seconds": 0.49070574999495875
+          }
+        },
+        {
+          "id": "draft-073",
+          "question": "According to the March 2026 additional FAQ, how do minimum wages differ from wages?",
+          "target_page": "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0002",
+          "shipped": {
+            "rank": 1,
+            "pages": [
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0002",
+              "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0002",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0016",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0001",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0006",
+              "43cadbd9ed08dd00dfba43571253eaf63d655f9fc411df5b9a1059de8d40ce09:page_0024",
+              "b69218566ea54d960f33e63df96f0c8e22dceb32cff44790d7ebaafe4de7a443:page_0002",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0015",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0171",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0199"
+            ],
+            "seconds": 0.47702437500993256
+          },
+          "previous": {
+            "rank": 2,
+            "pages": [
+              "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0002",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0002",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0016",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0007",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0006",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0001",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0005",
+              "43cadbd9ed08dd00dfba43571253eaf63d655f9fc411df5b9a1059de8d40ce09:page_0024",
+              "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0003",
+              "b69218566ea54d960f33e63df96f0c8e22dceb32cff44790d7ebaafe4de7a443:page_0002"
+            ],
+            "seconds": 0.4782189169927733
+          }
+        },
+        {
+          "id": "draft-070",
+          "question": "What does the December 2025 occupational safety FAQ say about state rule-making?",
+          "target_page": "e6c7b3b716ce5bbdced0e2eb487950fed6dcf3343eced2d5389db675989ecb3f:page_0002",
+          "previous": {
+            "rank": null,
+            "pages": [
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0053",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0001",
+              "c7ac8b5f23d5b545fea2ce54268c50ecf9e4271b6494e5bf4e75f5fbfb14b584:page_0002",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0016",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0055",
+              "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0001",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0006",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0013",
+              "3d94a0c291cce2dfbfcc3a5c7c3a5c80d1de9b69b55408309e66b5775cbefe39:page_0004",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0051"
+            ],
+            "seconds": 0.4874030840001069
+          },
+          "shipped": {
+            "rank": null,
+            "pages": [
+              "3d94a0c291cce2dfbfcc3a5c7c3a5c80d1de9b69b55408309e66b5775cbefe39:page_0004",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0006",
+              "c7ac8b5f23d5b545fea2ce54268c50ecf9e4271b6494e5bf4e75f5fbfb14b584:page_0002",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0134",
+              "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0001",
+              "7f8f90a85cb678c3a66c2e45c124230a2285dee845fa975418c497e6f3bffe00:page_0004",
+              "39fd8e7c94ea7515c285f1a5e35fe77697adce4a0f557fe0f1393bb82d9b91aa:page_0038",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0005",
+              "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0003",
+              "aa0357bbe410d7533e7dfaff6d14d935acb6f730b5fbe53750d5012fea92542c:page_0001"
+            ],
+            "seconds": 0.4767770000034943
+          }
+        },
+        {
+          "id": "draft-062",
+          "question": "What does the December 2025 industrial relations FAQ say about conciliation?",
+          "target_page": "4cd16d6b6e60245869da7d97b1d4620e42b2143690d35e8927d92a39d74b2103:page_0002",
+          "shipped": {
+            "rank": null,
+            "pages": [
+              "c7ac8b5f23d5b545fea2ce54268c50ecf9e4271b6494e5bf4e75f5fbfb14b584:page_0002",
+              "368c4a4836deb7d1a23d424412ff039254b51327b14361a7d69ea959336f7d32:page_0092",
+              "bbc851624beb6011c550fa6b8c6b6f29f0c5add6be6b8f5be5e9bc2f3b0288ec:page_0002",
+              "4cd16d6b6e60245869da7d97b1d4620e42b2143690d35e8927d92a39d74b2103:page_0001",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0033",
+              "e4aa7849df8b5ea7084cec5e3f74fe3a1fecea0577733df840aa94f956bf8358:page_0002",
+              "39fd8e7c94ea7515c285f1a5e35fe77697adce4a0f557fe0f1393bb82d9b91aa:page_0038",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0005",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0006",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0036"
+            ],
+            "seconds": 0.47987454099347815
+          },
+          "previous": {
+            "rank": null,
+            "pages": [
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0033",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0032",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0030",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0016",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0001",
+              "4cd16d6b6e60245869da7d97b1d4620e42b2143690d35e8927d92a39d74b2103:page_0001",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0036",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0006",
+              "c7ac8b5f23d5b545fea2ce54268c50ecf9e4271b6494e5bf4e75f5fbfb14b584:page_0002",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0026"
+            ],
+            "seconds": 0.4800568749924423
+          }
+        },
+        {
+          "id": "draft-039",
+          "question": "How does the Code on Social Security describe an authorised officer?",
+          "target_page": "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0003",
+          "previous": {
+            "rank": null,
+            "pages": [
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0080",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0021",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0003",
+              "e70b1398caedc1f28f0e135bbed9fd942d5435669eeffdef04ef2050b3665fae:page_0278",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0217",
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0079",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0210",
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0021",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0034",
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0088"
+            ],
+            "seconds": 0.477813542005606
+          },
+          "shipped": {
+            "rank": null,
+            "pages": [
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0080",
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0079",
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0021",
+              "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0088",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0217",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0228",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0205",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0216",
+              "e70b1398caedc1f28f0e135bbed9fd942d5435669eeffdef04ef2050b3665fae:page_0234",
+              "785ab9a70a7b10e76beacb4a57a44d56064d77b865533175bd0f3c8c428fa5f3:page_0002"
+            ],
+            "seconds": 0.47927399999753106
+          }
+        },
+        {
+          "id": "draft-066",
+          "question": "What does the March 2026 occupational safety FAQ say about amending central OSH standards?",
+          "target_page": "aa0357bbe410d7533e7dfaff6d14d935acb6f730b5fbe53750d5012fea92542c:page_0001",
+          "shipped": {
+            "rank": 1,
+            "pages": [
+              "aa0357bbe410d7533e7dfaff6d14d935acb6f730b5fbe53750d5012fea92542c:page_0001",
+              "db6912b54ba8f1aac89966feb7734b27557c815df0472caf642190a2e2951d7c:page_0002",
+              "9ce8f68b88f725fbce4fadfb45d9ddc3ed7a5f59d92a2ebd3d5bd7ebb1c83891:page_0021",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0199",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0056",
+              "3d94a0c291cce2dfbfcc3a5c7c3a5c80d1de9b69b55408309e66b5775cbefe39:page_0004",
+              "9ce8f68b88f725fbce4fadfb45d9ddc3ed7a5f59d92a2ebd3d5bd7ebb1c83891:page_0018",
+              "e70b1398caedc1f28f0e135bbed9fd942d5435669eeffdef04ef2050b3665fae:page_0314",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0051",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0053"
+            ],
+            "seconds": 0.4782362919941079
+          },
+          "previous": {
+            "rank": 1,
+            "pages": [
+              "aa0357bbe410d7533e7dfaff6d14d935acb6f730b5fbe53750d5012fea92542c:page_0001",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0041",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0053",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0051",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0056",
+              "db6912b54ba8f1aac89966feb7734b27557c815df0472caf642190a2e2951d7c:page_0002",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0055",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0047",
+              "9ce8f68b88f725fbce4fadfb45d9ddc3ed7a5f59d92a2ebd3d5bd7ebb1c83891:page_0021",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0199"
+            ],
+            "seconds": 0.4774524160020519
+          }
+        },
+        {
+          "id": "draft-026",
+          "question": "Which boards are included in the Code on Wages definition of Advisory Board?",
+          "target_page": "0d17b967a528da2d6b827655ba9a701dc15d78b4d4f58b9bbc21d6789a680c85:page_0002",
+          "previous": {
+            "rank": null,
+            "pages": [
+              "0d17b967a528da2d6b827655ba9a701dc15d78b4d4f58b9bbc21d6789a680c85:page_0018",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0021",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0002",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0013",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0030",
+              "19b5fd49f2264433bd2d29c26ea104f33e776a4f55b4de4f59c16bfc9c6bb2a2:page_0006",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0008",
+              "c7ac8b5f23d5b545fea2ce54268c50ecf9e4271b6494e5bf4e75f5fbfb14b584:page_0004",
+              "b3b416e4dbcc8c8401d5af563daaaecb70c5f191edee67eefa658dcabbe90316:page_0001",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0002"
+            ],
+            "seconds": 0.47974854199856054
+          },
+          "shipped": {
+            "rank": null,
+            "pages": [
+              "0d17b967a528da2d6b827655ba9a701dc15d78b4d4f58b9bbc21d6789a680c85:page_0018",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0021",
+              "19b5fd49f2264433bd2d29c26ea104f33e776a4f55b4de4f59c16bfc9c6bb2a2:page_0006",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0013",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0037",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0002",
+              "19b5fd49f2264433bd2d29c26ea104f33e776a4f55b4de4f59c16bfc9c6bb2a2:page_0005",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0003",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0002",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0008"
+            ],
+            "seconds": 0.4771782500029076
+          }
+        },
+        {
+          "id": "draft-063",
+          "question": "What tribunal structure is described in the December 2025 industrial relations FAQ?",
+          "target_page": "4cd16d6b6e60245869da7d97b1d4620e42b2143690d35e8927d92a39d74b2103:page_0002",
+          "shipped": {
+            "rank": null,
+            "pages": [
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0006",
+              "c7ac8b5f23d5b545fea2ce54268c50ecf9e4271b6494e5bf4e75f5fbfb14b584:page_0002",
+              "368c4a4836deb7d1a23d424412ff039254b51327b14361a7d69ea959336f7d32:page_0092",
+              "e4aa7849df8b5ea7084cec5e3f74fe3a1fecea0577733df840aa94f956bf8358:page_0002",
+              "39fd8e7c94ea7515c285f1a5e35fe77697adce4a0f557fe0f1393bb82d9b91aa:page_0038",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0005",
+              "43cadbd9ed08dd00dfba43571253eaf63d655f9fc411df5b9a1059de8d40ce09:page_0050",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0134",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0016",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0032"
+            ],
+            "seconds": 0.48096454099868424
+          },
+          "previous": {
+            "rank": null,
+            "pages": [
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0006",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0016",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0030",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0033",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0001",
+              "368c4a4836deb7d1a23d424412ff039254b51327b14361a7d69ea959336f7d32:page_0092",
+              "43cadbd9ed08dd00dfba43571253eaf63d655f9fc411df5b9a1059de8d40ce09:page_0025",
+              "c7ac8b5f23d5b545fea2ce54268c50ecf9e4271b6494e5bf4e75f5fbfb14b584:page_0002",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0031",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0036"
+            ],
+            "seconds": 0.47930616700614337
+          }
+        },
+        {
+          "id": "draft-057",
+          "question": "What minimum overtime rate is stated in the December 2025 wages FAQ?",
+          "target_page": "b3b416e4dbcc8c8401d5af563daaaecb70c5f191edee67eefa658dcabbe90316:page_0002",
+          "previous": {
+            "rank": 4,
+            "pages": [
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0002",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0013",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0001",
+              "b3b416e4dbcc8c8401d5af563daaaecb70c5f191edee67eefa658dcabbe90316:page_0002",
+              "39fd8e7c94ea7515c285f1a5e35fe77697adce4a0f557fe0f1393bb82d9b91aa:page_0038",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0012",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0005",
+              "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0005",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0016",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0006"
+            ],
+            "seconds": 0.48668812499090564
+          },
+          "shipped": {
+            "rank": null,
+            "pages": [
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0002",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0013",
+              "39fd8e7c94ea7515c285f1a5e35fe77697adce4a0f557fe0f1393bb82d9b91aa:page_0038",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0005",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0012",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0001",
+              "0d17b967a528da2d6b827655ba9a701dc15d78b4d4f58b9bbc21d6789a680c85:page_0008",
+              "bbc851624beb6011c550fa6b8c6b6f29f0c5add6be6b8f5be5e9bc2f3b0288ec:page_0009",
+              "39fd8e7c94ea7515c285f1a5e35fe77697adce4a0f557fe0f1393bb82d9b91aa:page_0042",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0006"
+            ],
+            "seconds": 0.477895208998234
+          }
+        },
+        {
+          "id": "draft-060",
+          "question": "What strike notice period does the December 2025 industrial relations FAQ describe?",
+          "target_page": "4cd16d6b6e60245869da7d97b1d4620e42b2143690d35e8927d92a39d74b2103:page_0001",
+          "shipped": {
+            "rank": 1,
+            "pages": [
+              "4cd16d6b6e60245869da7d97b1d4620e42b2143690d35e8927d92a39d74b2103:page_0001",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0026",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0006",
+              "39fd8e7c94ea7515c285f1a5e35fe77697adce4a0f557fe0f1393bb82d9b91aa:page_0038",
+              "c7ac8b5f23d5b545fea2ce54268c50ecf9e4271b6494e5bf4e75f5fbfb14b584:page_0002",
+              "37c5a8cd8684e9362f86a1a72642174045a302234fa1918e8a73a30296b43878:page_0134",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0035",
+              "368c4a4836deb7d1a23d424412ff039254b51327b14361a7d69ea959336f7d32:page_0085",
+              "368c4a4836deb7d1a23d424412ff039254b51327b14361a7d69ea959336f7d32:page_0088",
+              "e4aa7849df8b5ea7084cec5e3f74fe3a1fecea0577733df840aa94f956bf8358:page_0002"
+            ],
+            "seconds": 0.4787905419943854
+          },
+          "previous": {
+            "rank": 1,
+            "pages": [
+              "4cd16d6b6e60245869da7d97b1d4620e42b2143690d35e8927d92a39d74b2103:page_0001",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0026",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0030",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0016",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0033",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0035",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0006",
+              "f6837ef4696609ccf20221dcf48fc83d135029d313147367c8fe2f9bd72ea90d:page_0032",
+              "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0001",
+              "39fd8e7c94ea7515c285f1a5e35fe77697adce4a0f557fe0f1393bb82d9b91aa:page_0038"
+            ],
+            "seconds": 0.4821150409989059
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,117 @@
+{
+  "scope": "Development only: source-linked review_required cases, single cited page; labels incomplete and not independently adjudicated.",
+  "before": {
+    "hit_at_3": 0.6,
+    "hit_at_5": 0.7,
+    "hit_at_10": 0.8,
+    "hit_at_30": 0.95
+  },
+  "after": {
+    "hit_at_3": 0.7,
+    "hit_at_5": 0.75,
+    "hit_at_10": 0.85,
+    "hit_at_30": 0.95
+  },
+  "cases": [
+    {
+      "id": "fresh-draft-001",
+      "before": 1,
+      "after": 1
+    },
+    {
+      "id": "fresh-draft-002",
+      "before": 1,
+      "after": 1
+    },
+    {
+      "id": "fresh-draft-003",
+      "before": 2,
+      "after": 1
+    },
+    {
+      "id": "fresh-draft-004",
+      "before": 1,
+      "after": 1
+    },
+    {
+      "id": "fresh-draft-005",
+      "before": 1,
+      "after": 1
+    },
+    {
+      "id": "fresh-draft-006",
+      "before": 1,
+      "after": 1
+    },
+    {
+      "id": "fresh-draft-007",
+      "before": 1,
+      "after": 1
+    },
+    {
+      "id": "fresh-draft-008",
+      "before": 1,
+      "after": 1
+    },
+    {
+      "id": "fresh-draft-009",
+      "before": 5,
+      "after": 5
+    },
+    {
+      "id": "fresh-draft-010",
+      "before": 5,
+      "after": 1
+    },
+    {
+      "id": "fresh-draft-011",
+      "before": 20,
+      "after": 20
+    },
+    {
+      "id": "fresh-draft-012",
+      "before": 1,
+      "after": 1
+    },
+    {
+      "id": "fresh-draft-013",
+      "before": 8,
+      "after": 8
+    },
+    {
+      "id": "fresh-draft-014",
+      "before": 1,
+      "after": 1
+    },
+    {
+      "id": "fresh-draft-015",
+      "before": 11,
+      "after": 2
+    },
+    {
+      "id": "fresh-draft-016",
+      "before": 9,
+      "after": 9
+    },
+    {
+      "id": "fresh-draft-017",
+      "before": 2,
+      "after": 2
+    },
+    {
+      "id": "fresh-draft-018",
+      "before": 19,
+      "after": 19
+    },
+    {
+      "id": "fresh-draft-019",
+      "before": null,
+      "after": null
+    },
+    {
+      "id": "fresh-draft-020",
+      "before": 2,
+      "after": 2
+    }
+  ]
+}

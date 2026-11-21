@@ -9,6 +9,7 @@ from hr_navigator.observability.tracer import (
     utc_now_iso,
 )
 from hr_navigator.security.guardrails import RateLimiter, validate_user_input
+from hr_navigator.retrieval.search import unsupported_query
 
 app = FastAPI(title="HR Policy Navigator API", version="0.1.0")
 rate_limiter = RateLimiter(max_requests=30, window_seconds=60)
@@ -53,6 +54,10 @@ def health() -> dict[str, str]:
 def chat(payload: ChatRequest) -> ChatResponse:
     if not rate_limiter.is_allowed(payload.session_id):
         raise HTTPException(status_code=429, detail="Rate limit exceeded. Try again shortly.")
+
+    if unsupported_query(payload.query):
+        return ChatResponse(answer='Please ask your question in English.', citations=[],
+                            route_taken='unsupported_language', latency_ms=0.0)
 
     guard = validate_user_input(payload.query)
     if not guard.allowed:
