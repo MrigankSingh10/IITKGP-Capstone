@@ -10,7 +10,9 @@ An IIT Kharagpur Track B capstone prototype for finding evidence in a collection
 - **Review work:** Added queues for sparse-page OCR, source dates and possible versions, plus a template for independent retrieval relevance review. Eleven user-accepted OCR pages are included in a separate versioned search corpus; OCR transcription and source warnings remain visible. See `docs/phase_2_review_guide.md`.
 - **Grounded answers:** A prototype checks source identity and exact quotations, but a live test produced an incorrect answer with genuine, irrelevant quotes. It therefore escalates to human review rather than presenting an unverified answer.
 
-No agent graph, production service or real HR integration has been implemented. The user reports faculty acceptance of page counting; written evidence and its exact scope remain to be attached. See `reports/phase_2_summary.md` and `reports/retrieval_v1_report.md` for results and limitations; earlier phase reports describe the project at the time they were written.
+The team has added a FastAPI and Streamlit prototype with security and tracing components; its agent integration remains a stub. No LangGraph or production HR integration has been implemented. The user reports faculty acceptance of page counting; written evidence and its exact scope remain to be attached. See `reports/phase_2_summary.md` and `reports/retrieval_v1_report.md` for results and limitations; earlier phase reports describe the project at the time they were written.
+
+Two baseline reviews are retained: `reports/baseline_v1_review.csv` contains the later user-provided strict adjudication, and `reports/baseline_v1_review_team.csv` preserves the team review. Their scores differ, so the team should reconcile the rubric and reviewer provenance before using either as a verified comparison.
 
 ## Project layout
 
@@ -84,6 +86,15 @@ The accepted cache is regenerated from the original cache and isolated OCR cache
 Review sparse pages and proposed OCR against the original PDFs, verify source dates and version relationships, and independently annotate retrieval relevance using `docs/phase_2_review_guide.md`. The reviewed-OCR workflow preserves original page text and source conflict warnings in a separate indexed version. Adjudicate the supplied baseline scores and complete independent review before claiming improvement or beginning agent development. Reliable answer support checks, adversarial evaluation, legal applicability and faculty clarification remain open.
 
 For API-backed experiments, use `.env.example` as a template for local environment variables; the application does not automatically load `.env`. Keep keys and certificates out of the repository, use the appropriate separate chat and embedding credentials, and retain TLS verification. Confirm endpoint assignment and operational limits before live use. Docker Compose provides an audit skeleton, not a running application.
+
+## API and Streamlit prototype
+
+The team prototype includes a FastAPI service in `src/hr_navigator/server.py`, a Streamlit app in `app.py`, and security and tracing modules. The service's agent hook is a stub; its responses should not be mistaken for the grounded retrieval workflow.
+
+```bash
+PYTHONPATH=src uvicorn hr_navigator.server:app --reload --host 127.0.0.1 --port 8000
+streamlit run app.py
+```
 
 ### Isolated OCR-candidate evidence test
 

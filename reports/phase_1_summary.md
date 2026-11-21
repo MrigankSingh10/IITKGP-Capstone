@@ -2,9 +2,9 @@
 
 The user approved the 80 document-only cases; `evaluation/gold_v1.jsonl` was frozen on 2026-11-18 with the adjacent SHA256. Approval applies to the set as a whole; existing case-level `unreviewed` values do not establish individual legal review. It covers 10 PDFs and 21 PDF/page pairs, including six explicit prior-user-turn cases. More diverse sources and independent relevance review would improve future evaluation versions.
 
-All 240 live closed-book baseline calls succeeded on the permitted Qwen/Qwen3-8B chat endpoint. Three prompting strategies each used the same 80 questions and settings. Detailed results, usage, latency, examples and limitations are in `baseline_v1_report.md`; machine-readable runs and a human-review worksheet are alongside it. Correctness and refusal accuracy remain unscored. The document-only set has no explicit refusal cases. Cost is unknown; VM04 assignment still needs confirmation. No agent graph has been implemented.
+All 240 live closed-book baseline calls succeeded on the permitted Qwen/Qwen3-8B chat endpoint. Three prompting strategies each used the same 80 questions and settings. Detailed results, usage, latency, examples and limitations are in `baseline_v1_report.md`; the document-only set has no explicit refusal cases. Cost is unknown; no agent graph has been implemented.
 
-Remaining before claiming the Phase 1 evaluation gate: human case-level answer and citation review, grading the baseline against frozen conditions, and documenting observed failures without editing the frozen file. Faculty page-as-document clarification, legal applicability and redistribution rights remain pending. The team should confirm how document-only tests demonstrate Track B tool and completion requirements. Phase 2 retrieval and Phase 3 LangGraph have not started.
+Before claiming the Phase 1 evaluation gate, reconcile the differing reviews described below and document observed failures without editing the frozen file. Faculty page-as-document acceptance was reported by the user; its written scope, legal applicability and redistribution rights remain to be documented. Phase 2 retrieval is underway; Phase 3 LangGraph has not started.
 
 ## User-approved deferral — 2026-11-18
 
@@ -17,3 +17,7 @@ All 240 row-level baseline scores were supplied and imported; the row table tota
 ## User-provided adjudication update — 2026-11-20
 
 All 16 flagged baseline items received user-provided strict-rubric decisions; 13 scores changed from 1 to 0, and three existing 0 scores were retained. Current sheet totals are 6/80 zero-shot, 5/80 few-shot and 8/80 decomposition (19/240 overall). These are user-provided, not independently verified human accuracy scores. Historical scores remain in row notes. See `baseline_user_review_import.md` and `baseline_adjudication.csv`.
+
+## Team review retained
+
+The team also supplied a separately reviewed baseline sheet, preserved as `baseline_v1_review_team.csv`, and a report describing 33/240 passes. Its scores differ from the later strict adjudication above. Both are retained for rubric and reviewer reconciliation; the summaries are not interchangeable or independently verified by this merge. The 40-case behaviour scenario set remains a draft and must be reconciled with the user's document-focused scope before use.

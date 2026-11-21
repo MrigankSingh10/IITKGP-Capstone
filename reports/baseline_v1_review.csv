@@ -1,4 +1,4 @@
-﻿case_id,strategy,correct,refusal_correct,failure_category,reviewer,notes
+case_id,strategy,correct,refusal_correct,failure_category,reviewer,notes
 draft-001,zero_shot,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),"Mentions Gazette notification by Central Govt, but omits that different dates can apply to different provisions."
 draft-001,few_shot,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),Too vague; omits Central Govt notification and staggered commencement dates across provisions.
 draft-001,decomposition,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),"Says ""appropriate government"" instead of Central Government and omits Official Gazette and different dates per provision."
