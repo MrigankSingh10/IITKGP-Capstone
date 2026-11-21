@@ -155,3 +155,76 @@ def test_real_but_irrelevant_citation_does_not_release_model_claim():
                                   [chunk], {original['page_id']: original})
     assert output['decision'] == 'escalate'
     assert 'does not include' not in output['answer']
+
+
+
+def test_exact_gazette_identifier_is_normalized_but_number_and_suffix_are_exact():
+    from hr_navigator.retrieval.search import instrument_ids
+
+    assert instrument_ids('G.S.R. 321(E)') == instrument_ids('G S R 321 ( E )')
+    assert instrument_ids('S.O. 321(E)') != instrument_ids('G.S.R. 321(E)')
+    assert instrument_ids('G.S.R. 321(E)') != instrument_ids('G.S.R. 321(A)')
+    assert not instrument_ids('G.S.R. 321')
+    assert not instrument_ids('XG.S.R. 321(E)')
+
+
+def test_identifier_retrieval_matches_passage_without_bypassing_filters():
+    target = {**page('Notification G.S.R. 321(E) applies here.', number=1), 'chunk_id': 'z'}
+    distractor = {**page('Notification G.S.R. 322(E) applies here.', number=2), 'chunk_id': 'a'}
+    result = search('G S R 321 ( E ) notification', [distractor, target], mode='bm25')
+    assert result[0]['chunk_id'] == 'z'
+    assert search('G S R 321 ( E )', [target], labour_code='B', mode='bm25') == []
+
+
+def test_english_passage_filter_and_devanagari_input():
+    from hr_navigator.retrieval.search import english_eligible, unsupported_query
+
+    english = {**page('The notification is in English', number=1), 'chunk_id': 'en'}
+    hindi = {**page('मजदूरी का भुगतान', number=2), 'chunk_id': 'hi'}
+    mixed = {**page('English text and मजदूरी', number=3), 'chunk_id': 'mix'}
+    sparse = {**page('123.', number=4), 'chunk_id': 'sparse'}
+    assert english_eligible(english)
+    assert not any(english_eligible(c) for c in (hindi, mixed, sparse))
+    assert unsupported_query('What is मजदूरी?')
+    assert search('notification', [english, hindi, mixed, sparse], mode='bm25')[0]['chunk_id'] == 'en'
+    assert search('मजदूरी', [english, hindi], mode='bm25') == []
+
+
+def test_bm25_ignores_question_boilerplate_but_keeps_negation():
+    from hr_navigator.retrieval.search import bm25
+    chunks = [
+        {'chunk_id': 'a', 'text': 'wages are not payable'},
+        {'chunk_id': 'b', 'text': 'wages are payable'},
+    ]
+    assert bm25('what are wages not payable', chunks) == bm25('wages not payable', chunks)
+    assert bm25('wages not payable', chunks)[0][0] == 'a'
+    assert bm25('is', [{'chunk_id': 'c', 'text': 'is'}])
+
+
+def test_section_heading_boost_requires_named_code_and_act():
+    code = 'Code on Wages'
+    act = {**page('16. (1) The wage period is monthly.', code, 1), 'chunk_id': 'act'}
+    notice = {**page('16. (1) The wage period is monthly.', code, 2), 'chunk_id': 'notice', 'category': 'Notifications'}
+    other = {**page('16. (1) The wage period is monthly.', 'Code on Social Security', 3), 'chunk_id': 'other'}
+    from hr_navigator.retrieval.search import section_heading_matches
+    assert section_heading_matches('Section 16 of the Code on Wages', [act, notice, other]) == {'act'}
+    assert not section_heading_matches('Section 16', [act, notice, other])
+    assert not section_heading_matches('Section 16 and section 17 of the Code on Wages', [act])
+    assert not section_heading_matches('Section 16 of the Code on Wages', [{**act, 'text': 'under section 16. The wage period'}])
+
+
+def test_hybrid_heading_reorders_only_existing_top_ten_and_is_top_k_consistent(monkeypatch):
+    from hr_navigator.retrieval import search as retrieval
+
+    chunks = [{**page(('16. (1) Heading text' if i == 5 else 'ordinary text'),
+                      'Code on Wages', i + 1), 'chunk_id': f'{i:02d}'}
+              for i in range(12)]
+    ranking = [(c['chunk_id'], 1.0) for c in chunks]
+    monkeypatch.setattr(retrieval, 'bm25', lambda q, c: ranking)
+    monkeypatch.setattr(retrieval, 'dense', lambda q, c, v: ranking)
+    query = 'Section 16 of the Code on Wages'
+    result = retrieval.search(query, chunks, {}, [1], top_k=10, mode='hybrid_rerank')
+    assert result[0]['chunk_id'] == '05'
+    assert {c['chunk_id'] for c in result} == {f'{i:02d}' for i in range(10)}
+    assert retrieval.search(query, chunks, {}, [1], top_k=3, mode='hybrid_rerank') == result[:3]
+    assert [c['chunk_id'] for c in retrieval.search(query, chunks, {}, [1], top_k=12, mode='hybrid_rerank')][10:] == ['10', '11']

@@ -1,0 +1,166 @@
+{
+  "frozen_sha256": "90d9e6b16405e8572748ecaec8f1595de344fbd243e5754f04e362e10c39d1b5",
+  "purpose": "Post-change regression, not independent evaluation. Assistant-reviewed labels are incomplete.",
+  "results": {
+    "200": {
+      "chunk_sha256": "b2862e00622ad110f5a5fa5e91a0657d4348fb43ec2c9c154eef1f5d4d18d6ee",
+      "previous": {
+        "queries": 10,
+        "hit_at_10": 0.5,
+        "page_recall_at_10": 0.5,
+        "mrr_at_10": 0.5,
+        "mean_local_search_seconds": 0.43307778330054136
+      },
+      "unicode": {
+        "queries": 10,
+        "hit_at_10": 0.5,
+        "page_recall_at_10": 0.5,
+        "mrr_at_10": 0.45,
+        "mean_local_search_seconds": 0.9337131583000883
+      }
+    },
+    "350": {
+      "chunk_sha256": "71a97c1db5d981fa3bb9688078bce321b9dcb8dde768342e6f26608f3968497a",
+      "previous": {
+        "queries": 10,
+        "hit_at_10": 0.6,
+        "page_recall_at_10": 0.55,
+        "mrr_at_10": 0.46111111111111114,
+        "mean_local_search_seconds": 0.3794496832997538
+      },
+      "unicode": {
+        "queries": 10,
+        "hit_at_10": 0.5,
+        "page_recall_at_10": 0.5,
+        "mrr_at_10": 0.45,
+        "mean_local_search_seconds": 0.9112366125002154
+      }
+    }
+  },
+  "pairs": {
+    "200": [
+      {
+        "case_id": "rel-001",
+        "language": "English",
+        "previous_rank": 1,
+        "unicode_rank": 1
+      },
+      {
+        "case_id": "rel-002",
+        "language": "English",
+        "previous_rank": null,
+        "unicode_rank": null
+      },
+      {
+        "case_id": "rel-003",
+        "language": "Hindi",
+        "previous_rank": 1,
+        "unicode_rank": 1
+      },
+      {
+        "case_id": "rel-004",
+        "language": "English",
+        "previous_rank": null,
+        "unicode_rank": null
+      },
+      {
+        "case_id": "rel-005",
+        "language": "English",
+        "previous_rank": 1,
+        "unicode_rank": 1
+      },
+      {
+        "case_id": "rel-006",
+        "language": "English",
+        "previous_rank": null,
+        "unicode_rank": null
+      },
+      {
+        "case_id": "rel-007",
+        "language": "Bilingual",
+        "previous_rank": null,
+        "unicode_rank": null
+      },
+      {
+        "case_id": "rel-008",
+        "language": "English",
+        "previous_rank": 1,
+        "unicode_rank": 1
+      },
+      {
+        "case_id": "rel-009",
+        "language": "English",
+        "previous_rank": 1,
+        "unicode_rank": 2
+      },
+      {
+        "case_id": "rel-010",
+        "language": "Hindi",
+        "previous_rank": null,
+        "unicode_rank": null
+      }
+    ],
+    "350": [
+      {
+        "case_id": "rel-001",
+        "language": "English",
+        "previous_rank": 1,
+        "unicode_rank": 1
+      },
+      {
+        "case_id": "rel-002",
+        "language": "English",
+        "previous_rank": null,
+        "unicode_rank": null
+      },
+      {
+        "case_id": "rel-003",
+        "language": "Hindi",
+        "previous_rank": 1,
+        "unicode_rank": 1
+      },
+      {
+        "case_id": "rel-004",
+        "language": "English",
+        "previous_rank": null,
+        "unicode_rank": null
+      },
+      {
+        "case_id": "rel-005",
+        "language": "English",
+        "previous_rank": 1,
+        "unicode_rank": 1
+      },
+      {
+        "case_id": "rel-006",
+        "language": "English",
+        "previous_rank": null,
+        "unicode_rank": null
+      },
+      {
+        "case_id": "rel-007",
+        "language": "Bilingual",
+        "previous_rank": null,
+        "unicode_rank": null
+      },
+      {
+        "case_id": "rel-008",
+        "language": "English",
+        "previous_rank": 2,
+        "unicode_rank": 2
+      },
+      {
+        "case_id": "rel-009",
+        "language": "English",
+        "previous_rank": 1,
+        "unicode_rank": 1
+      },
+      {
+        "case_id": "rel-010",
+        "language": "Hindi",
+        "previous_rank": 9,
+        "unicode_rank": null
+      }
+    ]
+  }
+}

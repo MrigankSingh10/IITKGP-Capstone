@@ -11,7 +11,10 @@ from hr_navigator.clients.api import APIConfig, HostedClient  # noqa: E402
 from hr_navigator.retrieval.embeddings import connect, read_vector  # noqa: E402
 from hr_navigator.retrieval.grounded import answer_with_evidence  # noqa: E402
 from hr_navigator.retrieval.draft_review import draft_for_review  # noqa: E402
-from hr_navigator.retrieval.search import search  # noqa: E402
+from hr_navigator.retrieval.search import search, unsupported_query  # noqa: E402
+from hr_navigator.retrieval.source_context import (  # noqa: E402
+    enrich_pages, load_source_context, pair_related,
+)
 
 parser = argparse.ArgumentParser()
 parser.add_argument('question')
@@ -28,11 +31,16 @@ parser.add_argument('--chat-ca-file', required=True, type=Path)
 parser.add_argument('--chat-base-url', required=True)
 parser.add_argument('--chat-model', required=True)
 args = parser.parse_args()
+if unsupported_query(args.question):
+    print(json.dumps({'decision': 'unsupported_language', 'answer': 'Please ask your question in English.'}))
+    sys.exit(0)
 tokenizer = Tokenizer.from_file('configs/bge-small-en-v1.5-tokenizer.json')
 if len(tokenizer.encode(args.question, add_special_tokens=True).ids) > 512:
     parser.error('Question exceeds the embedding model token limit')
 chunks = [json.loads(line) for line in (args.data_dir / 'chunks_350.jsonl').read_text().splitlines()]
 pages = {p['page_id']: p for p in (json.loads(line) for line in (args.data_dir / 'pages.jsonl').read_text().splitlines())}
+context = load_source_context()
+enrich_pages(pages, context)
 if not args.cache_file.is_file():
     parser.error('Embedding cache does not exist')
 db = connect(args.cache_file)
@@ -51,6 +59,7 @@ try:
         raise ValueError('Invalid embedding response')
     evidence = search(args.question, chunks, vectors, data[0]['embedding'],
                       labour_code=args.code, top_k=3, mode='hybrid_rerank')
+    evidence = pair_related(args.question, evidence, chunks, context, args.code)
     chat = HostedClient(APIConfig(args.chat_base_url, args.chat_model,
                                   args.chat_key_file.read_text().strip(), str(args.chat_ca_file)))
     result = (draft_for_review(chat, args.question, evidence, pages) if args.draft_for_review

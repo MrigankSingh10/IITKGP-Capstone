@@ -103,3 +103,7 @@ was shown. RAG runs should also return `retrieved_page_ids` so retrieval misses 
 | Auto-check pass rate | All automatic checks passed (decision, required/forbidden tools, approval flag, trusted identity on identity-sensitive tools, sources for statutory answers, gold page retrieved) |
 | Tool calls, latency (mean, p95), tokens per query, cost | From each answer's record and `configs/pricing.json` |
 | Failure categories | Reviewer's `failure_category`, using `docs/error_taxonomy.md`; the sheet's `suggested_category` gives the automatic suggestion. Also reported by layer and as `auto_detected_failures` before review. |
+
+## English-only scope
+
+Use English questions and English evidence for new product evaluations. The frozen historical files remain unchanged. `scripts/evaluate_relevance_english.py` performs an offline English-labeled subset regression on the existing assistant-reviewed relevance pilot; it is small, incompletely labeled and not independent. Its subset scores must not be compared directly to the full multilingual historical aggregate. The script filter used in retrieval is not reliable language identification.

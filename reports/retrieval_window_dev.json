@@ -1,0 +1,338 @@
+{
+  "development_sha256": "3ef74cde9409c40beda04e6016b0235d7e051b56f1a046e84376061fafade8ea",
+  "scope": "Development only; one source-linked page per case, incomplete labels and not independently adjudicated.",
+  "results": {
+    "200": {
+      "chunk_sha256": "b2862e00622ad110f5a5fa5e91a0657d4348fb43ec2c9c154eef1f5d4d18d6ee",
+      "before": {
+        "hit_at_3": 0.6,
+        "hit_at_5": 0.7,
+        "hit_at_10": 0.8,
+        "hit_at_30": 0.95,
+        "mrr_at_10": 0.5568055555555556
+      },
+      "window": {
+        "hit_at_3": 0.8,
+        "hit_at_5": 0.85,
+        "hit_at_10": 0.85,
+        "hit_at_30": 0.95,
+        "mrr_at_10": 0.6625000000000001
+      },
+      "combined": {
+        "hit_at_3": 0.8,
+        "hit_at_5": 0.85,
+        "hit_at_10": 0.85,
+        "hit_at_30": 0.95,
+        "mrr_at_10": 0.6958333333333334
+      },
+      "cases": [
+        {
+          "id": "fresh-draft-001",
+          "target_page": "0d17b967a528da2d6b827655ba9a701dc15d78b4d4f58b9bbc21d6789a680c85:page_0009",
+          "before": 1,
+          "window": 1,
+          "combined": 1
+        },
+        {
+          "id": "fresh-draft-002",
+          "target_page": "0d17b967a528da2d6b827655ba9a701dc15d78b4d4f58b9bbc21d6789a680c85:page_0009",
+          "before": 1,
+          "window": 1,
+          "combined": 1
+        },
+        {
+          "id": "fresh-draft-003",
+          "target_page": "0d17b967a528da2d6b827655ba9a701dc15d78b4d4f58b9bbc21d6789a680c85:page_0009",
+          "before": 2,
+          "window": 1,
+          "combined": 1
+        },
+        {
+          "id": "fresh-draft-004",
+          "target_page": "0d17b967a528da2d6b827655ba9a701dc15d78b4d4f58b9bbc21d6789a680c85:page_0007",
+          "before": 1,
+          "window": 1,
+          "combined": 1
+        },
+        {
+          "id": "fresh-draft-005",
+          "target_page": "0d17b967a528da2d6b827655ba9a701dc15d78b4d4f58b9bbc21d6789a680c85:page_0007",
+          "before": 1,
+          "window": 1,
+          "combined": 1
+        },
+        {
+          "id": "fresh-draft-006",
+          "target_page": "43cadbd9ed08dd00dfba43571253eaf63d655f9fc411df5b9a1059de8d40ce09:page_0008",
+          "before": 1,
+          "window": 1,
+          "combined": 1
+        },
+        {
+          "id": "fresh-draft-007",
+          "target_page": "43cadbd9ed08dd00dfba43571253eaf63d655f9fc411df5b9a1059de8d40ce09:page_0008",
+          "before": 1,
+          "window": 1,
+          "combined": 1
+        },
+        {
+          "id": "fresh-draft-008",
+          "target_page": "43cadbd9ed08dd00dfba43571253eaf63d655f9fc411df5b9a1059de8d40ce09:page_0008",
+          "before": 1,
+          "window": 1,
+          "combined": 1
+        },
+        {
+          "id": "fresh-draft-009",
+          "target_page": "43cadbd9ed08dd00dfba43571253eaf63d655f9fc411df5b9a1059de8d40ce09:page_0009",
+          "before": 5,
+          "window": 2,
+          "combined": 2
+        },
+        {
+          "id": "fresh-draft-010",
+          "target_page": "43cadbd9ed08dd00dfba43571253eaf63d655f9fc411df5b9a1059de8d40ce09:page_0013",
+          "before": 5,
+          "window": 2,
+          "combined": 1
+        },
+        {
+          "id": "fresh-draft-011",
+          "target_page": "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0008",
+          "before": 20,
+          "window": 15,
+          "combined": 15
+        },
+        {
+          "id": "fresh-draft-012",
+          "target_page": "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0041",
+          "before": 1,
+          "window": 1,
+          "combined": 1
+        },
+        {
+          "id": "fresh-draft-013",
+          "target_page": "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0041",
+          "before": 8,
+          "window": 4,
+          "combined": 4
+        },
+        {
+          "id": "fresh-draft-014",
+          "target_page": "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0042",
+          "before": 1,
+          "window": 1,
+          "combined": 1
+        },
+        {
+          "id": "fresh-draft-015",
+          "target_page": "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0045",
+          "before": 11,
+          "window": 3,
+          "combined": 2
+        },
+        {
+          "id": "fresh-draft-016",
+          "target_page": "9ce8f68b88f725fbce4fadfb45d9ddc3ed7a5f59d92a2ebd3d5bd7ebb1c83891:page_0017",
+          "before": 9,
+          "window": 3,
+          "combined": 3
+        },
+        {
+          "id": "fresh-draft-017",
+          "target_page": "9ce8f68b88f725fbce4fadfb45d9ddc3ed7a5f59d92a2ebd3d5bd7ebb1c83891:page_0021",
+          "before": 2,
+          "window": 1,
+          "combined": 1
+        },
+        {
+          "id": "fresh-draft-018",
+          "target_page": "9ce8f68b88f725fbce4fadfb45d9ddc3ed7a5f59d92a2ebd3d5bd7ebb1c83891:page_0025",
+          "before": 19,
+          "window": 23,
+          "combined": 23
+        },
+        {
+          "id": "fresh-draft-019",
+          "target_page": "9ce8f68b88f725fbce4fadfb45d9ddc3ed7a5f59d92a2ebd3d5bd7ebb1c83891:page_0026",
+          "before": null,
+          "window": null,
+          "combined": null
+        },
+        {
+          "id": "fresh-draft-020",
+          "target_page": "d7d9516acb49ecfa04cf111de95fd600689e5859fb20020c36e2c06cb6e22cb5:page_0005",
+          "before": 2,
+          "window": 3,
+          "combined": 3
+        }
+      ]
+    },
+    "350": {
+      "chunk_sha256": "71a97c1db5d981fa3bb9688078bce321b9dcb8dde768342e6f26608f3968497a",
+      "before": {
+        "hit_at_3": 0.7,
+        "hit_at_5": 0.8,
+        "hit_at_10": 0.85,
+        "hit_at_30": 0.95,
+        "mrr_at_10": 0.7046428571428571
+      },
+      "window": {
+        "hit_at_3": 0.8,
+        "hit_at_5": 0.85,
+        "hit_at_10": 0.9,
+        "hit_at_30": 0.95,
+        "mrr_at_10": 0.7424999999999999
+      },
+      "combined": {
+        "hit_at_3": 0.8,
+        "hit_at_5": 0.85,
+        "hit_at_10": 0.9,
+        "hit_at_30": 0.95,
+        "mrr_at_10": 0.7675
+      },
+      "cases": [
+        {
+          "id": "fresh-draft-001",
+          "target_page": "0d17b967a528da2d6b827655ba9a701dc15d78b4d4f58b9bbc21d6789a680c85:page_0009",
+          "before": 1,
+          "window": 1,
+          "combined": 1
+        },
+        {
+          "id": "fresh-draft-002",
+          "target_page": "0d17b967a528da2d6b827655ba9a701dc15d78b4d4f58b9bbc21d6789a680c85:page_0009",
+          "before": 1,
+          "window": 1,
+          "combined": 1
+        },
+        {
+          "id": "fresh-draft-003",
+          "target_page": "0d17b967a528da2d6b827655ba9a701dc15d78b4d4f58b9bbc21d6789a680c85:page_0009",
+          "before": 1,
+          "window": 1,
+          "combined": 1
+        },
+        {
+          "id": "fresh-draft-004",
+          "target_page": "0d17b967a528da2d6b827655ba9a701dc15d78b4d4f58b9bbc21d6789a680c85:page_0007",
+          "before": 1,
+          "window": 1,
+          "combined": 1
+        },
+        {
+          "id": "fresh-draft-005",
+          "target_page": "0d17b967a528da2d6b827655ba9a701dc15d78b4d4f58b9bbc21d6789a680c85:page_0007",
+          "before": 1,
+          "window": 1,
+          "combined": 1
+        },
+        {
+          "id": "fresh-draft-006",
+          "target_page": "43cadbd9ed08dd00dfba43571253eaf63d655f9fc411df5b9a1059de8d40ce09:page_0008",
+          "before": 1,
+          "window": 1,
+          "combined": 1
+        },
+        {
+          "id": "fresh-draft-007",
+          "target_page": "43cadbd9ed08dd00dfba43571253eaf63d655f9fc411df5b9a1059de8d40ce09:page_0008",
+          "before": 1,
+          "window": 1,
+          "combined": 1
+        },
+        {
+          "id": "fresh-draft-008",
+          "target_page": "43cadbd9ed08dd00dfba43571253eaf63d655f9fc411df5b9a1059de8d40ce09:page_0008",
+          "before": 1,
+          "window": 1,
+          "combined": 1
+        },
+        {
+          "id": "fresh-draft-009",
+          "target_page": "43cadbd9ed08dd00dfba43571253eaf63d655f9fc411df5b9a1059de8d40ce09:page_0009",
+          "before": 4,
+          "window": 2,
+          "combined": 2
+        },
+        {
+          "id": "fresh-draft-010",
+          "target_page": "43cadbd9ed08dd00dfba43571253eaf63d655f9fc411df5b9a1059de8d40ce09:page_0013",
+          "before": 2,
+          "window": 2,
+          "combined": 1
+        },
+        {
+          "id": "fresh-draft-011",
+          "target_page": "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0008",
+          "before": 13,
+          "window": 10,
+          "combined": 10
+        },
+        {
+          "id": "fresh-draft-012",
+          "target_page": "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0041",
+          "before": 1,
+          "window": 1,
+          "combined": 1
+        },
+        {
+          "id": "fresh-draft-013",
+          "target_page": "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0041",
+          "before": 1,
+          "window": 1,
+          "combined": 1
+        },
+        {
+          "id": "fresh-draft-014",
+          "target_page": "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0042",
+          "before": 1,
+          "window": 1,
+          "combined": 1
+        },
+        {
+          "id": "fresh-draft-015",
+          "target_page": "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0045",
+          "before": 1,
+          "window": 1,
+          "combined": 1
+        },
+        {
+          "id": "fresh-draft-016",
+          "target_page": "9ce8f68b88f725fbce4fadfb45d9ddc3ed7a5f59d92a2ebd3d5bd7ebb1c83891:page_0017",
+          "before": 7,
+          "window": 2,
+          "combined": 2
+        },
+        {
+          "id": "fresh-draft-017",
+          "target_page": "9ce8f68b88f725fbce4fadfb45d9ddc3ed7a5f59d92a2ebd3d5bd7ebb1c83891:page_0021",
+          "before": 1,
+          "window": 1,
+          "combined": 1
+        },
+        {
+          "id": "fresh-draft-018",
+          "target_page": "9ce8f68b88f725fbce4fadfb45d9ddc3ed7a5f59d92a2ebd3d5bd7ebb1c83891:page_0025",
+          "before": 20,
+          "window": 20,
+          "combined": 20
+        },
+        {
+          "id": "fresh-draft-019",
+          "target_page": "9ce8f68b88f725fbce4fadfb45d9ddc3ed7a5f59d92a2ebd3d5bd7ebb1c83891:page_0026",
+          "before": null,
+          "window": null,
+          "combined": null
+        },
+        {
+          "id": "fresh-draft-020",
+          "target_page": "d7d9516acb49ecfa04cf111de95fd600689e5859fb20020c36e2c06cb6e22cb5:page_0005",
+          "before": 5,
+          "window": 4,
+          "combined": 4
+        }
+      ]
+    }
+  }
+}

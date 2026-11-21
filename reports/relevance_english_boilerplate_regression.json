@@ -1,0 +1,28 @@
+{
+  "frozen_sha256": "90d9e6b16405e8572748ecaec8f1595de344fbd243e5754f04e362e10c39d1b5",
+  "scope": "English-labeled subset only; assistant-reviewed, incomplete labels; not independent",
+  "selected_queries": 7,
+  "excluded_queries": 3,
+  "results": {
+    "200": {
+      "queries": 7,
+      "hit_at_10": 0.5714285714285714,
+      "page_recall_at_10": 0.5714285714285714,
+      "mrr_at_10": 0.5714285714285714,
+      "total_chunks": 9615,
+      "eligible_chunks": 3459,
+      "chunk_sha256": "b2862e00622ad110f5a5fa5e91a0657d4348fb43ec2c9c154eef1f5d4d18d6ee",
+      "mean_local_search_seconds": 0.5755348987128984
+    },
+    "350": {
+      "queries": 7,
+      "hit_at_10": 0.5714285714285714,
+      "page_recall_at_10": 0.5714285714285714,
+      "mrr_at_10": 0.5714285714285714,
+      "total_chunks": 5605,
+      "eligible_chunks": 1965,
+      "chunk_sha256": "71a97c1db5d981fa3bb9688078bce321b9dcb8dde768342e6f26608f3968497a",
+      "mean_local_search_seconds": 0.4900252320013741
+    }
+  }
+}

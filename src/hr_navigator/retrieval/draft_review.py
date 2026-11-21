@@ -4,6 +4,7 @@ import re
 
 from hr_navigator.clients.api import APIError
 from hr_navigator.retrieval.grounded import extractive_evidence
+from hr_navigator.retrieval.source_context import citation_context
 
 
 def _json_response(client, system, payload):
@@ -213,7 +214,7 @@ def draft_for_review(client, question, evidence, pages):
                             'original_title': chunk['original_title'], 'page_number': chunk['pdf_page_number'],
                             'source_url': chunk['source_url'], 'scope': chunk['scope'],
                             'quote_or_section': quote, 'extraction_status': page['extraction_status'],
-                            'source_warnings': page.get('source_warnings', [])})
+                            'source_warnings': page.get('source_warnings', []), **citation_context(page)})
         if not definition_quote_matches(question, [c['quote_or_section'] for c in checked]):
             return {'decision': 'escalate', 'reason': 'The quote does not establish the requested definition.', 'sources': checked}
         qualifier = missing_material_qualifier(answer, checked, pages)

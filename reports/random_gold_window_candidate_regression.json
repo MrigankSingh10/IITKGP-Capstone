@@ -1,0 +1,184 @@
+{
+  "prior_sha256": "ee0a184fda872e310a34bda8de264cd637fe922182e69796da9001e18e9b92d1",
+  "gold_sha256": "00945556195f2403b17a7a4078b642f4fe1c3eb8b68109ed0a04a92b3a2238bf",
+  "chunk_sha256": "b2862e00622ad110f5a5fa5e91a0657d4348fb43ec2c9c154eef1f5d4d18d6ee",
+  "sample_ids": [
+    "draft-068",
+    "draft-023",
+    "draft-036",
+    "draft-045",
+    "draft-011",
+    "draft-044",
+    "draft-010",
+    "draft-001",
+    "draft-024",
+    "draft-021",
+    "draft-047",
+    "draft-073",
+    "draft-070",
+    "draft-062",
+    "draft-039",
+    "draft-066",
+    "draft-026",
+    "draft-063",
+    "draft-057",
+    "draft-060"
+  ],
+  "scope": "One cited target page per case; incomplete labels, no independent relevance adjudication; 30 means final page order after reranking first ten, hence identical membership to pre-rerank 30.",
+  "before": {
+    "hit_at_3": 0.5,
+    "hit_at_5": 0.6,
+    "hit_at_10": 0.75,
+    "hit_at_30": 0.8,
+    "mrr_at_10": 0.5164484126984126
+  },
+  "after": {
+    "hit_at_3": 0.55,
+    "hit_at_5": 0.65,
+    "hit_at_10": 0.8,
+    "hit_at_30": 0.85,
+    "mrr_at_10": 0.5692261904761904
+  },
+  "cases": [
+    {
+      "id": "draft-068",
+      "target_page": "aa0357bbe410d7533e7dfaff6d14d935acb6f730b5fbe53750d5012fea92542c:page_0002",
+      "question": "What does the March 2026 occupational safety FAQ say about welfare facilities for contract labour?",
+      "before": 2,
+      "after": 1
+    },
+    {
+      "id": "draft-023",
+      "target_page": "43cadbd9ed08dd00dfba43571253eaf63d655f9fc411df5b9a1059de8d40ce09:page_0001",
+      "question": "What does the industrial relations code say about different commencement dates?",
+      "before": 1,
+      "after": 1
+    },
+    {
+      "id": "draft-036",
+      "target_page": "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0002",
+      "question": "According to the Code on Social Security, what notice must the Central Government give under section 1(6)?",
+      "before": null,
+      "after": 6
+    },
+    {
+      "id": "draft-045",
+      "target_page": "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0001",
+      "question": "According to the January 2026 Social Security FAQ, must every procedure be digital?",
+      "before": 1,
+      "after": 1
+    },
+    {
+      "id": "draft-011",
+      "target_page": "0d17b967a528da2d6b827655ba9a701dc15d78b4d4f58b9bbc21d6789a680c85:page_0001",
+      "question": "What date is printed in brackets under the title of the Code on Wages?",
+      "before": 1,
+      "after": 1
+    },
+    {
+      "id": "draft-044",
+      "target_page": "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0002",
+      "question": "Does the Code on Social Security describe applicability of specified chapters by reference to a schedule?",
+      "before": 4,
+      "after": 2
+    },
+    {
+      "id": "draft-010",
+      "target_page": "0d17b967a528da2d6b827655ba9a701dc15d78b4d4f58b9bbc21d6789a680c85:page_0001",
+      "question": "What topics does the opening description of the Code on Wages identify?",
+      "before": 11,
+      "after": 12
+    },
+    {
+      "id": "draft-001",
+      "target_page": "0d17b967a528da2d6b827655ba9a701dc15d78b4d4f58b9bbc21d6789a680c85:page_0001",
+      "question": "What does section 1 of the Code on Wages say about commencement?",
+      "before": 1,
+      "after": 1
+    },
+    {
+      "id": "draft-024",
+      "target_page": "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0001",
+      "question": "Can the date on the first page of the social security code alone establish when every provision began?",
+      "before": 1,
+      "after": 1
+    },
+    {
+      "id": "draft-021",
+      "target_page": "43cadbd9ed08dd00dfba43571253eaf63d655f9fc411df5b9a1059de8d40ce09:page_0003",
+      "question": "How does the Industrial Relations Code define a conciliation officer?",
+      "before": 8,
+      "after": 8
+    },
+    {
+      "id": "draft-047",
+      "target_page": "92a9b945cbc62001ba3cb3571c1faf1bce1148c577b4c23b1295b56a2f6d9f0d:page_0001",
+      "question": "According to the January 2026 Social Security FAQ, how may the rules be modified?",
+      "before": 1,
+      "after": 1
+    },
+    {
+      "id": "draft-073",
+      "target_page": "d55818a3956bebf5445e515e25999d5ee5b94e58e371554b24197470cf4ee2ed:page_0002",
+      "question": "According to the March 2026 additional FAQ, how do minimum wages differ from wages?",
+      "before": 1,
+      "after": 1
+    },
+    {
+      "id": "draft-070",
+      "target_page": "e6c7b3b716ce5bbdced0e2eb487950fed6dcf3343eced2d5389db675989ecb3f:page_0002",
+      "question": "What does the December 2025 occupational safety FAQ say about state rule-making?",
+      "before": null,
+      "after": null
+    },
+    {
+      "id": "draft-062",
+      "target_page": "4cd16d6b6e60245869da7d97b1d4620e42b2143690d35e8927d92a39d74b2103:page_0002",
+      "question": "What does the December 2025 industrial relations FAQ say about conciliation?",
+      "before": 9,
+      "after": 7
+    },
+    {
+      "id": "draft-039",
+      "target_page": "975235e57b8b8c3f4a09f6c9f0dbb2bfc663c15faf3715108ea33113ef565be7:page_0003",
+      "question": "How does the Code on Social Security describe an authorised officer?",
+      "before": null,
+      "after": null
+    },
+    {
+      "id": "draft-066",
+      "target_page": "aa0357bbe410d7533e7dfaff6d14d935acb6f730b5fbe53750d5012fea92542c:page_0001",
+      "question": "What does the March 2026 occupational safety FAQ say about amending central OSH standards?",
+      "before": 1,
+      "after": 1
+    },
+    {
+      "id": "draft-026",
+      "target_page": "0d17b967a528da2d6b827655ba9a701dc15d78b4d4f58b9bbc21d6789a680c85:page_0002",
+      "question": "Which boards are included in the Code on Wages definition of Advisory Board?",
+      "before": 7,
+      "after": 4
+    },
+    {
+      "id": "draft-063",
+      "target_page": "4cd16d6b6e60245869da7d97b1d4620e42b2143690d35e8927d92a39d74b2103:page_0002",
+      "question": "What tribunal structure is described in the December 2025 industrial relations FAQ?",
+      "before": null,
+      "after": null
+    },
+    {
+      "id": "draft-057",
+      "target_page": "b3b416e4dbcc8c8401d5af563daaaecb70c5f191edee67eefa658dcabbe90316:page_0002",
+      "question": "What minimum overtime rate is stated in the December 2025 wages FAQ?",
+      "before": 5,
+      "after": 5
+    },
+    {
+      "id": "draft-060",
+      "target_page": "4cd16d6b6e60245869da7d97b1d4620e42b2143690d35e8927d92a39d74b2103:page_0001",
+      "question": "What strike notice period does the December 2025 industrial relations FAQ describe?",
+      "before": 1,
+      "after": 1
+    }
+  ]
+}

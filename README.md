@@ -4,6 +4,10 @@ An IIT Kharagpur Track B capstone prototype for finding and citing information i
 
 The retrieval workflow is experimental. Generated answers are drafts for review, and citation checks do not establish legal applicability or guarantee correctness. The FastAPI and Streamlit prototype is not yet connected to the retrieval workflow or a LangGraph agent.
 
+## Team handoff and shared log
+
+All members and AI agents: read and update the [shared team work log](docs/team_work_log.md) each session. It contains the Member 1/2 handoff, current ownership, decisions, validation and next actions.
+
 ## What is implemented
 
 ### Corpus, OCR and provenance
@@ -123,3 +127,7 @@ The API exposes `GET /health` and `POST /chat`. The UI shows chat and a trace da
 - Improve and evaluate retrieval, source matching and grounded answers on questions not used to tune the workflow. Keep generated answers review-only until the evaluation supports a change.
 - Continue source-date, version, legal-status, sparse-page and redistribution checks. The user reported faculty acceptance of page counting; written confirmation and its scope are not attached.
 - Align the API/UI with the document-only scope, address trace handling and connect the retrieval workflow. Implement LangGraph and document-focused task completion in a later phase.
+
+### Current language scope
+
+The active document workflow supports English questions and English evidence. Passage filtering excludes Devanagari-containing and sparse chunks; it preserves eligible English chunks even on bilingual PDFs. This is a script heuristic, not a language guarantee: mixed-script English can be missed, and Romanized Hindi, other Latin-script languages and legacy-font text can pass. The document CLIs ask for English when input contains Devanagari. Historical sources and frozen evaluations are preserved. The offline `scripts/evaluate_relevance_english.py` reports the English-labeled subset of the assistant-reviewed pilot.

@@ -1,0 +1,3 @@
+case_id,question,reviewer,review_status,source_search_and_missing_evidence,expected_handling,notes
+missing-001,What is my employer's current maternity leave policy and how many days of leave do I personally have left?,,,,,
+missing-002,Does the Social Security Code currently apply to my specific employer in my state and occupation?,,,,,
