@@ -1,5 +1,7 @@
 # Phase 1 closed-book baseline — 2026-11-18
 
+**Review reconciliation:** The scoring section below describes the separate team review preserved in `baseline_v1_review_team.csv` and `baseline_v1_metrics_team.json`. The later user-provided strict adjudication is in `baseline_v1_review.csv` and the regenerated `baseline_v1_metrics.json` (19/240). These assessments use different review decisions and have not been reconciled; neither should be represented as independently verified accuracy.
+
 The user approved and froze 80 document-only cases (SHA256 `00945556195f2403b17a7a4078b642f4fe1c3eb8b68109ed0a04a92b3a2238bf`). We ran the permitted Qwen/Qwen3-8B model on the supplied VM04 endpoint: one request per case and strategy, 240 requests, all HTTP/API calls succeeded. VM04 was inferred from the supplied CA and still needs group-assignment confirmation. The same 80 questions, temperature 0 and max output 512 were used in each strategy. For six cases an earlier user message was also supplied; this is not a test of durable state. No PDF content, gold answers or retrieval were sent. Strategies: zero-shot structured; few-shot with general uncertainty examples; decomposition with a concise self-check and no request for private reasoning. See `scripts/run_baselines.py` for exact prompts and settings.
 
 | Strategy | Calls succeeded | Valid JSON with string answer and uncertainty | Mean latency (seconds) | Reported prompt / completion tokens |

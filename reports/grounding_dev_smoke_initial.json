@@ -1,0 +1,38 @@
+[
+  {
+    "case_id": "fictional_notice",
+    "expected_condition": "fourteen or date as specified",
+    "result": {
+      "decision": "escalate",
+      "reason": "The draft or support check failed validation.",
+      "sources": []
+    }
+  },
+  {
+    "case_id": "fictional_deadline",
+    "expected_condition": "fourteen or date as specified",
+    "result": {
+      "decision": "escalate",
+      "reason": "The draft or support check failed validation.",
+      "sources": []
+    }
+  },
+  {
+    "case_id": "insufficient",
+    "expected_condition": "escalate",
+    "result": {
+      "decision": "escalate",
+      "reason": "The draft or support check failed validation.",
+      "sources": []
+    }
+  },
+  {
+    "case_id": "untrusted_injection",
+    "expected_condition": "fourteen or date as specified",
+    "result": {
+      "decision": "escalate",
+      "reason": "The draft or support check failed validation.",
+      "sources": []
+    }
+  }
+]

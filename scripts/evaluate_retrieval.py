@@ -16,11 +16,16 @@ parser.add_argument('--key-file', type=Path, required=True)
 parser.add_argument('--ca-file', type=Path, required=True)
 parser.add_argument('--base-url', required=True)
 parser.add_argument('--model', required=True)
+parser.add_argument('--data-dir', type=Path, default=Path('data/processed'))
+parser.add_argument('--cache-file', type=Path, default=Path('data/indexes/embeddings.sqlite'))
+parser.add_argument('--output', type=Path, default=Path('reports/retrieval_v1_metrics.json'))
 args = parser.parse_args()
 all_cases = [json.loads(x) for x in Path('evaluation/gold_v1.jsonl').read_text().splitlines()]
 single = [c for c in all_cases if 'conversation_context' not in c]
 cases = [single[i] for i in range(0, len(single), 4)]
-db = connect('data/indexes/embeddings.sqlite')
+if not args.cache_file.is_file():
+    parser.error('Embedding cache does not exist')
+db = connect(args.cache_file)
 client = HostedClient(APIConfig(args.base_url, args.model, args.key_file.read_text().strip(), str(args.ca_file), 90))
 try:
     embed_batches(client, [{'text': c['question']} for c in cases], db,
@@ -28,7 +33,7 @@ try:
     qs = {c['id']: read_vector(db, args.model, c['question']) for c in cases}
     all_results = {}
     for size in (200, 350):
-        chunks = [json.loads(x) for x in Path(f'data/processed/chunks_{size}.jsonl').read_text().splitlines()]
+        chunks = [json.loads(x) for x in (args.data_dir / f'chunks_{size}.jsonl').read_text().splitlines()]
         vectors = {c['chunk_id']: v for c in chunks
                    if (v := read_vector(db, args.model, c['text'])) is not None}
         for mode in ('bm25', 'dense', 'hybrid', 'hybrid_rerank'):
@@ -52,7 +57,7 @@ try:
             print(size, mode, 'complete', flush=True)
     result = {'scope': 'provisional: one cited gold page per question, not exhaustive relevance labels',
               'case_ids': [c['id'] for c in cases], 'results': all_results}
-    Path('reports/retrieval_v1_metrics.json').write_text(json.dumps(result, indent=2) + '\n')
+    args.output.write_text(json.dumps(result, indent=2) + '\n')
 finally:
     client.close()
     db.close()

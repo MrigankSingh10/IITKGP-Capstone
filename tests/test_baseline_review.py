@@ -3,7 +3,9 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-CATEGORIES = {'hallucination', 'reasoning error', 'evidence unavailable', 'format error'}
+CATEGORIES = {'hallucination', 'reasoning error', 'evidence unavailable', 'format error',
+              'hallucinated_or_incorrect', 'incomplete_or_vague', 'cutoff_abstention',
+              'wrong_jurisdiction_or_entity', 'json_schema_error'}
 
 
 def test_review_sheet_covers_every_run_with_valid_marks():
