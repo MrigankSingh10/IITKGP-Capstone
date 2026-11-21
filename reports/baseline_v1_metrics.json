@@ -20,6 +20,12 @@
       "json_schema_error": 14,
       "wrong_jurisdiction_or_entity": 10
     },
+    "failure_categories_taxonomy": {
+      "abstention": 11,
+      "format_error": 14,
+      "hallucination": 36,
+      "reasoning_error": 13
+    },
     "reviewers": [
       "User-provided adjudication (reviewer not identified)",
       "User-provided evaluation (reviewer not identified)"
@@ -56,6 +62,11 @@
       "incomplete_or_vague": 26,
       "wrong_jurisdiction_or_entity": 6
     },
+    "failure_categories_taxonomy": {
+      "abstention": 16,
+      "hallucination": 33,
+      "reasoning_error": 26
+    },
     "reviewers": [
       "User-provided adjudication (reviewer not identified)",
       "User-provided evaluation (reviewer not identified)"
@@ -91,6 +102,11 @@
       "hallucinated_or_incorrect": 32,
       "incomplete_or_vague": 17,
       "wrong_jurisdiction_or_entity": 7
+    },
+    "failure_categories_taxonomy": {
+      "abstention": 16,
+      "hallucination": 39,
+      "reasoning_error": 17
     },
     "reviewers": [
       "User-provided adjudication (reviewer not identified)",
