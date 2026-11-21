@@ -1,241 +1,241 @@
-case_id,strategy,correct,refusal_correct,failure_category,reviewer,notes
-draft-001,zero_shot,,,,,
-draft-001,few_shot,,,,,
-draft-001,decomposition,,,,,
-draft-002,zero_shot,,,,,
-draft-002,few_shot,,,,,
-draft-002,decomposition,,,,,
-draft-003,zero_shot,,,,,
-draft-003,few_shot,,,,,
-draft-003,decomposition,,,,,
-draft-004,zero_shot,,,,,
-draft-004,few_shot,,,,,
-draft-004,decomposition,,,,,
-draft-005,zero_shot,,,,,
-draft-005,few_shot,,,,,
-draft-005,decomposition,,,,,
-draft-006,zero_shot,,,,,
-draft-006,few_shot,,,,,
-draft-006,decomposition,,,,,
-draft-007,zero_shot,,,,,
-draft-007,few_shot,,,,,
-draft-007,decomposition,,,,,
-draft-008,zero_shot,,,,,
-draft-008,few_shot,,,,,
-draft-008,decomposition,,,,,
-draft-009,zero_shot,,,,,
-draft-009,few_shot,,,,,
-draft-009,decomposition,,,,,
-draft-010,zero_shot,,,,,
-draft-010,few_shot,,,,,
-draft-010,decomposition,,,,,
-draft-011,zero_shot,,,,,
-draft-011,few_shot,,,,,
-draft-011,decomposition,,,,,
-draft-012,zero_shot,,,,,
-draft-012,few_shot,,,,,
-draft-012,decomposition,,,,,
-draft-013,zero_shot,,,,,
-draft-013,few_shot,,,,,
-draft-013,decomposition,,,,,
-draft-014,zero_shot,,,,,
-draft-014,few_shot,,,,,
-draft-014,decomposition,,,,,
-draft-015,zero_shot,,,,,
-draft-015,few_shot,,,,,
-draft-015,decomposition,,,,,
-draft-016,zero_shot,,,,,
-draft-016,few_shot,,,,,
-draft-016,decomposition,,,,,
-draft-017,zero_shot,,,,,
-draft-017,few_shot,,,,,
-draft-017,decomposition,,,,,
-draft-018,zero_shot,,,,,
-draft-018,few_shot,,,,,
-draft-018,decomposition,,,,,
-draft-019,zero_shot,,,,,
-draft-019,few_shot,,,,,
-draft-019,decomposition,,,,,
-draft-020,zero_shot,,,,,
-draft-020,few_shot,,,,,
-draft-020,decomposition,,,,,
-draft-021,zero_shot,,,,,
-draft-021,few_shot,,,,,
-draft-021,decomposition,,,,,
-draft-022,zero_shot,,,,,
-draft-022,few_shot,,,,,
-draft-022,decomposition,,,,,
-draft-023,zero_shot,,,,,
-draft-023,few_shot,,,,,
-draft-023,decomposition,,,,,
-draft-024,zero_shot,,,,,
-draft-024,few_shot,,,,,
-draft-024,decomposition,,,,,
-draft-025,zero_shot,,,,,
-draft-025,few_shot,,,,,
-draft-025,decomposition,,,,,
-draft-026,zero_shot,,,,,
-draft-026,few_shot,,,,,
-draft-026,decomposition,,,,,
-draft-027,zero_shot,,,,,
-draft-027,few_shot,,,,,
-draft-027,decomposition,,,,,
-draft-028,zero_shot,,,,,
-draft-028,few_shot,,,,,
-draft-028,decomposition,,,,,
-draft-029,zero_shot,,,,,
-draft-029,few_shot,,,,,
-draft-029,decomposition,,,,,
-draft-030,zero_shot,,,,,
-draft-030,few_shot,,,,,
-draft-030,decomposition,,,,,
-draft-031,zero_shot,,,,,
-draft-031,few_shot,,,,,
-draft-031,decomposition,,,,,
-draft-032,zero_shot,,,,,
-draft-032,few_shot,,,,,
-draft-032,decomposition,,,,,
-draft-033,zero_shot,,,,,
-draft-033,few_shot,,,,,
-draft-033,decomposition,,,,,
-draft-034,zero_shot,,,,,
-draft-034,few_shot,,,,,
-draft-034,decomposition,,,,,
-draft-035,zero_shot,,,,,
-draft-035,few_shot,,,,,
-draft-035,decomposition,,,,,
-draft-036,zero_shot,,,,,
-draft-036,few_shot,,,,,
-draft-036,decomposition,,,,,
-draft-037,zero_shot,,,,,
-draft-037,few_shot,,,,,
-draft-037,decomposition,,,,,
-draft-038,zero_shot,,,,,
-draft-038,few_shot,,,,,
-draft-038,decomposition,,,,,
-draft-039,zero_shot,,,,,
-draft-039,few_shot,,,,,
-draft-039,decomposition,,,,,
-draft-040,zero_shot,,,,,
-draft-040,few_shot,,,,,
-draft-040,decomposition,,,,,
-draft-041,zero_shot,,,,,
-draft-041,few_shot,,,,,
-draft-041,decomposition,,,,,
-draft-042,zero_shot,,,,,
-draft-042,few_shot,,,,,
-draft-042,decomposition,,,,,
-draft-043,zero_shot,,,,,
-draft-043,few_shot,,,,,
-draft-043,decomposition,,,,,
-draft-044,zero_shot,,,,,
-draft-044,few_shot,,,,,
-draft-044,decomposition,,,,,
-draft-045,zero_shot,,,,,
-draft-045,few_shot,,,,,
-draft-045,decomposition,,,,,
-draft-046,zero_shot,,,,,
-draft-046,few_shot,,,,,
-draft-046,decomposition,,,,,
-draft-047,zero_shot,,,,,
-draft-047,few_shot,,,,,
-draft-047,decomposition,,,,,
-draft-048,zero_shot,,,,,
-draft-048,few_shot,,,,,
-draft-048,decomposition,,,,,
-draft-049,zero_shot,,,,,
-draft-049,few_shot,,,,,
-draft-049,decomposition,,,,,
-draft-050,zero_shot,,,,,
-draft-050,few_shot,,,,,
-draft-050,decomposition,,,,,
-draft-051,zero_shot,,,,,
-draft-051,few_shot,,,,,
-draft-051,decomposition,,,,,
-draft-052,zero_shot,,,,,
-draft-052,few_shot,,,,,
-draft-052,decomposition,,,,,
-draft-053,zero_shot,,,,,
-draft-053,few_shot,,,,,
-draft-053,decomposition,,,,,
-draft-054,zero_shot,,,,,
-draft-054,few_shot,,,,,
-draft-054,decomposition,,,,,
-draft-055,zero_shot,,,,,
-draft-055,few_shot,,,,,
-draft-055,decomposition,,,,,
-draft-056,zero_shot,,,,,
-draft-056,few_shot,,,,,
-draft-056,decomposition,,,,,
-draft-057,zero_shot,,,,,
-draft-057,few_shot,,,,,
-draft-057,decomposition,,,,,
-draft-058,zero_shot,,,,,
-draft-058,few_shot,,,,,
-draft-058,decomposition,,,,,
-draft-059,zero_shot,,,,,
-draft-059,few_shot,,,,,
-draft-059,decomposition,,,,,
-draft-060,zero_shot,,,,,
-draft-060,few_shot,,,,,
-draft-060,decomposition,,,,,
-draft-061,zero_shot,,,,,
-draft-061,few_shot,,,,,
-draft-061,decomposition,,,,,
-draft-062,zero_shot,,,,,
-draft-062,few_shot,,,,,
-draft-062,decomposition,,,,,
-draft-063,zero_shot,,,,,
-draft-063,few_shot,,,,,
-draft-063,decomposition,,,,,
-draft-064,zero_shot,,,,,
-draft-064,few_shot,,,,,
-draft-064,decomposition,,,,,
-draft-065,zero_shot,,,,,
-draft-065,few_shot,,,,,
-draft-065,decomposition,,,,,
-draft-066,zero_shot,,,,,
-draft-066,few_shot,,,,,
-draft-066,decomposition,,,,,
-draft-067,zero_shot,,,,,
-draft-067,few_shot,,,,,
-draft-067,decomposition,,,,,
-draft-068,zero_shot,,,,,
-draft-068,few_shot,,,,,
-draft-068,decomposition,,,,,
-draft-069,zero_shot,,,,,
-draft-069,few_shot,,,,,
-draft-069,decomposition,,,,,
-draft-070,zero_shot,,,,,
-draft-070,few_shot,,,,,
-draft-070,decomposition,,,,,
-draft-071,zero_shot,,,,,
-draft-071,few_shot,,,,,
-draft-071,decomposition,,,,,
-draft-072,zero_shot,,,,,
-draft-072,few_shot,,,,,
-draft-072,decomposition,,,,,
-draft-073,zero_shot,,,,,
-draft-073,few_shot,,,,,
-draft-073,decomposition,,,,,
-draft-074,zero_shot,,,,,
-draft-074,few_shot,,,,,
-draft-074,decomposition,,,,,
-draft-075,zero_shot,,,,,
-draft-075,few_shot,,,,,
-draft-075,decomposition,,,,,
-draft-076,zero_shot,,,,,
-draft-076,few_shot,,,,,
-draft-076,decomposition,,,,,
-draft-077,zero_shot,,,,,
-draft-077,few_shot,,,,,
-draft-077,decomposition,,,,,
-draft-078,zero_shot,,,,,
-draft-078,few_shot,,,,,
-draft-078,decomposition,,,,,
-draft-079,zero_shot,,,,,
-draft-079,few_shot,,,,,
-draft-079,decomposition,,,,,
-draft-080,zero_shot,,,,,
-draft-080,few_shot,,,,,
-draft-080,decomposition,,,,,
+﻿case_id,strategy,correct,refusal_correct,failure_category,reviewer,notes
+draft-001,zero_shot,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),"Mentions Gazette notification by Central Govt, but omits that different dates can apply to different provisions."
+draft-001,few_shot,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),Too vague; omits Central Govt notification and staggered commencement dates across provisions.
+draft-001,decomposition,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),"Says ""appropriate government"" instead of Central Government and omits Official Gazette and different dates per provision."
+draft-002,zero_shot,1,,,User-provided evaluation (reviewer not identified),Accurately states extent to the whole of India without inferring employer applicability.
+draft-002,few_shot,1,,,User-provided evaluation (reviewer not identified),Accurately states extent to the whole of India.
+draft-002,decomposition,1,,,User-provided evaluation (reviewer not identified),Accurately states extent to the entire territory of India.
+draft-003,zero_shot,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),Omits that different dates can apply to different provisions and adds unsupported claim about applying to all persons/employers.
+draft-003,few_shot,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),Too generic; omits Central Government notification and different dates by provision.
+draft-003,decomposition,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),Omits Central Government appointment and different commencement dates for different provisions.
+draft-004,zero_shot,1,,,User-provided evaluation (reviewer not identified),Accurately states it applies to the entire territory of India.
+draft-004,few_shot,1,,,User-provided evaluation (reviewer not identified),Accurately states it applies to the entire territory of India.
+draft-004,decomposition,1,,,User-provided evaluation (reviewer not identified),Accurately states it applies to the entire territory of India.
+draft-005,zero_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Incorrectly claims Section 1 does not address commencement.
+draft-005,few_shot,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),Too vague; omits Central Govt notification and different dates by provision.
+draft-005,decomposition,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Incorrectly states it comes into force on date of publication rather than date appointed by Central Govt notification.
+draft-006,zero_shot,0,,wrong_jurisdiction_or_entity,User-provided evaluation (reviewer not identified),Hallucinates Australia instead of India.
+draft-006,few_shot,0,,wrong_jurisdiction_or_entity,User-provided evaluation (reviewer not identified),Hallucinates Australia instead of India.
+draft-006,decomposition,1,,,User-provided evaluation (reviewer not identified),Accurately states extent to the entire territory of India.
+draft-007,zero_shot,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),Omits that the accounting year commences on 1 April.
+draft-007,few_shot,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),Fails to specify 1 April and wrongly doubts whether the Code defines the term.
+draft-007,decomposition,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),Omits the 1 April commencement date.
+draft-008,zero_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),"Hallucinates Minimum Wages Act, 1948 instead of Code on Wages, 2019."
+draft-008,few_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Hallucinates National Wages Code and year 1948.
+draft-008,decomposition,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),"Hallucinates Payment of Wages Act, 1936."
+draft-009,zero_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Falsely claims no law number is printed; misses No. 29 of 2019.
+draft-009,few_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Falsely claims no specific law number is associated with it.
+draft-009,decomposition,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Falsely claims no law number is printed on it.
+draft-010,zero_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Fails to mention amending/consolidating laws relating to wages and bonus.
+draft-010,few_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Omits amending/consolidating laws relating to wages and bonus.
+draft-010,decomposition,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Omits amending/consolidating laws relating to wages and bonus.
+draft-011,zero_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Hallucinates 2023 instead of 8 August 2019.
+draft-011,few_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Hallucinates 2023 instead of 8 August 2019.
+draft-011,decomposition,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Hallucinates 2023-06-20 instead of 8 August 2019.
+draft-012,zero_shot,0,,wrong_jurisdiction_or_entity,User-provided evaluation (reviewer not identified),"Hallucinates US Social Security Act, 1935 instead of Code on Social Security, 2020."
+draft-012,few_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Hallucinates enactment year 1935 instead of 2020.
+draft-012,decomposition,0,,wrong_jurisdiction_or_entity,User-provided evaluation (reviewer not identified),"Hallucinates Social Security Act, 1935."
+draft-013,zero_shot,0,,wrong_jurisdiction_or_entity,User-provided evaluation (reviewer not identified),Confuses the Act with a US Social Security card; misses No. 36 of 2020.
+draft-013,few_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Falsely claims it does not include a law number.
+draft-013,decomposition,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Falsely claims no law number is printed on it.
+draft-014,zero_shot,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),"Generic boilerplate; omits extending social security to employees/workers in organised, unorganised or other sectors."
+draft-014,few_shot,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),Generic boilerplate; misses specific aim of extending coverage to organised/unorganised/other sectors.
+draft-014,decomposition,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),"Generic boilerplate; omits extending social security to organised, unorganised or other sectors."
+draft-015,zero_shot,0,,wrong_jurisdiction_or_entity,User-provided evaluation (reviewer not identified),"Hallucinates January 1, 1935 instead of 28 September 2020."
+draft-015,few_shot,0,,cutoff_abstention,User-provided evaluation (reviewer not identified),Abstains instead of providing 28 September 2020.
+draft-015,decomposition,0,,wrong_jurisdiction_or_entity,User-provided evaluation (reviewer not identified),"Hallucinates April 5, 1935 instead of 28 September 2020."
+draft-016,zero_shot,1,,,User-provided evaluation (reviewer not identified),"Accurately identifies Industrial Relations Code, 2020."
+draft-016,few_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Hallucinates year 1957 instead of 2020.
+draft-016,decomposition,1,,,User-provided evaluation (reviewer not identified),"Accurately identifies Industrial Relations Code, 2020."
+draft-017,zero_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Falsely claims it has no single law number; misses No. 35 of 2020.
+draft-017,few_shot,0,,cutoff_abstention,User-provided evaluation (reviewer not identified),Abstains instead of providing No. 35 of 2020.
+draft-017,decomposition,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Falsely claims it has no single law number.
+draft-018,zero_shot,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),"Generic summary; omits trade unions, conditions of employment in industrial establishments/undertakings, and investigation/settlement of industrial disputes."
+draft-018,few_shot,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),Generic summary; misses trade unions and specific opening description topics.
+draft-018,decomposition,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),Omits trade unions and investigation and settlement of industrial disputes.
+draft-019,zero_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),"Hallucinates April 23, 1947 instead of 28 September 2020."
+draft-019,few_shot,0,,cutoff_abstention,User-provided evaluation (reviewer not identified),Abstains instead of providing 28 September 2020.
+draft-019,decomposition,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Hallucinates 1946 instead of 28 September 2020.
+draft-020,zero_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Conflates closure with temporary suspension/termination instead of permanent closing down of a place of employment or part thereof.
+draft-020,few_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Incorrectly defines closure as temporary suspension of work.
+draft-020,decomposition,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Incorrectly defines closure as suspension of work rather than permanent closing down.
+draft-021,zero_shot,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),Omits explicit reference to appointment under section 43.
+draft-021,few_shot,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),Generic description; omits appointment under section 43.
+draft-021,decomposition,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),Omits appointment under section 43.
+draft-022,zero_shot,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),Generic description; fails to state it is a proceeding held by a conciliation officer under the Code.
+draft-022,few_shot,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),Generic description; omits that it is held by a conciliation officer under the Code.
+draft-022,decomposition,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Says initiated by Labour Department rather than a proceeding held by a conciliation officer under the Code.
+draft-023,zero_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Confuses statutory commencement of Code provisions with strikes/lockouts.
+draft-023,few_shot,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),Omits Central Government appointment by Official Gazette notification.
+draft-023,decomposition,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Falsely claims the Code does not address different commencement dates.
+draft-024,zero_shot,0,,incomplete_or_vague,User-provided adjudication (reviewer not identified),Correctly answers No and explains individual provisions may take effect on different notified dates. [User-provided strict adjudication: score 0; previous supplied score 1. Reviewer not identified. Refer to baseline_adjudication.csv.]
+draft-024,few_shot,0,,incomplete_or_vague,User-provided adjudication (reviewer not identified),Correctly answers No and notes the first-page date does not establish effective dates of every provision. [User-provided strict adjudication: score 0; previous supplied score 1. Reviewer not identified. Refer to baseline_adjudication.csv.]
+draft-024,decomposition,0,,incomplete_or_vague,User-provided adjudication (reviewer not identified),"Correctly answers No. [Adjudication: marked correct, but expected conditions include notification and possible different dates; the answer is only No.] [User-provided strict adjudication: score 0; previous supplied score 1. Reviewer not identified. Refer to baseline_adjudication.csv.]"
+draft-025,zero_shot,1,,,User-provided evaluation (reviewer not identified),Accurately states accounting year begins on 1 April.
+draft-025,few_shot,1,,,User-provided evaluation (reviewer not identified),Accurately states accounting year begins on 1 April.
+draft-025,decomposition,1,,,User-provided evaluation (reviewer not identified),Accurately states accounting year begins on 1 April.
+draft-026,zero_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Falsely claims the Code does not define Advisory Board; misses Central/State Advisory Board under section 42.
+draft-026,few_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Falsely claims the Code does not define Advisory Board.
+draft-026,decomposition,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Falsely claims it does not define Advisory Board and hallucinates Wage Board.
+draft-027,zero_shot,0,,hallucinated_or_incorrect,User-provided adjudication (reviewer not identified),"Falsely claims Code on Wages has no specific definition of company (section 2(f) defines it via section 2(20) of Companies Act, 2013). [Adjudication: the cited company definition is section 2(e) on the supplied PDF page, not 2(f).] [User-provided strict adjudication: score 0; previous supplied score 0. Reviewer not identified. Refer to baseline_adjudication.csv.]"
+draft-027,few_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),"Fabricates definition (""entity engaged in industrial activity"") instead of section 2(20) of Companies Act, 2013."
+draft-027,decomposition,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Falsely claims Code on Wages does not define company.
+draft-028,zero_shot,0,,hallucinated_or_incorrect,User-provided adjudication (reviewer not identified),"Incorrectly states the definition does not explicitly include sub-contractors (section 2(g) expressly includes sub-contractor). [Adjudication: contractor is defined in section 2(f) on the supplied PDF page, not 2(g).] [User-provided strict adjudication: score 0; previous supplied score 0. Reviewer not identified. Refer to baseline_adjudication.csv.]"
+draft-028,few_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Incorrectly states it does not include sub-contractors.
+draft-028,decomposition,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Incorrectly answers No.
+draft-029,zero_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Fabricates explanation; fails to state it excludes a company and a co-operative society.
+draft-029,few_shot,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),Generic boilerplate; fails to mention company and co-operative society.
+draft-029,decomposition,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Confuses corporation definition with informal sector workers.
+draft-030,zero_shot,0,,json_schema_error,User-provided evaluation (reviewer not identified),json_valid is False (boolean uncertainty) and omits that minimum wage is the wage fixed under section 6.
+draft-030,few_shot,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),Generic definition; omits that it means the wage fixed under section 6.
+draft-030,decomposition,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),Generic definition; omits that it means the wage fixed under section 6.
+draft-031,zero_shot,0,,hallucinated_or_incorrect,User-provided adjudication (reviewer not identified),"Falsely claims notification is not defined (section 2(r) defines it as published in Gazette of India or Official Gazette of a State). [Adjudication: notification is defined in section 2(t) on the supplied PDF page, not 2(r).] [User-provided strict adjudication: score 0; previous supplied score 0. Reviewer not identified. Refer to baseline_adjudication.csv.]"
+draft-031,few_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Hallucinates employer compliance communication instead of Gazette publication.
+draft-031,decomposition,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Hallucinates employer compliance communication instead of Gazette publication.
+draft-032,zero_shot,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),"Generic dictionary definition; omits ""by rules made by the appropriate Government""."
+draft-032,few_shot,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),"Generic wording; omits ""by rules made by the appropriate Government""."
+draft-032,decomposition,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),"Generic wording; omits ""by rules made by the appropriate Government""."
+draft-033,zero_shot,0,,json_schema_error,User-provided evaluation (reviewer not identified),json_valid is False and answers No instead of Yes.
+draft-033,few_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Incorrectly states it does not explicitly include Union territories.
+draft-033,decomposition,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Incorrectly answers No.
+draft-034,zero_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Hallucinates house rent allowance instead of retaining allowance.
+draft-034,few_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Hallucinates house rent allowance instead of retaining allowance.
+draft-034,decomposition,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Hallucinates house rent allowance instead of retaining allowance.
+draft-035,zero_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),"Falsely claims Code on Social Security does not use or define ""aggregator"" (defined in section 2(2))."
+draft-035,few_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),"Fabricates definition (""person who collects and consolidates contributions"") instead of digital intermediary/marketplace."
+draft-035,decomposition,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),"Falsely claims it does not define ""aggregator""."
+draft-036,zero_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Incorrectly states 30 days instead of not less than two months' notice.
+draft-036,few_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Omits two months' notice and hallucinates notice to Parliament of amendments.
+draft-036,decomposition,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Incorrectly states 30 days instead of not less than two months' notice.
+draft-037,zero_shot,0,,json_schema_error,User-provided evaluation (reviewer not identified),json_valid is False and falsely claims the Code does not address falling below the threshold.
+draft-037,few_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Falsely claims the Code does not address falling below the First Schedule threshold.
+draft-037,decomposition,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Falsely claims the Code does not address falling below the First Schedule threshold.
+draft-038,zero_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Falsely claims the Code does not list audiovisual production types (section 2(4) lists them).
+draft-038,few_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Falsely claims the Code does not list audiovisual production types.
+draft-038,decomposition,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Falsely claims the Code does not list audiovisual production types.
+draft-039,zero_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),"Falsely claims ""authorised officer"" is not defined (defined in section 2(5))."
+draft-039,few_shot,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),Generic guess; omits officer of the Central Board or Corporation notified by Central Government.
+draft-039,decomposition,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),Omits that the officer belongs to the Central Board or Corporation.
+draft-040,zero_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),"Confuses Industrial Relations Code, 2020 with 1947 and claims term is not used."
+draft-040,few_shot,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),Generic guess; omits appointment by appropriate Government via Official Gazette notification.
+draft-040,decomposition,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),Generic guess; omits appointment by appropriate Government via Official Gazette notification.
+draft-041,zero_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),"Hallucinates ""certification of industrial disputes"" instead of functions under Chapter IV."
+draft-041,few_shot,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),Generic guess; omits appointment by notification by appropriate Government under Chapter IV.
+draft-041,decomposition,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Hallucinates investigating industrial disputes instead of functions under Chapter IV.
+draft-042,zero_shot,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),Generic description; omits declaration by a Central Act that control by the Union is expedient in the public interest.
+draft-042,few_shot,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),Circular generic answer; misses Union control declared by a Central Act in public interest.
+draft-042,decomposition,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),Generic description; misses Union control declared by a Central Act in public interest.
+draft-043,zero_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Incorrectly answers No (long title expressly mentions wages and bonus).
+draft-043,few_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Incorrectly states it does not mention bonus.
+draft-043,decomposition,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Incorrectly answers No.
+draft-044,zero_shot,0,,incomplete_or_vague,User-provided adjudication (reviewer not identified),Correctly answers Yes and notes applicability of specified chapters is described by reference to a schedule. [User-provided strict adjudication: score 0; previous supplied score 1. Reviewer not identified. Refer to baseline_adjudication.csv.]
+draft-044,few_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Incorrectly states it does not describe applicability by reference to a schedule.
+draft-044,decomposition,0,,incomplete_or_vague,User-provided adjudication (reviewer not identified),Correctly answers Yes. [User-provided strict adjudication: score 0; previous supplied score 1. Reviewer not identified. Refer to baseline_adjudication.csv.]
+draft-045,zero_shot,1,,,User-provided evaluation (reviewer not identified),Correctly answers No and notes non-digital/physical submissions remain allowed.
+draft-045,few_shot,0,,incomplete_or_vague,User-provided adjudication (reviewer not identified),"Correctly answers No, not every procedure must be digital. [User-provided strict adjudication: score 0; previous supplied score 1. Reviewer not identified. Refer to baseline_adjudication.csv.]"
+draft-045,decomposition,0,,incomplete_or_vague,User-provided adjudication (reviewer not identified),Correctly answers No. [User-provided strict adjudication: score 0; previous supplied score 1. Reviewer not identified. Refer to baseline_adjudication.csv.]
+draft-046,zero_shot,0,,cutoff_abstention,User-provided evaluation (reviewer not identified),Abstains due to July 2024 cutoff instead of answering from Jan 2026 FAQ.
+draft-046,few_shot,0,,cutoff_abstention,User-provided evaluation (reviewer not identified),Abstains claiming document was not provided.
+draft-046,decomposition,0,,cutoff_abstention,User-provided evaluation (reviewer not identified),Abstains due to July 2024 cutoff.
+draft-047,zero_shot,0,,cutoff_abstention,User-provided evaluation (reviewer not identified),Abstains due to July 2024 cutoff.
+draft-047,few_shot,0,,wrong_jurisdiction_or_entity,User-provided evaluation (reviewer not identified),Hallucinates US Social Security Administration rulemaking.
+draft-047,decomposition,0,,wrong_jurisdiction_or_entity,User-provided evaluation (reviewer not identified),Hallucinates legislative action by US Congress.
+draft-048,zero_shot,0,,cutoff_abstention,User-provided evaluation (reviewer not identified),Abstains claiming Jan 2026 FAQ is not publicly available.
+draft-048,few_shot,0,,cutoff_abstention,User-provided evaluation (reviewer not identified),Abstains claiming document was not supplied.
+draft-048,decomposition,0,,cutoff_abstention,User-provided evaluation (reviewer not identified),Claims FAQ does not address Social Security Fund accounts.
+draft-049,zero_shot,0,,wrong_jurisdiction_or_entity,User-provided evaluation (reviewer not identified),Cites US SSA guidelines and falsely claims the Jan 2026 FAQ does not address plain paper claims.
+draft-049,few_shot,0,,cutoff_abstention,User-provided evaluation (reviewer not identified),Claims FAQ does not address plain paper claims.
+draft-049,decomposition,0,,cutoff_abstention,User-provided evaluation (reviewer not identified),Falsely claims FAQ does not mention rejecting maternity claims on plain paper.
+draft-050,zero_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),"Hallucinates midwife/hospital instead of ASHAs, auxiliary nurse midwives, local authorities, and prescribed village/municipal officials."
+draft-050,few_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),"Hallucinates ""licensed midwife"" instead of ASHAs, ANMs, and local/village/municipal officials."
+draft-050,decomposition,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),"Hallucinates ""midwife"" instead of ASHAs, ANMs, and local/village/municipal officials."
+draft-051,zero_shot,0,,hallucinated_or_incorrect,User-provided adjudication (reviewer not identified),"Correctly answers No (though uncertainty note contradicts existence of doc, main answer matches expected condition). [Adjudication: marked correct, but expected conditions include shared facilities and allowance; response omits them and its uncertainty states the document does not exist.] [User-provided strict adjudication: score 0; previous supplied score 1. Reviewer not identified. Refer to baseline_adjudication.csv.]"
+draft-051,few_shot,0,,incomplete_or_vague,User-provided adjudication (reviewer not identified),"Correctly answers No. [Adjudication: marked correct, but expected conditions include shared facilities and allowance, which this answer omits.] [User-provided strict adjudication: score 0; previous supplied score 1. Reviewer not identified. Refer to baseline_adjudication.csv.]"
+draft-051,decomposition,0,,incomplete_or_vague,User-provided adjudication (reviewer not identified),"Correctly answers No. [Adjudication: marked correct, but expected conditions include shared facilities and allowance, which this answer omits.] [User-provided strict adjudication: score 0; previous supplied score 1. Reviewer not identified. Refer to baseline_adjudication.csv.]"
+draft-052,zero_shot,0,,cutoff_abstention,User-provided evaluation (reviewer not identified),Abstains citing US SSA and lack of access to Jan 2026 FAQ.
+draft-052,few_shot,0,,cutoff_abstention,User-provided evaluation (reviewer not identified),Abstains claiming document was not provided.
+draft-052,decomposition,0,,cutoff_abstention,User-provided evaluation (reviewer not identified),Falsely claims FAQ does not address delay in filing gratuity application.
+draft-053,zero_shot,0,,wrong_jurisdiction_or_entity,User-provided evaluation (reviewer not identified),"Refers to US ""federal minimum wage"" and claims FAQ gives no info."
+draft-053,few_shot,0,,incomplete_or_vague,User-provided adjudication (reviewer not identified),"States state's higher minimum wage applies (minor ""federal"" phrasing, but captures core rule). [User-provided strict adjudication: score 0; previous supplied score 1. Reviewer not identified. Refer to baseline_adjudication.csv.]"
+draft-053,decomposition,0,,incomplete_or_vague,User-provided adjudication (reviewer not identified),States employers must comply with the higher state minimum wage. [User-provided strict adjudication: score 0; previous supplied score 1. Reviewer not identified. Refer to baseline_adjudication.csv.]
+draft-054,zero_shot,0,,cutoff_abstention,User-provided evaluation (reviewer not identified),Abstains instead of stating 50% deduction limit.
+draft-054,few_shot,0,,cutoff_abstention,User-provided evaluation (reviewer not identified),Claims FAQ provides no specific limit; misses 50% limit.
+draft-054,decomposition,0,,cutoff_abstention,User-provided evaluation (reviewer not identified),Claims FAQ provides no specific limit; misses 50% limit.
+draft-055,zero_shot,0,,json_schema_error,User-provided evaluation (reviewer not identified),json_valid is False and abstains due to July 2024 cutoff.
+draft-055,few_shot,0,,wrong_jurisdiction_or_entity,User-provided evaluation (reviewer not identified),"Refers to ""federal, state, or local governments"" instead of Central and State Governments."
+draft-055,decomposition,0,,wrong_jurisdiction_or_entity,User-provided evaluation (reviewer not identified),"Refers to ""federal, state, or local governments"" instead of Central and State Governments."
+draft-056,zero_shot,0,,cutoff_abstention,User-provided evaluation (reviewer not identified),Falsely claims FAQ provides no info beyond enforcement.
+draft-056,few_shot,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),Generic guess; omits raising awareness of rights and guiding compliance.
+draft-056,decomposition,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),Generic guess; omits raising awareness of rights.
+draft-057,zero_shot,0,,wrong_jurisdiction_or_entity,User-provided evaluation (reviewer not identified),Hallucinates US FLSA rate (1.5x over 40 hours) instead of at least twice (2x) the normal wage rate.
+draft-057,few_shot,0,,wrong_jurisdiction_or_entity,User-provided evaluation (reviewer not identified),Hallucinates 1.5 times instead of at least twice (2x).
+draft-057,decomposition,0,,wrong_jurisdiction_or_entity,User-provided evaluation (reviewer not identified),Hallucinates 1.5x over 40 hours instead of at least twice (2x).
+draft-058,zero_shot,0,,incomplete_or_vague,User-provided adjudication (reviewer not identified),Accurately states the Labour Code takes precedence over the FAQ in case of conflict. [User-provided strict adjudication: score 0; previous supplied score 1. Reviewer not identified. Refer to baseline_adjudication.csv.]
+draft-058,few_shot,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),Generic boilerplate; fails to state that the relevant Labour Code prevails.
+draft-058,decomposition,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),"Incorrectly states FAQ ""is not intended to conflict"" rather than stating the Labour Code prevails."
+draft-059,zero_shot,0,,cutoff_abstention,User-provided evaluation (reviewer not identified),Abstains claiming Dec 2025 FAQ is unavailable.
+draft-059,few_shot,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),"Says retained, but omits Chapter III of the Industrial Relations Code."
+draft-059,decomposition,0,,cutoff_abstention,User-provided evaluation (reviewer not identified),Claims document does not exist.
+draft-060,zero_shot,0,,json_schema_error,User-provided evaluation (reviewer not identified),json_valid is False and falsely claims the document does not exist.
+draft-060,few_shot,1,,,User-provided evaluation (reviewer not identified),Correctly identifies 14 days' strike notice period.
+draft-060,decomposition,1,,,User-provided evaluation (reviewer not identified),Correctly identifies 14 days' strike notice period.
+draft-061,zero_shot,0,,cutoff_abstention,User-provided evaluation (reviewer not identified),Claims Dec 2025 FAQ does not exist.
+draft-061,few_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Falsely claims no bargaining structures are mentioned.
+draft-061,decomposition,0,,cutoff_abstention,User-provided evaluation (reviewer not identified),Claims Dec 2025 FAQ does not exist.
+draft-062,zero_shot,0,,json_schema_error,User-provided evaluation (reviewer not identified),json_valid is False and abstains claiming FAQ is unpublished.
+draft-062,few_shot,0,,cutoff_abstention,User-provided evaluation (reviewer not identified),Abstains claiming document was not provided.
+draft-062,decomposition,0,,cutoff_abstention,User-provided evaluation (reviewer not identified),Falsely claims FAQ gives no info on conciliation.
+draft-063,zero_shot,0,,cutoff_abstention,User-provided evaluation (reviewer not identified),Abstains claiming tribunal structure is unavailable.
+draft-063,few_shot,0,,cutoff_abstention,User-provided evaluation (reviewer not identified),Abstains claiming document was not supplied.
+draft-063,decomposition,0,,cutoff_abstention,User-provided evaluation (reviewer not identified),Abstains claiming tribunal structure is unavailable.
+draft-064,zero_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Falsely claims FAQ does not mention forums for participation in management.
+draft-064,few_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Hallucinates generic forums instead of Works Committees and Grievance Redressal Committees.
+draft-064,decomposition,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Falsely claims FAQ does not mention specific forums.
+draft-065,zero_shot,0,,cutoff_abstention,User-provided evaluation (reviewer not identified),Falsely claims FAQ provides no info on minor ports.
+draft-065,few_shot,0,,wrong_jurisdiction_or_entity,User-provided evaluation (reviewer not identified),"Hallucinates ""local government"" instead of State Government."
+draft-065,decomposition,0,,wrong_jurisdiction_or_entity,User-provided evaluation (reviewer not identified),"Hallucinates ""local government"" instead of State Government."
+draft-066,zero_shot,0,,json_schema_error,User-provided evaluation (reviewer not identified),json_valid is False and claims March 2026 FAQ does not exist.
+draft-066,few_shot,0,,cutoff_abstention,User-provided evaluation (reviewer not identified),Abstains claiming document was not provided.
+draft-066,decomposition,0,,cutoff_abstention,User-provided evaluation (reviewer not identified),Falsely claims FAQ provides no info on amending central OSH standards.
+draft-067,zero_shot,0,,json_schema_error,User-provided evaluation (reviewer not identified),json_valid is False and abstains claiming no source provided.
+draft-067,few_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Falsely claims FAQ does not mention complaint-based inspections.
+draft-067,decomposition,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Incorrectly answers No.
+draft-068,zero_shot,0,,json_schema_error,User-provided evaluation (reviewer not identified),json_valid is False and claims March 2026 FAQ is not recognized.
+draft-068,few_shot,0,,cutoff_abstention,User-provided evaluation (reviewer not identified),Abstains claiming document was not supplied.
+draft-068,decomposition,0,,cutoff_abstention,User-provided evaluation (reviewer not identified),Falsely claims FAQ provides no info on contract labour welfare facilities.
+draft-069,zero_shot,0,,json_schema_error,User-provided evaluation (reviewer not identified),json_valid is False and claims no limitation on legal status; misses that the Labour Code prevails on variance.
+draft-069,few_shot,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),"Notes it is informational/non-binding, but omits that the relevant Labour Code prevails if there is a variance."
+draft-069,decomposition,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Falsely claims FAQ places no limitation on its legal status.
+draft-070,zero_shot,0,,wrong_jurisdiction_or_entity,User-provided evaluation (reviewer not identified),Refers to US OSHA and claims Dec 2025 FAQ does not exist.
+draft-070,few_shot,0,,cutoff_abstention,User-provided evaluation (reviewer not identified),Abstains claiming document was not made available.
+draft-070,decomposition,0,,cutoff_abstention,User-provided evaluation (reviewer not identified),Falsely claims FAQ provides no info on state rule-making.
+draft-071,zero_shot,0,,cutoff_abstention,User-provided evaluation (reviewer not identified),Falsely claims FAQ provides no info on inter-state migrant workers.
+draft-071,few_shot,0,,cutoff_abstention,User-provided evaluation (reviewer not identified),Falsely claims FAQ provides no info on inter-state migrant workers.
+draft-071,decomposition,0,,cutoff_abstention,User-provided evaluation (reviewer not identified),Falsely claims FAQ does not mention specific support.
+draft-072,zero_shot,0,,json_schema_error,User-provided evaluation (reviewer not identified),json_valid is False and claims document is not recognized.
+draft-072,few_shot,0,,cutoff_abstention,User-provided evaluation (reviewer not identified),Abstains claiming document was not supplied.
+draft-072,decomposition,0,,cutoff_abstention,User-provided evaluation (reviewer not identified),Falsely claims FAQ provides no info on annual performance-based incentives.
+draft-073,zero_shot,0,,json_schema_error,User-provided evaluation (reviewer not identified),json_valid is False and claims FAQ provides no specific info.
+draft-073,few_shot,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),Generic distinction; omits that minimum wages are fixed by the appropriate government whereas wages are fixed under terms of employment.
+draft-073,decomposition,0,,cutoff_abstention,User-provided evaluation (reviewer not identified),Falsely claims FAQ provides no specific info on the difference.
+draft-074,zero_shot,1,,,User-provided evaluation (reviewer not identified),"Correctly identifies Ministry of Labour and Employment, Government of India."
+draft-074,few_shot,1,,,User-provided evaluation (reviewer not identified),"Correctly identifies Ministry of Labour and Employment, Government of India."
+draft-074,decomposition,1,,,User-provided evaluation (reviewer not identified),"Correctly identifies Ministry of Labour and Employment, Government of India."
+draft-075,zero_shot,0,,wrong_jurisdiction_or_entity,User-provided evaluation (reviewer not identified),Hallucinates US Social Security website and falsely claims physical submissions are no longer accepted.
+draft-075,few_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Falsely claims physical submissions are no longer accepted.
+draft-075,decomposition,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Falsely claims physical submissions are no longer accepted.
+draft-076,zero_shot,0,,json_schema_error,User-provided evaluation (reviewer not identified),json_valid is False and abstains citing July 2024 cutoff.
+draft-076,few_shot,0,,cutoff_abstention,User-provided evaluation (reviewer not identified),Falsely claims FAQ provides no info on registration status.
+draft-076,decomposition,0,,cutoff_abstention,User-provided evaluation (reviewer not identified),Falsely claims FAQ provides no info on registration status.
+draft-077,zero_shot,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),"Says Code should be consulted, but fails to state that the relevant Labour Code prevails in case of variance."
+draft-077,few_shot,0,,incomplete_or_vague,User-provided evaluation (reviewer not identified),"Notes FAQs may differ, but omits that the relevant Labour Code prevails in case of variance."
+draft-077,decomposition,1,,,User-provided evaluation (reviewer not identified),"Accurately states that if FAQs differ from the Code on Wages, the Code takes precedence."
+draft-078,zero_shot,0,,json_schema_error,User-provided evaluation (reviewer not identified),json_valid is False and abstains claiming document is unavailable.
+draft-078,few_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),"Hallucinates ""employer organizations, and workplace committees"" instead of a negotiating union or council."
+draft-078,decomposition,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),"Hallucinates fictional bodies (""National Industrial Relations Commission"", etc.) instead of a negotiating union or council."
+draft-079,zero_shot,0,,wrong_jurisdiction_or_entity,User-provided evaluation (reviewer not identified),"Hallucinates ""federal government"" instead of State Government."
+draft-079,few_shot,0,,wrong_jurisdiction_or_entity,User-provided evaluation (reviewer not identified),"Hallucinates ""federal government"" instead of State Government."
+draft-079,decomposition,0,,wrong_jurisdiction_or_entity,User-provided evaluation (reviewer not identified),"Hallucinates ""federal government"" instead of State Government."
+draft-080,zero_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Falsely states the publication does not mention a helpline.
+draft-080,few_shot,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Falsely states the publication does not mention a helpline.
+draft-080,decomposition,0,,hallucinated_or_incorrect,User-provided evaluation (reviewer not identified),Incorrectly answers No.

@@ -9,7 +9,7 @@ from hr_navigator.ingestion.audit import language  # noqa: E402
 from hr_navigator.ingestion.pages import write_jsonl  # noqa: E402
 
 review_path = Path('reports/sparse_ocr_review_readable.csv')
-rows = list(csv.DictReader(review_path.open(encoding='utf-8', newline='')))
+rows = list(csv.DictReader(review_path.open(encoding='utf-8-sig', newline='')))
 ids = [row['page_id'] for row in rows]
 if len(ids) != len(set(ids)):
     raise ValueError('Duplicate OCR review page ID')
@@ -31,5 +31,6 @@ for page_id, row in approved.items():
     page['language_heuristic'] = language(page['text'])
     page['extraction_status'] = 'ocr_reviewed'
     page['ocr_reviewer'] = row['reviewer'].strip()
+    page['source_warnings'] = ['OCR transcription: verify against the original PDF page.', row.get('notes', '')]
 write_jsonl('data/processed/pages_reviewed_ocr.jsonl', pages)
 print(f'Wrote {len(pages)} pages with {len(approved)} reviewed OCR replacements; indexes not changed.')

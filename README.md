@@ -5,12 +5,12 @@ An IIT Kharagpur Track B capstone prototype for finding evidence in a collection
 ## Current progress
 
 - **Corpus audit:** Imported 126 source PDFs (1,767 pages), matched them to the supplied manifest, and recorded source IDs, titles, URLs and extraction results. Twenty-five pages had sparse extracted text. Source dates, legal applicability and redistribution rights still require verification.
-- **Evaluation and baselines:** Froze 80 document-only questions in `evaluation/gold_v1.jsonl` and saved 240 closed-book responses across three prompting strategies. Human scoring and case-level review remain outstanding; no baseline accuracy or improvement is claimed.
+- **Evaluation and baselines:** Froze 80 document-only questions in `evaluation/gold_v1.jsonl` and saved 240 closed-book responses across three prompting strategies. A user-provided evaluation covers 240 rows; scoring discrepancies and independent review remain unresolved, so no verified baseline accuracy or improvement is claimed.
 - **Retrieval prototype:** Extracts page-contained chunks at two sizes, searches with BM25, dense FAISS or hybrid ranking, and returns source and page metadata. Dense indexing currently covers pages heuristically classified as Latin script; lexical search covers extractable chunks across scripts.
-- **Review work:** Added queues for sparse-page OCR, source dates and possible versions, plus a template for independent retrieval relevance review. OCR candidates require human approval and are not automatically indexed. See `docs/phase_2_review_guide.md`.
+- **Review work:** Added queues for sparse-page OCR, source dates and possible versions, plus a template for independent retrieval relevance review. Eleven user-accepted OCR pages are included in a separate versioned search corpus; OCR transcription and source warnings remain visible. See `docs/phase_2_review_guide.md`.
 - **Grounded answers:** A prototype checks source identity and exact quotations, but a live test produced an incorrect answer with genuine, irrelevant quotes. It therefore escalates to human review rather than presenting an unverified answer.
 
-No agent graph, production service or real HR integration has been implemented. Faculty confirmation of how pages count toward the document requirement is pending. See `reports/phase_2_summary.md` and `reports/retrieval_v1_report.md` for results and limitations; earlier phase reports describe the project at the time they were written.
+No agent graph, production service or real HR integration has been implemented. The user reports faculty acceptance of page counting; written evidence and its exact scope remain to be attached. See `reports/phase_2_summary.md` and `reports/retrieval_v1_report.md` for results and limitations; earlier phase reports describe the project at the time they were written.
 
 ## Project layout
 
@@ -57,7 +57,7 @@ BM25 search runs locally after the pages and chunks are built:
 python scripts/search_corpus.py 'Does State include a Union territory?' --mode bm25 --code 'Code on Wages'
 ```
 
-Results include the original title, PDF page number, source URL and matching text. Build the local embedding cache to use dense or hybrid search. Set `EMBEDDING_BASE_URL` to the authorized endpoint and supply the course-provided key and CA certificate locally:
+The search commands default to `data/processed/accepted_ocr/` and `data/indexes/accepted_ocr.sqlite`; they require the accepted-OCR build below. Results include the original title, PDF page, URL, text and source warnings. To search the original non-OCR corpus, pass `--data-dir data/processed --cache-file data/indexes/embeddings.sqlite`. Build the local embedding cache to use dense or hybrid search. Set `EMBEDDING_BASE_URL` to the authorized endpoint and supply the course-provided key and CA certificate locally:
 
 ```bash
 python scripts/build_embeddings.py \
@@ -66,10 +66,35 @@ python scripts/build_embeddings.py \
   --base-url "$EMBEDDING_BASE_URL" --model bge-small-en-v1.5
 ```
 
-Use `python scripts/search_corpus.py --help` for dense and hybrid options. The cache resumes without re-embedding saved text. The included BGE-small tokenizer is from the public model repository; check its redistribution terms and those of the corpus before sharing. Language detection is heuristic and mixed-language coverage is not validated. Date filters fail closed until source dates are verified.
+To build the accepted-OCR search corpus from the existing approved review sheet and caches, after `build_pages.py` and `build_embeddings.py`, run:
+
+```bash
+python scripts/apply_reviewed_ocr.py
+python scripts/build_ocr_candidate.py
+python scripts/embed_ocr_candidate.py --key-file VM02_Embeddings_Access/shared-embedding-key.txt \
+  --ca-file VM02_Embeddings_Access/vm02-ca.crt \
+  --base-url "$EMBEDDING_BASE_URL" --model bge-small-en-v1.5
+python scripts/build_accepted_ocr_index.py
+```
+
+The accepted cache is regenerated from the original cache and isolated OCR cache; existing source files and original indexes remain available. `scripts/review_evidence.py` returns excerpts for review, not a generated legal answer. Use `python scripts/search_corpus.py --help` for dense and hybrid options. The cache resumes without re-embedding saved text. The included BGE-small tokenizer is from the public model repository; check its redistribution terms and those of the corpus before sharing. Language detection is heuristic and mixed-language coverage is not validated. Date filters fail closed until source dates are verified.
 
 ## Review and next steps
 
-Review sparse pages and proposed OCR against the original PDFs, verify source dates and version relationships, and independently annotate retrieval relevance using `docs/phase_2_review_guide.md`. The optional `scripts/apply_reviewed_ocr.py` creates a separate page file from explicitly approved rows; it does not update indexes. Complete human scoring of the saved baseline responses before claiming improvement or beginning agent development. Reliable answer support checks, adversarial evaluation, legal applicability and faculty clarification remain open.
+Review sparse pages and proposed OCR against the original PDFs, verify source dates and version relationships, and independently annotate retrieval relevance using `docs/phase_2_review_guide.md`. The reviewed-OCR workflow preserves original page text and source conflict warnings in a separate indexed version. Adjudicate the supplied baseline scores and complete independent review before claiming improvement or beginning agent development. Reliable answer support checks, adversarial evaluation, legal applicability and faculty clarification remain open.
 
 For API-backed experiments, use `.env.example` as a template for local environment variables; the application does not automatically load `.env`. Keep keys and certificates out of the repository, use the appropriate separate chat and embedding credentials, and retain TLS verification. Confirm endpoint assignment and operational limits before live use. Docker Compose provides an audit skeleton, not a running application.
+
+### Isolated OCR-candidate evidence test
+
+A separate candidate corpus includes 11 OCR draft pages for testing only. It does not change the normal index and is not approved for legal answers. To see source passages without generating an answer:
+
+```bash
+.venv/bin/python scripts/review_evidence.py \
+  'annexure appropriate government rules nomination fresh nomination' \
+  --code 'Code on Social Security' --include-ocr-candidates
+```
+
+The output labels unverified OCR and source conflicts. A passage matching a question is not proof of legal applicability or answer entailment. Run `scripts/build_ocr_candidate.py` to rebuild the isolated candidate files and `scripts/smoke_ocr_candidate.py` for the internal, non-independent integration check. See `reports/ocr_candidate_smoke.json` for results. The separate candidate embedding cache is in `data/indexes/ocr_candidate.sqlite`.
+
+The experimental `scripts/ask_documents.py --draft-for-review` mode asks the permitted chat model for a cited draft and an additional model support check. Even a passing draft requires human review. This development workflow has demonstrated prompt-injection and citation-validation failures; the guards are incomplete. See `reports/grounding_dev_report.md`. The default continues to fail closed.

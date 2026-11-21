@@ -1,0 +1,83 @@
+{
+  "status": "internal integration smoke test; queries selected with knowledge of pages, not a benchmark",
+  "results": [
+    {
+      "expected_source_pdf_id": "d7d9516acb49ecfa04cf111de95fd600689e5859fb20020c36e2c06cb6e22cb5",
+      "expected_pdf_page": 3,
+      "query": "annexure appropriate government rules nomination fresh nomination",
+      "original": {
+        "rank_at_10": null,
+        "elapsed_seconds": 0.102
+      },
+      "ocr_candidate": {
+        "rank_at_10": 1,
+        "elapsed_seconds": 0.103
+      }
+    },
+    {
+      "expected_source_pdf_id": "d7d9516acb49ecfa04cf111de95fd600689e5859fb20020c36e2c06cb6e22cb5",
+      "expected_pdf_page": 5,
+      "query": "central government rules registration establishment cancellation closure",
+      "original": {
+        "rank_at_10": null,
+        "elapsed_seconds": 0.101
+      },
+      "ocr_candidate": {
+        "rank_at_10": 2,
+        "elapsed_seconds": 0.101
+      }
+    },
+    {
+      "expected_source_pdf_id": "d7d9516acb49ecfa04cf111de95fd600689e5859fb20020c36e2c06cb6e22cb5",
+      "expected_pdf_page": 6,
+      "query": "NSSB term of office committee transaction of business",
+      "original": {
+        "rank_at_10": null,
+        "elapsed_seconds": 0.102
+      },
+      "ocr_candidate": {
+        "rank_at_10": 1,
+        "elapsed_seconds": 0.101
+      }
+    },
+    {
+      "expected_source_pdf_id": "d7d9516acb49ecfa04cf111de95fd600689e5859fb20020c36e2c06cb6e22cb5",
+      "expected_pdf_page": 8,
+      "query": "Gig Platform Workers smooth functioning social security schemes",
+      "original": {
+        "rank_at_10": null,
+        "elapsed_seconds": 0.098
+      },
+      "ocr_candidate": {
+        "rank_at_10": 1,
+        "elapsed_seconds": 0.098
+      }
+    },
+    {
+      "expected_source_pdf_id": "d7d9516acb49ecfa04cf111de95fd600689e5859fb20020c36e2c06cb6e22cb5",
+      "expected_pdf_page": 9,
+      "query": "arrangements other countries transfer money paid compensation",
+      "original": {
+        "rank_at_10": null,
+        "elapsed_seconds": 0.1
+      },
+      "ocr_candidate": {
+        "rank_at_10": 2,
+        "elapsed_seconds": 0.102
+      }
+    },
+    {
+      "expected_source_pdf_id": "d7d9516acb49ecfa04cf111de95fd600689e5859fb20020c36e2c06cb6e22cb5",
+      "expected_pdf_page": 11,
+      "query": "central government schemes gig workers life disability accident insurance",
+      "original": {
+        "rank_at_10": null,
+        "elapsed_seconds": 0.099
+      },
+      "ocr_candidate": {
+        "rank_at_10": 1,
+        "elapsed_seconds": 0.103
+      }
+    }
+  ]
+}

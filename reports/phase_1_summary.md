@@ -9,3 +9,11 @@ Remaining before claiming the Phase 1 evaluation gate: human case-level answer a
 ## User-approved deferral — 2026-11-18
 
 The user requested that Phase 2 start while human scoring of the saved baseline responses remains outstanding. This defers the Phase 1 evaluation gate; it does not establish baseline accuracy or a measured improvement. Preserve the frozen questions and saved responses. Reviewers should score the baseline independently before viewing Phase 2 answers, and complete scoring before claiming improvements or starting agent development.
+
+## User-provided scoring and adjudication — 2026-11-20
+
+All 240 row-level baseline scores were supplied and imported; the row table totals 32 passes, whereas the supplied narrative stated 24. This is provisional user-provided evaluation, not an independently verified accuracy figure. `reports/baseline_adjudication.csv` contains 16 items needing review for scoring completeness or clause references; original supplied scores remain unchanged. The scenario set in `evaluation/scenarios_v0.1.jsonl` is not frozen. Complete review before claiming improvement or beginning agent development.
+
+## User-provided adjudication update — 2026-11-20
+
+All 16 flagged baseline items received user-provided strict-rubric decisions; 13 scores changed from 1 to 0, and three existing 0 scores were retained. Current sheet totals are 6/80 zero-shot, 5/80 few-shot and 8/80 decomposition (19/240 overall). These are user-provided, not independently verified human accuracy scores. Historical scores remain in row notes. See `baseline_user_review_import.md` and `baseline_adjudication.csv`.

@@ -1,0 +1,82 @@
+{
+  "scope": "hand-designed additional development examples; not a benchmark",
+  "usage": {
+    "prompt_tokens": 1277,
+    "total_tokens": 1632,
+    "completion_tokens": 355
+  },
+  "results": [
+    {
+      "id": "new_irrelevant",
+      "expected_accept": false,
+      "observed_accept": false,
+      "observed": {
+        "answers_question": false,
+        "requested_source_match": true,
+        "reason": "The proposed answer does not address the question about the fictional inspection fee. The cited source mentions the facility opening on Monday, which is unrelated to the inspection fee."
+      },
+      "error": null,
+      "latency_seconds": 1.328
+    },
+    {
+      "id": "new_direct",
+      "expected_accept": true,
+      "observed_accept": true,
+      "observed": {
+        "answers_question": true,
+        "requested_source_match": true,
+        "reason": "The draft directly answers the question by stating the fictional inspection fee is 12 tokens, and the cited title matches the document mentioned in the question."
+      },
+      "error": null,
+      "latency_seconds": 1.199
+    },
+    {
+      "id": "new_wrong_document",
+      "expected_accept": false,
+      "observed_accept": false,
+      "observed": {
+        "answers_question": false,
+        "requested_source_match": false,
+        "reason": "The draft cites a document titled 'Fictional harbor bulletin 2026', which does not match the question's reference to the '2024 fictional harbor bulletin'. Therefore, the source does not match the requested document."
+      },
+      "error": null,
+      "latency_seconds": 1.589
+    },
+    {
+      "id": "new_right_document",
+      "expected_accept": true,
+      "observed_accept": true,
+      "observed": {
+        "answers_question": true,
+        "requested_source_match": true,
+        "reason": "The draft directly answers the question about the renewal period from the 2024 fictional harbor bulletin, and the cited title matches the specific document mentioned in the question."
+      },
+      "error": null,
+      "latency_seconds": 1.369
+    },
+    {
+      "id": "new_missing_component",
+      "expected_accept": false,
+      "observed_accept": false,
+      "observed": {
+        "answers_question": false,
+        "requested_source_match": true,
+        "reason": "An explicitly requested paired item is missing; review required."
+      },
+      "error": null,
+      "latency_seconds": 1.329
+    },
+    {
+      "id": "new_compact_complete",
+      "expected_accept": true,
+      "observed_accept": false,
+      "observed": {
+        "answers_question": false,
+        "requested_source_match": true,
+        "reason": "An explicitly requested paired item is missing; review required."
+      },
+      "error": null,
+      "latency_seconds": 1.538
+    }
+  ]
+}

@@ -1,3 +1,3 @@
 # Faculty clarification
 
-Pending written evidence: the team reports that individual PDF pages may count as documents for the 500–2,000 document requirement. Until confirmed, treat this interpretation as conditional; do not describe pages as distinct source PDFs. If it is rejected, escalate the distinct-source gap.
+On 2026-11-19 the user reported that faculty acceptance is complete. The exact wording, whether it covers both page-as-document counting and the retrieval chunk counts, and written supporting evidence have not yet been attached. Do not present this report as a written faculty document. Source PDFs, page documents and retrieval chunks remain separate metrics.

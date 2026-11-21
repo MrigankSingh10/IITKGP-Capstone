@@ -1,0 +1,82 @@
+{
+  "scope": "fictional development checks, not held-out evaluation",
+  "usage": {
+    "prompt_tokens": 1258,
+    "total_tokens": 1607,
+    "completion_tokens": 349
+  },
+  "results": [
+    {
+      "id": "topic_mismatch",
+      "expected_answers_question": false,
+      "expected_source_match": true,
+      "observed": {
+        "answers_question": false,
+        "requested_source_match": true,
+        "reason": "The draft does not directly answer the question about the color of the fictional vehicle. It only mentions the number of wheels. The cited source matches the requested document title, but the content does not address the specific question."
+      },
+      "error": null,
+      "latency_seconds": 1.551
+    },
+    {
+      "id": "correct_topic",
+      "expected_answers_question": true,
+      "expected_source_match": true,
+      "observed": {
+        "answers_question": true,
+        "requested_source_match": true,
+        "reason": "The draft directly answers the question about the color of the fictional vehicle, and the cited document 'Fictional transport guide' matches the source mentioned in the question."
+      },
+      "error": null,
+      "latency_seconds": 1.38
+    },
+    {
+      "id": "source_mismatch",
+      "expected_answers_question": true,
+      "expected_source_match": false,
+      "observed": {
+        "answers_question": false,
+        "requested_source_match": false,
+        "reason": "The draft cites 'Fictional Safety FAQ 2026', but the question refers to the '2024 fictional safety FAQ'. The source cited does not match the specific document mentioned in the question."
+      },
+      "error": null,
+      "latency_seconds": 1.498
+    },
+    {
+      "id": "source_match",
+      "expected_answers_question": true,
+      "expected_source_match": true,
+      "observed": {
+        "answers_question": true,
+        "requested_source_match": true,
+        "reason": "The draft directly answers the question by stating the interval is thirty days, and the cited title matches the specific document mentioned in the question."
+      },
+      "error": null,
+      "latency_seconds": 1.132
+    },
+    {
+      "id": "partial_answer",
+      "expected_answers_question": false,
+      "expected_source_match": true,
+      "observed": {
+        "answers_question": false,
+        "requested_source_match": true,
+        "reason": "An explicitly requested paired item is missing; review required."
+      },
+      "error": null,
+      "latency_seconds": 1.258
+    },
+    {
+      "id": "source_instruction",
+      "expected_answers_question": false,
+      "expected_source_match": true,
+      "observed": {
+        "answers_question": false,
+        "requested_source_match": true,
+        "reason": "The draft answer claims the vehicle is red, but the cited document states it is blue. The answer does not directly answer the question based on the provided citation."
+      },
+      "error": null,
+      "latency_seconds": 1.333
+    }
+  ]
+}

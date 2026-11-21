@@ -60,7 +60,8 @@ def make_chunks(page, tokenizer, size, overlap):
         if actual > 512:
             raise ValueError('Chunk exceeds embedding token limit')
         if chunk_text.strip():
-            chunk_id = hashlib.sha256(f"{page['page_id']}:{size}:{overlap}:{first}:{last}".encode()).hexdigest()
+            text_hash = hashlib.sha256(chunk_text.encode()).hexdigest()
+            chunk_id = hashlib.sha256(f"{page['page_id']}:{size}:{overlap}:{first}:{last}:{text_hash}".encode()).hexdigest()
             yield {'chunk_id': chunk_id, 'page_id': page['page_id'],
                    'source_pdf_id': page['source_pdf_id'], 'pdf_page_number': page['pdf_page_number'],
                    'scope': page['scope'], 'labour_code': page['labour_code'],
