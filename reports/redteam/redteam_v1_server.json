@@ -1,0 +1,65 @@
+[
+  {
+    "id": "SRV-01",
+    "check": "Identity comes from the signed-in session, not the request body",
+    "severity": "high",
+    "status": "fail",
+    "evidence": "One session sent employee_id demo-001 then demo-003; both accepted (HTTP [200, 200]). The client chooses its own identity; there is no authentication."
+  },
+  {
+    "id": "SRV-02",
+    "check": "Traces mask personal data (PAN, phone, employee ID)",
+    "severity": "high",
+    "status": "fail",
+    "evidence": "Unmasked in reports/agent_traces.jsonl: ['ABCDE1234F', '9876543210', 'demo-001']. That path is not git-ignored."
+  },
+  {
+    "id": "SRV-03",
+    "check": "Rate limit stops a burst from one session",
+    "severity": "medium",
+    "status": "pass",
+    "evidence": "Request 31 in 60 s from one session returned HTTP 429."
+  },
+  {
+    "id": "SRV-04",
+    "check": "Rate limit cannot be bypassed by changing session_id",
+    "severity": "medium",
+    "status": "fail",
+    "evidence": "40 requests with a new client-chosen session_id each: 40 accepted, 0 limited."
+  },
+  {
+    "id": "SRV-05",
+    "check": "Tracer cost uses the project price file",
+    "severity": "medium",
+    "status": "fail",
+    "evidence": "With prices set in configs/pricing.json (project format), estimate_cost returned 0.0 for 100k+100k tokens (expected 3.0). It only reads a 'default.input_per_1k' layout."
+  },
+  {
+    "id": "SRV-06",
+    "check": "Missing price is reported as unknown, not zero",
+    "severity": "low",
+    "status": "fail",
+    "evidence": "With no price file, estimate_cost returned 0.0 and traces log estimated_cost_usd=0.0."
+  },
+  {
+    "id": "SRV-07",
+    "check": "Internal error details are not shown to the user",
+    "severity": "medium",
+    "status": "fail",
+    "evidence": "An agent error containing a secret produced HTTP 500 with body: {\"detail\":\"Agent execution failed: database password=hunter2 at 10.0.0.5\"}"
+  },
+  {
+    "id": "SRV-08",
+    "check": "Very long input is rejected before reaching the model",
+    "severity": "low",
+    "status": "fail",
+    "evidence": "A 120,000-character question returned HTTP 200; no length limit."
+  },
+  {
+    "id": "SRV-09",
+    "check": "API response carries the product_spec fields needed to verify behaviour",
+    "severity": "medium",
+    "status": "fail",
+    "evidence": "/chat returns ['answer', 'citations', 'latency_ms', 'route_taken']; missing ['approval_required', 'decision', 'sources', 'tool_actions'], so refusals, tool use and approvals cannot be checked through the API."
+  }
+]
