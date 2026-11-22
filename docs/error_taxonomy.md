@@ -58,14 +58,16 @@ Two reviews of the 240 closed-book answers exist; their per-strategy counts are 
 |---|---:|---:|---:|---:|---:|
 | Strict adjudication, `baseline_v1_review.csv` / `baseline_v1_metrics.json` | 19 | 108 | 56 | 43 | 14 |
 | Team review, `baseline_v1_review_team.csv` / `baseline_v1_metrics_team.json` | 33 | 147 | 34 | 26 | 0 |
+| **Reconciled (official)**, `baseline_v1_review_reconciled.csv` / `baseline_v1_metrics_reconciled.json` | **19** | **150** | **49** | **22** | **0** |
 
 The two reviews agree on 226 of 240 correct/incorrect marks (94.2%); all 14 differences are answers
 the team review accepted as correct and the strict review rejected (bare yes/no or partly complete
 answers). The category counts differ more, because the reviews labelled failures differently: for
 example, the strict review files the 14 zero-shot invalid-JSON answers as `format_error`, whereas under
 this taxonomy's precedence a wrong answer with broken JSON is primarily a content failure, and
-`format_error` applies only when the content is acceptable. Reconciling the labels is part of the
-pending baseline reconciliation. There were no retrieval, tool or safety categories because the
+`format_error` applies only when the content is acceptable. The reconciled sheet resolves this: the
+team agreed to the strict marks, and where the reviews' categories differed (54 answers) the
+precedence rule above chose the primary one (`scripts/reconcile_baseline_reviews.py`). There were no retrieval, tool or safety categories because the
 baseline had no retrieval or tools.
 
 ## Reporting

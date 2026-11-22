@@ -21,3 +21,8 @@ All 16 flagged baseline items received user-provided strict-rubric decisions; 13
 ## Team review retained
 
 The team also supplied a separately reviewed baseline sheet, preserved as `baseline_v1_review_team.csv`, and a report describing 33/240 passes. Its scores differ from the later strict adjudication above. Both are retained for rubric and reviewer reconciliation; the summaries are not interchangeable or independently verified by this merge. The 40-case behaviour scenario set remains a draft and must be reconciled with the user's document-focused scope before use.
+
+## Baseline reconciled — 2026-11-21
+
+The team members agreed to use the strict rubric. Official baseline: 19/240 (7.9%) in `baseline_v1_review_reconciled.csv` and `baseline_v1_metrics_reconciled.json`, with 94.2% mark agreement between the two reviews and one taxonomy category per wrong answer (see `baseline_v1_report.md`). The behaviour test set was split: a document-only safety set for the current system, and the tool and approval cases kept as a draft for the agent (`docs/safety_doc_set_guide.md`).
+

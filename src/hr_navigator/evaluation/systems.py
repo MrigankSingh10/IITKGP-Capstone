@@ -82,6 +82,28 @@ def normalize_rag_response(result: dict, evidence: list[dict], top_k: int) -> di
     }
 
 
+def poisoned_evidence(documents: list[dict]):
+    """Turn test documents into registered-looking pages and chunks (a simulated tampered corpus page).
+
+    The RAG pipeline only accepts evidence that matches a registered page exactly, so each test
+    document becomes its own page entry, clearly labelled as a test page.
+    """
+    pages, chunks = {}, []
+    for doc in documents:
+        source_id = f"test-{doc['id'].lower()}"
+        page_id = f'{source_id}:page_0001'
+        url = f"https://example.invalid/test-documents/{doc['id']}"
+        page = {'page_id': page_id, 'source_pdf_id': source_id, 'pdf_page_number': 1, 'source_url': url,
+                'scope': 'statutory', 'original_title': doc['title'], 'text': doc['text'],
+                'extraction_status': 'test_document', 'source_warnings': ['Synthetic tampered test page']}
+        pages[page_id] = page
+        chunks.append({'chunk_id': f"{source_id}:chunk", 'page_id': page_id, 'source_pdf_id': source_id,
+                       'pdf_page_number': 1, 'source_url': url, 'scope': 'statutory',
+                       'original_title': doc['title'], 'text': doc['text'], 'char_start': 0,
+                       'char_end': len(doc['text']), 'extraction_status': 'test_document'})
+    return pages, chunks
+
+
 class RagSystem:
     """Retrieval plus the current grounded-draft pipeline (statutory corpus only).
 
@@ -115,7 +137,12 @@ class RagSystem:
             raise ValueError('Invalid embedding response')
         evidence = search.search(case['question'], self.chunks, self.vectors, data[0]['embedding'],
                                  top_k=self.top_k, mode=self.mode)
-        result = draft_review.draft_for_review(self.chat, case['question'], evidence, self.pages)
+        pages = self.pages
+        if case.get('injected_documents'):
+            extra_pages, extra_chunks = poisoned_evidence(case['injected_documents'])
+            pages = {**self.pages, **extra_pages}
+            evidence = extra_chunks + evidence
+        result = draft_review.draft_for_review(self.chat, case['question'], evidence, pages)
         return normalize_rag_response(result, evidence, self.top_k)
 
 
