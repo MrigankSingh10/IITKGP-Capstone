@@ -6,8 +6,8 @@ As of 2026-11-22. This is the shared living coordination record for all members 
 
 | Owner | Status and next action |
 | --- | --- |
-| Member 1 — domain/data | Handoff complete for document-reference scope. Maintain source provenance and resolve outstanding source, applicability and review questions; see [closeout](../reports/member_1_completion_checklist.md). |
-| Member 2 — retrieval | Current baseline accepted for progression; further retrieval improvements deferred. Preserve the review-only boundary and support independent relevance and grounding review; see [Phase 2 status](../reports/phase_2_summary.md). |
+| Member 1 — domain/data | Priority source dates and version conflicts checked. Eleven OCR page spot-checks are ready for a human reviewer. Written faculty wording remains open and the release uses official links. See [source verification](../reports/member_1_source_verification_2026-11-22.md). |
+| Member 2 — retrieval | Review-only retrieval adapter and citation contract ready for Member 3. The new 12-question English packet awaits independent labels. See [Phase 2 status](../reports/phase_2_summary.md) and the [review guide](relevance_english_independent_review_guide.md). |
 | Member 3 — orchestration | Phase 3 graph, typed state, routing, budgets and tests remain open. Before graph development, satisfy the evaluation gate below and agree interfaces with Members 2 and 4. |
 | Member 4 — HR tools/security | Own the existing synthetic tools and their integration. Drafts, persistent requests, overlap handling, action-bound confirmation, replay protection, idempotent submissions and tickets remain open; see [Phase 3 status](../reports/phase_3_summary.md). |
 | Member 5 — integration/evaluation | Coordinate API/UI, evaluation and deployment. The current API hook is a stub; align the interface and trace handling with document-only scope before integration. |
@@ -33,6 +33,8 @@ Follow [README setup](../README.md#setup-and-tests) and corpus/index instruction
 python scripts/search_corpus.py 'Does State include a Union territory?' --mode bm25 --size 200 --code 'Code on Wages'
 python scripts/review_evidence.py 'Does State include a Union territory?' --code 'Code on Wages'
 ```
+
+Member 3 can call [the Python review adapter](../src/hr_navigator/retrieval/review_adapter.py) without a subprocess. Load accepted-OCR chunks and registered pages, enrich pages with source context, and use `ReviewAdapter.retrieve(ReviewRequest(...))`. Branch on `evidence_only`, `review_required`, or `escalate`. Evidence excerpts appear in `passage`; draft citations use `quote_or_section`. This local BM25 adapter is separate from the measured hybrid configuration. See the [runnable handoff example](../reports/phase_2_summary.md#review-adapter-handoff-2026-11-22).
 
 For the accepted hybrid configuration, use `scripts/search_corpus.py --mode hybrid_rerank --size 200` with its `--key-file`, `--ca-file`, `--base-url` and `--model` options and the accepted-OCR cache. See `--help`; the default search size is 350. `scripts/ask_documents.py --help` describes both hosted API configurations: it currently loads **350-token** chunks, so its draft results are not the 200-token benchmark. `scripts/review_evidence.py` displays excerpts for review. The README documents setup and the separate stub UI/API launch.
 
@@ -75,3 +77,11 @@ Copy this heading and fill it in for each session:
 - Files / evidence: the Member 1 closeout, Phase 2 and Phase 3 reports, and verification artifacts linked above.
 - Validation and results: repository tests, frozen input checksums and the staged changes were checked before publication.
 - Blockers / next action / owner: independent evaluation and faculty clarification remain open. Members 3 and 4 own the next implementation milestones.
+
+### 2026-11-22 — Source and retrieval verification
+
+- Owner: Members 1 and 2.
+- Work and decisions: verified priority commencement notices and supersession, spot-checked all 11 accepted OCR pages, and documented the release decision to share the registry and official links. Prepared the faculty request, independent English review packet and Member 3 retrieval adapter.
+- Files / evidence: [source verification](../reports/member_1_source_verification_2026-11-22.md), [OCR worksheet](../reports/member_1_ocr_spotcheck.csv), [review guide](relevance_english_independent_review_guide.md), and [Phase 2 verification](../reports/phase_2_summary.md).
+- Validation and results: checked the adapter against the actual corpus for a traceable passage and missing-evidence escalation. Local tests exercise mocked draft checks. Existing frozen gold and grounding hashes passed.
+- Blockers / next action / owner: a human reviewer records OCR and blind relevance decisions. Faculty supplies written counting scope. Member 3 integrates the review adapter when the project graph gate is satisfied.

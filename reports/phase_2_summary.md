@@ -122,3 +122,26 @@ For 200-token chunks, BM25 / dense / hybrid / hybrid+rerank respectively achieve
 The user accepted the current retrieval baseline for project progression and deferred further score improvements. On the fixed 20-question English regression, the current 200-token hybrid setup achieved 55% Hit@3, 65% Hit@5, 80% Hit@10 and 0.569 MRR@10. See [the retrieval update](retrieval_window_section_update.md) and [per-question results](random_gold_window_candidate_regression.json). The regression measures retrieval of one expected PDF page per question.
 
 Independent relevance and grounding validation and written clarification of faculty acceptance remain open. [Phase 3](phase_3_summary.md) has started with deterministic synthetic HR tools. The human-reviewed evaluation requirement for graph development remains in the product specification.
+
+### Review adapter handoff (2026-11-22)
+
+`hr_navigator.retrieval.review_adapter` supplies a typed `ReviewRequest`, `ReviewResult` and `ReviewAdapter` for Member 3. It runs local BM25 against caller-supplied chunks and registered pages, restricted to statutory scope, and returns verified passages for review. A caller may inject a chat client to request an unverified draft; the result remains `review_required` or escalates. The adapter does not fetch data, create embeddings, or contact a model by itself. It does not establish relevance, entailment, current law, conflict resolution, or applicability. The script filter is not a language classifier; evidence and model outputs are untrusted. No graph or endpoint is connected.
+
+Example after loading the accepted-OCR `chunks_200.jsonl` and `pages.jsonl` and enriching the pages with `enrich_pages` as in the existing scripts:
+
+```python
+from hr_navigator.retrieval.review_adapter import ReviewAdapter, ReviewRequest
+
+adapter = ReviewAdapter(chunks, pages)  # pages is keyed by page_id
+result = adapter.retrieve(ReviewRequest('Does State include a Union territory?',
+                                        labour_code='Code on Wages'))
+print(result.decision, result.sources)  # evidence_only or escalate; human review required
+```
+
+An optional `client` argument invokes the existing draft checks, whose model verdicts may be wrong. The adapter uses BM25, not the accepted hybrid benchmark configuration, and is not a performance replacement for it. Offline tests use mocked model decisions and synthetic passages; they cannot measure adversarial robustness or grounding accuracy.
+
+The English-only `evaluation/relevance_english_review_packet.csv` preserves the original English rows and their fields without modifying the original or assigning judgments. Its questions were authored with corpus access and may have been seen by assistants; this is a review packet, not a fresh independent benchmark. A qualified independent reviewer should inspect original PDFs without model results, record page labels and ambiguities, and adjudicate before freezing. Use the existing review guide while excluding its Hindi-specific and hosted embedding steps unless separately authorized.
+
+The earlier seven-question English copy is archival because an assistant has scored those questions. The new 12-question `evaluation/relevance_english_independent_review.csv` is unlabeled; follow `docs/relevance_english_independent_review_guide.md` for independent human review and deterministic freeze. Question authorship involved corpus inspection, so independence applies to future labeling, not question authorship.
+
+Evidence-only sources contain `passage` (the exact validated chunk); draft citations contain `quote_or_section` (the exact validated cited quote). Both include `source_pdf_id`, `original_title`, `page_number` (1-based PDF page), `source_url`, `scope`, `extraction_status`, `source_warnings`, and available source context. An escalation exposes `reason`; neither a passage nor a quote proves relevance or applicability. The two-source conflict test uses synthetic contradictory passages and a mocked insufficient critic verdict: it checks response handling, not reliable detection of every conflict by a real model.

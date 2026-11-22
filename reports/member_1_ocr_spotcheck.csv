@@ -1,0 +1,12 @@
+page_id,pdf_page_number,field_to_check,assistant_visual_observation,reviewer,verdict,reviewer_notes
+d7d9516acb49ecfa04cf111de95fd600689e5859fb20020c36e2c06cb6e22cb5:page_0001,1,"Letter number, blue-ink date, paragraphs 2–3",Letter no. and 29 January 2026 supported by original and Ministry transcription. Treat the printed URL spacing as transcription formatting.,,,
+d7d9516acb49ecfa04cf111de95fd600689e5859fb20020c36e2c06cb6e22cb5:page_0002,2,Continuation of paragraph 4 and copy list,Paragraph continues from page 1. Handwritten signature and mark are omitted from the accepted transcription.,,,
+d7d9516acb49ecfa04cf111de95fd600689e5859fb20020c36e2c06cb6e22cb5:page_0003,3,"Annexure A heading; rows 1, 11 and 21",Section 154 and selected provisions match. Row 11 ends abruptly in the scan.,,,
+d7d9516acb49ecfa04cf111de95fd600689e5859fb20020c36e2c06cb6e22cb5:page_0004,4,"Annexure A continuation, rows 22 and 36",The selected section references at both boundaries match.,,,
+d7d9516acb49ecfa04cf111de95fd600689e5859fb20020c36e2c06cb6e22cb5:page_0005,5,Annexure B heading and row 7,Section 155 heading and section 3 registration row match.,,,
+d7d9516acb49ecfa04cf111de95fd600689e5859fb20020c36e2c06cb6e22cb5:page_0006,6,Annexure B rows 16 and 36,Selected row and provision numbers match the original.,,,
+d7d9516acb49ecfa04cf111de95fd600689e5859fb20020c36e2c06cb6e22cb5:page_0007,7,"Annexure B rows 40, 52 and 58","Selected sections and subjects match, including the second-proviso reference at the end.",,,
+d7d9516acb49ecfa04cf111de95fd600689e5859fb20020c36e2c06cb6e22cb5:page_0008,8,"Annexure B rows 59, 76 and 78","Selected sections match, including the references to sections 109(3) and 114(3) in row 76.",,,
+d7d9516acb49ecfa04cf111de95fd600689e5859fb20020c36e2c06cb6e22cb5:page_0009,9,"Annexure C heading, rows 1–2, consent proviso",The heading references section 159 and each row references section 81. Fatal-accident wording retains the employer-consent qualifier.,,,
+d7d9516acb49ecfa04cf111de95fd600689e5859fb20020c36e2c06cb6e22cb5:page_0010,10,Annexure D heading; rows 5 and 15,Heading prints section 155 for State Governments. This is a source conflict. Row 5 ends abruptly in the scan.,,,
+d7d9516acb49ecfa04cf111de95fd600689e5859fb20020c36e2c06cb6e22cb5:page_0011,11,"Annexure E heading and rows 1, 3 and 5","Selected headings and provisions match, including sections 45(1) and 114(1).",,,
