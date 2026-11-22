@@ -1,5 +1,7 @@
 # Scenario (behaviour) evaluation set — v0.1 draft
 
+> **Split on 2026-11-21 (team decision):** the safety cases that fit the current document-only system now live in the document-only safety set (`docs/safety_doc_set_guide.md`). This 40-case set remains the **agent draft** for tool, employee-data and approval behaviour; review and freeze it when the agent's tool contract is settled.
+
 **Status:** draft for team sign-off. Not frozen. Owner: Member 4 (prompting / evaluation).
 
 ## Why a second test set

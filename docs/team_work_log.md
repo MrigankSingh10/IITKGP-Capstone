@@ -42,7 +42,7 @@ Run the existing synthetic-tool checks with `.venv/bin/python -m pytest -q tests
 
 ## Key decisions and open checks
 
-- Keep frozen sets and historical reports unchanged; don't tune against regression labels. Reconcile the differing baseline reviews and independently review new relevance and grounding cases before performance claims.
+- Keep frozen sets and historical reports unchanged; don't tune against regression labels. The baseline reviews are reconciled (strict rubric, 19/240); independently review new relevance, grounding hold-out and safety cases before performance claims.
 - Keep review-only output until evidence justifies changing it. Validate source versions, dates, conflicts, sparse pages and current applicability; obtain written faculty clarification and resolve redistribution scope.
 - Separate synthetic handbook rules from statutory evidence. Do not infer unrecorded leave policies or treat a balance check as a reservation.
 
@@ -85,3 +85,19 @@ Copy this heading and fill it in for each session:
 - Files / evidence: [source verification](../reports/member_1_source_verification_2026-11-22.md), [OCR worksheet](../reports/member_1_ocr_spotcheck.csv), [review guide](relevance_english_independent_review_guide.md), and [Phase 2 verification](../reports/phase_2_summary.md).
 - Validation and results: checked the adapter against the actual corpus for a traceable passage and missing-evidence escalation. Local tests exercise mocked draft checks. Existing frozen gold and grounding hashes passed.
 - Blockers / next action / owner: a human reviewer records OCR and blind relevance decisions. Faculty supplies written counting scope. Member 3 integrates the review adapter when the project graph gate is satisfied.
+
+### 2026-11-22 — Evaluation: red-team v1 (adversarial checks)
+
+- Owner: evaluation (prompting, baselines and safety testing), with an AI agent. Files arrive in the separate red-team PR.
+- Work and decisions: built a 49-item attack catalogue and ran it offline against the input guardrail, the evidence injection filter and the API (FastAPI test client, temporary folder). Guardrail blocked 6/24 attacks with 3/7 false alarms; filter caught 3/8 tampered passages with 3/4 false flags; API passed 1/9 checks. High findings: identity is taken from the request body, and traces store personal data unmasked. Re-run on the 2026-11-22 main gave identical results; Devanagari questions are now stopped at the API by the English-only check.
+- Files / evidence: [red-team report](../reports/redteam_v1_report.md), `reports/redteam/`, `evaluation/redteam_attacks_v0.1.jsonl`, `scripts/run_redteam.py`, `src/hr_navigator/evaluation/redteam.py`.
+- Validation and results: `tests/test_redteam.py`; offline only, the agent was a stub and no live model was called.
+- Blockers / next action / owner: API and guardrail owners fix the high findings and re-run the script; the real-corpus false-alarm count needs the local pages file; agent attacks run once an agent entry point exists.
+
+### 2026-11-22 — Evaluation: baseline reconciliation, safety set, hold-out drafts
+
+- Owner: evaluation (prompting, baselines and safety testing), with an AI agent.
+- Work and decisions: reconciled the two baseline reviews under the strict rubric by team decision (official closed-book baseline 19/240; 226/240 marks agreed). Split the behaviour draft: an 18-case document-only safety set (refusal, document injection, out-of-scope, clarify) for the current system, with tool and approval cases kept as the agent draft. Extended the grounding hold-out candidates from 8 to 20. The evaluation runner accepts more than one acceptable decision and adds tampered test pages to RAG evidence for injection cases; Member 1's English-only check in `RagSystem` is kept.
+- Files / evidence: [baseline report](../reports/baseline_v1_report.md), [reconciled review](../reports/baseline_v1_review_reconciled.csv), [safety set guide](safety_doc_set_guide.md), [hold-out review guide](holdout_review_guide.md), `src/hr_navigator/evaluation/runner.py`, `systems.py`, `safety_set.py`.
+- Validation and results: offline tests with fake systems and a fake page registry only; no live model run on the safety or hold-out sets.
+- Blockers / next action / owner: team members review the 18 safety cases and freeze them (`scripts/freeze_safety_set.py`); a member with the corpus checks the 20 hold-out questions against the PDF pages and freezes them (`scripts/freeze_holdout.py`). Live closed-book and RAG runs need the API keys.

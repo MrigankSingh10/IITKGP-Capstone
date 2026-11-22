@@ -26,9 +26,10 @@ All members and AI agents: read and update the [shared team work log](docs/team_
 ### Evaluation
 
 - [`evaluation/gold_v1.jsonl`](evaluation/gold_v1.jsonl) contains 80 frozen document-only questions. Three closed-book prompting strategies generated 240 saved baseline responses.
-- Two reviews of those responses are retained: [`baseline_v1_review.csv`](reports/baseline_v1_review.csv) contains later user-provided strict adjudication, and [`baseline_v1_review_team.csv`](reports/baseline_v1_review_team.csv) contains the team review. Their scores differ and require rubric and reviewer-provenance reconciliation before an accuracy claim.
+- The two reviews of those responses ([`baseline_v1_review.csv`](reports/baseline_v1_review.csv), strict; [`baseline_v1_review_team.csv`](reports/baseline_v1_review_team.csv), team) were reconciled under the strict rubric by team decision. The official closed-book baseline is **19/240 (7.9%)** in [`baseline_v1_review_reconciled.csv`](reports/baseline_v1_review_reconciled.csv); the reviews agreed on 226 of 240 marks (94.2%). Both original sheets are kept for traceability.
 - A separate 20-question grounding set was used to develop and test the retrieval checks. The recorded regression runs are **development results**, not independent accuracy estimates. The latest full run preceded two later targeted fixes; see [`reports/grounding_v3_regression.md`](reports/grounding_v3_regression.md).
-- Eight further document-only question candidates are in [`evaluation/grounding_holdout_candidates_v0.1.jsonl`](evaluation/grounding_holdout_candidates_v0.1.jsonl). They are drafts, have not been independently reviewed and have not been evaluated. A separate behaviour scenario set is also a draft and must be reconciled with the document-focused scope before use.
+- Hold-out candidates: the eight drafts in [`grounding_holdout_candidates_v0.1.jsonl`](evaluation/grounding_holdout_candidates_v0.1.jsonl) plus twelve more are in [`grounding_holdout_candidates_v0.2.jsonl`](evaluation/grounding_holdout_candidates_v0.2.jsonl). None has been reviewed against the corpus pages or evaluated; see [`docs/holdout_review_guide.md`](docs/holdout_review_guide.md).
+- The behaviour scenarios were split: an 18-case document-only safety set ([`safety_doc_v0.1.jsonl`](evaluation/safety_doc_v0.1.jsonl), draft awaiting sign-off; see [`docs/safety_doc_set_guide.md`](docs/safety_doc_set_guide.md)) and the tool/approval cases kept as an agent draft until the agent exists.
 
 ### API and interface prototype
 
@@ -123,7 +124,7 @@ The API exposes `GET /health` and `POST /chat`. The UI shows chat and a trace da
 
 ## Remaining work
 
-- Reconcile the two baseline reviews and independently assess the draft holdout questions before using them to measure performance.
+- Review the hold-out questions against the corpus pages and sign off the safety set, then freeze both before using them to measure performance.
 - Improve and evaluate retrieval, source matching and grounded answers on questions not used to tune the workflow. Keep generated answers review-only until the evaluation supports a change.
 - Continue source-date, version, legal-status, sparse-page and redistribution checks. The user reported faculty acceptance of page counting; written confirmation and its scope are not attached.
 - Align the API/UI with the document-only scope, address trace handling and connect the retrieval workflow. Implement LangGraph and document-focused task completion in a later phase.

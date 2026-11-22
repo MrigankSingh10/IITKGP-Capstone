@@ -1,6 +1,6 @@
 # Phase 1 closed-book baseline — 2026-11-18
 
-**Review reconciliation:** The scoring section below describes the separate team review preserved in `baseline_v1_review_team.csv` and `baseline_v1_metrics_team.json`. The later user-provided strict adjudication is in `baseline_v1_review.csv` and the regenerated `baseline_v1_metrics.json` (19/240). These assessments use different review decisions and have not been reconciled; neither should be represented as independently verified accuracy.
+**Reconciled official baseline (2026-11-21):** the team members agreed to use the strict rubric (the frozen gold rule "no partial correctness"). The official marks are in `baseline_v1_review_reconciled.csv` and `baseline_v1_metrics_reconciled.json`: **19/240 (7.9%)**; zero-shot 6/80 (7.5%), few-shot 5/80 (6.25%), decomposition 8/80 (10.0%). See "Reconciled baseline" at the end of this report. The two original reviews are kept unchanged for traceability.
 
 The user approved and froze 80 document-only cases (SHA256 `00945556195f2403b17a7a4078b642f4fe1c3eb8b68109ed0a04a92b3a2238bf`). We ran the permitted Qwen/Qwen3-8B model on the supplied VM04 endpoint: one request per case and strategy, 240 requests, all HTTP/API calls succeeded. VM04 was inferred from the supplied CA and still needs group-assignment confirmation. The same 80 questions, temperature 0 and max output 512 were used in each strategy. For six cases an earlier user message was also supplied; this is not a test of durable state. No PDF content, gold answers or retrieval were sent. Strategies: zero-shot structured; few-shot with general uncertainty examples; decomposition with a concise self-check and no request for private reasoning. See `scripts/run_baselines.py` for exact prompts and settings.
 
@@ -61,3 +61,18 @@ Token usage is taken from the API's reported `usage` for every call; cost needs 
 | Decomposition | 83.5 | 40.4 | 123.8 | unknown (price pending) |
 
 Few-shot spends about 70% more prompt tokens than zero-shot (its examples) but produces shorter answers; decomposition is the cheapest overall and the most accurate of the three, though it also hallucinates most.
+
+## Reconciled baseline — 2026-11-21
+
+The two reviews agreed on 226 of 240 correct/incorrect marks (94.2%). All 14 differences were bare yes/no or partly complete answers that the team review accepted and the strict review rejected; the team members agreed to follow the strict review, which applies the frozen gold rule "no partial correctness". Reviewer identity is recorded as team members.
+
+| Strategy | Correct | Accuracy |
+|---|---:|---:|
+| Zero-shot | 6/80 | 7.5% |
+| Few-shot | 5/80 | 6.25% |
+| Decomposition | 8/80 | 10.0% |
+| **All** | **19/240** | **7.9%** |
+
+Each of the 221 wrong answers has one category from `docs/error_taxonomy.md`: `hallucination` 150, `reasoning_error` 49, `abstention` 22. The two reviews chose the same category for 153 answers; for the other 54 the taxonomy's precedence rule decided (the more serious category is primary, and a format error is primary only when the content is acceptable). The remaining 14 wrong answers were marked wrong only by the strict review and take its category. Every decision is traceable in the sheet's `mark_basis`, `category_basis` and original-review columns, and `scripts/reconcile_baseline_reviews.py` reproduces the sheet exactly.
+
+The earlier sections of this report describe the team review (33/240) and remain as the record of that review; the reconciled figures above are the ones to use for comparisons.
