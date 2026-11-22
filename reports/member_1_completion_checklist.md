@@ -2,6 +2,8 @@
 
 21 November 2026. Member 1's deliverables are complete for the capstone’s document-reference scope. The project uses the supplied corpus with the limits recorded below.
 
+The [22 November follow-up](member_1_source_verification_2026-11-22.md) verifies the priority commencement and version questions, records the current distribution decision, and links the 11-page OCR spot-check worksheet.
+
 | Responsibility | Closure evidence |
 | --- | --- |
 | Define supported intents and refusal rules | [Domain specification](../docs/member_1_domain_rules.md) adopted under delegated authority. Covers answer, clarify, refuse, escalate, evidence hierarchy, version handling, privacy and confirmation. |
