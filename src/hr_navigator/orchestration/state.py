@@ -1,4 +1,5 @@
-from typing import TypedDict, Optional, Any
+
+from typing import TypedDict, Optional
 
 
 class HRState(TypedDict, total=False):
@@ -31,3 +32,10 @@ class HRState(TypedDict, total=False):
     status: str
     error: Optional[str]
     retry_count: int
+
+
+class HRContext(TypedDict):
+    """Trusted dependencies supplied by the application server."""
+
+    db_connection: object
+    idempotency_key: str

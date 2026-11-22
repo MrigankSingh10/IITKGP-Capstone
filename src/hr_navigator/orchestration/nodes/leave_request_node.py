@@ -1,14 +1,22 @@
+
 from datetime import date
 
-from hr_navigator.orchestration.state import HRState
+from langgraph.runtime import Runtime
+
+from hr_navigator.orchestration.state import HRState, HRContext
 from hr_navigator.tools.leave_workflow import create_leave_draft
 
 
-def leave_request_node(state: HRState) -> dict:
+def leave_request_node(
+    state: HRState,
+    runtime: Runtime[HRContext],
+) -> dict:
     """
     Prepare a leave-request draft.
 
     Does not submit or approve the request.
+    Database connection and idempotency key are supplied
+    through trusted server-side runtime context.
     """
 
     required_fields = [
@@ -44,9 +52,9 @@ def leave_request_node(state: HRState) -> dict:
                 "response": "Start date cannot be after end date.",
             }
 
-        # This key must be generated and managed safely
-        # by the server, not taken from employee text.
-        idempotency_key = state.get("idempotency_key")
+        # Read trusted server-side dependencies.
+        db_connection = runtime.context["db_connection"]
+        idempotency_key = runtime.context["idempotency_key"]
 
         if not idempotency_key:
             return {
@@ -55,7 +63,7 @@ def leave_request_node(state: HRState) -> dict:
             }
 
         result = create_leave_draft(
-            connection=state["db_connection"],
+            connection=db_connection,
             auth_context=state["auth_context"],
             leave_type=state["leave_type"],
             start_date=start_date,
