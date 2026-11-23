@@ -101,3 +101,17 @@ Copy this heading and fill it in for each session:
 - Files / evidence: [baseline report](../reports/baseline_v1_report.md), [reconciled review](../reports/baseline_v1_review_reconciled.csv), [safety set guide](safety_doc_set_guide.md), [hold-out review guide](holdout_review_guide.md), `src/hr_navigator/evaluation/runner.py`, `systems.py`, `safety_set.py`.
 - Validation and results: offline tests with fake systems and a fake page registry only; no live model run on the safety or hold-out sets.
 - Blockers / next action / owner: team members review the 18 safety cases and freeze them (`scripts/freeze_safety_set.py`); a member with the corpus checks the 20 hold-out questions against the PDF pages and freezes them (`scripts/freeze_holdout.py`). Live closed-book and RAG runs need the API keys.
+
+
+---
+
+### 2026-11-23 — Track 5 (UI, FastAPI, Guardrails & Observability)
+
+- **Owner:** Track 5 (UI / FastAPI / Security / Observability)[cite: 2, 9]
+- **Changes Made:**
+  - Wired `src/hr_navigator/server.py` (`GET /health` and `POST /chat`) with rate limiting (`src/hr_navigator/security/guardrails.py`), query routing with safe fallbacks, and JSONL trace logging (`src/hr_navigator/observability/tracer.py`)[cite: 2, 9].
+  - Updated `app.py` with sample demo prompts, employee ID input, response metadata (status, route, latency, citations), and the **Metrics & Traces** view reading `reports/agent_traces.jsonl` and existing JSON reports under `reports/`[cite: 2, 9].
+  - Documented Track 5 components and local startup commands in `README.md`[cite: 9].
+- **Demo & Handoff Notes:**
+  - All requests (`ok`, `refused`, and `error`) log to `reports/agent_traces.jsonl` so live counts, latency, refusals, and estimated cost appear in the dashboard[cite: 2, 9].
+  - Ready for coordinator demo walkthrough with FastAPI running on port `8000` and Streamlit running `app.py`.

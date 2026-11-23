@@ -116,6 +116,20 @@ After installing the separate UI/API dependencies, start the API and Streamlit i
 PYTHONPATH=src uvicorn hr_navigator.server:app --reload --host 127.0.0.1 --port 8000
 ```
 
+## Track 5: UI, FastAPI Backend, Security & Observability
+
+### Track 5 Components
+- `src/hr_navigator/server.py` — FastAPI backend exposing `GET /health` and `POST /chat` with per-session rate limiting, input guardrails, query routing, and trace logging[cite: 2, 9].
+- `src/hr_navigator/security/guardrails.py` — Session rate limiter and prompt-injection / out-of-scope query validation[cite: 2, 9].
+- `src/hr_navigator/observability/tracer.py` — Appends structured query traces to `reports/agent_traces.jsonl` and estimates token costs using `configs/pricing.json`[cite: 2, 9].
+- `app.py` — Streamlit demo application featuring the **Assistant Demo** chat tab and the **Metrics & Traces** dashboard tab[cite: 2, 9].
+
+### Running Track 5 Locally for Demo
+1. Start the FastAPI server:
+   ```powershell
+   $env:PYTHONPATH = "src"
+   uvicorn hr_navigator.server:app --reload --host 127.0.0.1 --port 8000
+
 ```bash
 streamlit run app.py
 ```
