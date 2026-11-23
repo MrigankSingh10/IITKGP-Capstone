@@ -24,3 +24,5 @@ Track_B_Inference_API_Learner_Guide.docx.pdf
 data/processed/
 *.egg-info/
 src/*.egg-info/
+configs/chat.json
+configs/*.dpapi
