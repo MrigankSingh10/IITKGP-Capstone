@@ -6,6 +6,7 @@ __pycache__/
 .env
 .env.*
 !.env.example
+configs/chat.local.json
 inputs/
 data/raw/
 data/indexes/

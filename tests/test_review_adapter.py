@@ -71,3 +71,57 @@ def test_two_sources_with_conflicting_notice_periods_escalate_on_critic_verdict(
     result = ReviewAdapter(chunks, pages).retrieve(ReviewRequest('What is the notice period?'), client)
     assert result.decision == 'escalate' and result.draft_not_verified is None
     assert {source['source_pdf_id'] for source in result.sources} == {'hash1', 'hash2'}
+
+
+def test_chat_service_failure_identifies_transport_without_disclosing_response():
+    from hr_navigator.clients.api import APIError
+    class FailedClient:
+        def chat(self, *args, **kwargs):
+            raise APIError('API request failed (HTTP 401)')
+    result = corpus().retrieve(ReviewRequest('How much notice?'), FailedClient())
+    assert result.decision == 'escalate'
+    assert 'HTTP 401' in result.reason
+    assert result.sources == []
+
+
+def test_verbatim_inclusion_requires_matching_act_and_registered_text():
+    text = '(w) "State" includes a Union territory;'
+    adapter = corpus(text)
+    chunk = adapter._chunks[0]
+    chunk['category'] = 'Acts'
+    request = ReviewRequest('Does State include a Union territory?', prefer_verbatim=True)
+    client = Client()
+    result = adapter.retrieve(request, client)
+    assert result.decision == 'evidence_only'
+    assert result.sources[0]['passage'] == text
+    assert client.calls == 0
+
+    chunk['text'] = text.replace('(w)', '(x)')
+    result = adapter.retrieve(request, client)
+    assert result.decision == 'escalate'
+    assert not result.sources
+    assert client.calls == 0
+
+
+def test_verbatim_named_definition_keeps_continuation_and_stops_at_next_definition():
+    excerpts = [
+        '(y) "wages" means remuneration.\nProvided that the employer',
+        'must count qualifying payments.\n(z) "worker" means something else;',
+    ]
+    pages, chunks = {}, []
+    for number, text in enumerate(excerpts, 4):
+        page_id = f'code:page_{number:04d}'
+        page = {'page_id': page_id, 'source_pdf_id': 'code', 'pdf_page_number': number,
+                'scope': 'statutory', 'labour_code': 'Code on Wages', 'category': 'Acts',
+                'original_title': 'The Code on Wages, 2019', 'source_url': 'https://example.org',
+                'extraction_status': 'extracted', 'text': text}
+        pages[page_id] = page
+        chunks.append({**page, 'chunk_id': page_id, 'char_start': 0, 'char_end': len(text)})
+    client = Client()
+    result = ReviewAdapter(chunks, pages).retrieve(ReviewRequest(
+        'What is the definition of wages under the Code on Wages?', prefer_verbatim=True,
+    ), client)
+    assert result.decision == 'evidence_only'
+    assert [source['page_number'] for source in result.sources] == [4, 5]
+    assert result.sources[1]['passage'] == 'must count qualifying payments.'
+    assert client.calls == 0

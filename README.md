@@ -2,7 +2,7 @@
 
 An IIT Kharagpur Track B capstone prototype for finding and citing information in Indian Labour Codes documents. The current document-focused scope answers questions about the supplied PDFs without needing employee details or external HR actions. The repository also contains a separate fictional Acme handbook and early UI/API scaffolding; these do not establish real employee entitlements.
 
-The retrieval workflow is experimental. Generated answers are drafts for review, and citation checks do not establish legal applicability or guarantee correctness. The FastAPI and Streamlit prototype is not yet connected to the retrieval workflow or a LangGraph agent.
+The retrieval workflow is experimental. Generated answers are drafts for review, and citation checks do not establish legal applicability or guarantee correctness. The FastAPI and Streamlit prototype uses the local document review adapter; it is not connected to a LangGraph agent.
 
 ## Team handoff and shared log
 
@@ -33,7 +33,7 @@ All members and AI agents: read and update the [shared team work log](docs/team_
 
 ### API and interface prototype
 
-The repository includes a FastAPI service (`src/hr_navigator/server.py`), a Streamlit interface (`app.py`), basic input checks, rate limiting and trace logging. The service's agent hook currently returns a stub response and a placeholder citation. **It does not answer from the PDF retrieval pipeline.** LangGraph, durable workflow state and real HR integrations are not implemented.
+The repository includes a FastAPI service (`src/hr_navigator/server.py`), a Streamlit interface (`app.py`), basic input checks, rate limiting and trace logging. The service searches the accepted-OCR statutory corpus and can produce an unverified review draft when a chat model is configured. LangGraph, durable workflow state and real HR integrations are not implemented.
 
 The prototype UI currently displays an employee-ID field and the API logs queries and the supplied ID to `reports/agent_traces.jsonl`. For the agreed document-only scope, use fictional test values and do not enter employee details. Trace files may contain what was entered and should not be shared or committed as project data.
 
@@ -110,31 +110,38 @@ Keep API keys and certificates local, use the appropriate credentials for each s
 
 ## Run the UI/API prototype
 
-After installing the separate UI/API dependencies, start the API and Streamlit in separate terminals:
+Build the accepted-OCR corpus as described above, then install the UI/API packages into the same environment used by the project:
 
 ```bash
-PYTHONPATH=src uvicorn hr_navigator.server:app --reload --host 127.0.0.1 --port 8000
+.venv/bin/python -m pip install fastapi uvicorn streamlit pandas requests
 ```
 
-## Track 5: UI, FastAPI Backend, Security & Observability
+For generated answers, create `configs/chat.local.json` with the endpoint assigned to your group and paths to the local key and CA certificate. This file is ignored by Git; the key itself stays in its separate file:
 
-### Track 5 Components
-- `src/hr_navigator/server.py` — FastAPI backend exposing `GET /health` and `POST /chat` with per-session rate limiting, input guardrails, query routing, and trace logging[cite: 2, 9].
-- `src/hr_navigator/security/guardrails.py` — Session rate limiter and prompt-injection / out-of-scope query validation[cite: 2, 9].
-- `src/hr_navigator/observability/tracer.py` — Appends structured query traces to `reports/agent_traces.jsonl` and estimates token costs using `configs/pricing.json`[cite: 2, 9].
-- `app.py` — Streamlit demo application featuring the **Assistant Demo** chat tab and the **Metrics & Traces** dashboard tab[cite: 2, 9].
+```json
+{
+  "base_url": "<your-authorized-https-endpoint-ending-in-/v1>",
+  "model": "Qwen/Qwen3-8B",
+  "key_file": "api-key.txt",
+  "ca_file": "vm04-ca.crt"
+}
+```
 
-### Running Track 5 Locally for Demo
-1. Start the FastAPI server:
-   ```powershell
-   $env:PYTHONPATH = "src"
-   uvicorn hr_navigator.server:app --reload --host 127.0.0.1 --port 8000
+Paths are relative to the repository root. Alternatively, all four `CHAT_*` environment variables in `.env.example` can be set in the API process; they take precedence over the local file. The application does not load `.env` automatically.
+
+Start the API, then start the UI in a second terminal from the repository root:
 
 ```bash
-streamlit run app.py
+PYTHONPATH=src .venv/bin/python -m uvicorn hr_navigator.server:app --reload --host 127.0.0.1 --port 8000
 ```
 
-The API exposes `GET /health` and `POST /chat`. The UI shows chat and a trace dashboard. As noted above, `/chat` currently calls a stub, not retrieval or LangGraph; use fictional test values only.
+```bash
+.venv/bin/python -m streamlit run app.py
+```
+
+Without chat settings, the UI displays retrieved passages instead of a generated answer. With them, it shows an unverified draft only when the existing citation and model checks pass; otherwise it escalates. Check the cited passages and current applicability. The corpus contains statutory documents, not personal leave balances or an employer handbook. Use fictional queries only: the prototype records queries in local traces.
+
+Use the sidebar's **Document collection** selector when a question concerns a particular Code. For example, select **Code on Wages** before asking whether its definition of State includes a Union territory. Searching all collections can retrieve unrelated passages.
 
 ## Remaining work
 

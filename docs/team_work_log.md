@@ -115,3 +115,91 @@ Copy this heading and fill it in for each session:
 - **Demo & Handoff Notes:**
   - All requests (`ok`, `refused`, and `error`) log to `reports/agent_traces.jsonl` so live counts, latency, refusals, and estimated cost appear in the dashboard[cite: 2, 9].
   - Ready for coordinator demo walkthrough with FastAPI running on port `8000` and Streamlit running `app.py`.
+
+### 2026-11-23 — FastAPI launch instructions
+
+- Owner: AI agent.
+- Work and decisions: provided local API setup and launch instructions.
+- Files / evidence: README and `pyproject.toml`.
+- Validation and results: checked the documented command and separately required API dependencies.
+- Blockers / next action / owner: none.
+
+### 2026-11-23 — Connect document retrieval to chat UI
+
+- Owner: AI agent.
+- Work and decisions: connected `/chat` to the local review adapter, enabled optional configured chat-model drafts, preserved review and escalation decisions, and displayed source passages and citations in the UI.
+- Files / evidence: `src/hr_navigator/server.py`, `app.py`, `tests/test_server_language.py`, `README.md`.
+- Validation and results: seven focused API/adapter tests passed; a real corpus query returned three sources; Streamlit AppTest displayed them without exceptions. The wider suite was interrupted after 79 passes when it stalled. Live model drafting was not tested because the authorized chat endpoint was not configured.
+- Blockers / next action / owner: set all four CHAT environment variables using the assigned endpoint to generate drafts; human review and evaluation gates remain open.
+
+### 2026-11-23 — API interpreter troubleshooting
+
+- Owner: AI agent.
+- Work and decisions: diagnosed the Python 3.14 Uvicorn launch missing httpx; made the launch instructions use the project Python 3.11 interpreter explicitly.
+- Files / evidence: `README.md`; user's traceback.
+- Validation and results: Python 3.11 imports httpx and Uvicorn and loads the API through application startup. The sandbox blocked binding a local port.
+- Blockers / next action / owner: restart the server with the documented interpreter.
+
+### 2026-11-23 — Local chat configuration
+
+- Owner: AI agent.
+- Work and decisions: added a Git-ignored local chat configuration using existing key and certificate files, retaining environment overrides; documented setup.
+- Files / evidence: `src/hr_navigator/server.py`, `.gitignore`, `README.md`, `tests/test_server_language.py`, local ignored configuration.
+- Validation and results: eight focused API/adapter tests passed, including local configuration and client cleanup. A live endpoint test was rejected by automatic approval review because it would send a local credential and document-derived request externally.
+- Blockers / next action / owner: confirm authorization for the configured endpoint and live test; independently evaluate retrieval and generated drafts.
+
+### 2026-11-23 — Draft failure diagnostics
+
+- Owner: AI agent.
+- Work and decisions: distinguished sanitized chat-service errors from draft validation failures so the API can report the cause without exposing response bodies or credentials.
+- Files / evidence: `src/hr_navigator/retrieval/draft_review.py`, `tests/test_review_adapter.py`.
+- Validation and results: nine focused review-adapter and server tests passed; no live external API request was made.
+- Blockers / next action / owner: user retries to provide the sanitized error; the earlier live test remains blocked by automatic approval review pending explicit authorization.
+
+### 2026-11-23 — Correct local chat endpoint pairing
+
+- Owner: AI agent.
+- Work and decisions: corrected the ignored local VM04 chat endpoint from port 1035 to port 1034, matching the supplied course guide's VM04 certificate and endpoint pairing.
+- Files / evidence: local ignored `configs/chat.local.json`; supplied Track B inference guide.
+- Validation and results: checked the guide's endpoint and certificate table; no external request was sent. User must retry to confirm connectivity and group authorization.
+- Blockers / next action / owner: group assignment remains to be confirmed; live generation and retrieval quality remain unverified.
+
+### 2026-11-23 — Document collection selection
+
+- Owner: AI agent.
+- Work and decisions: traced a citation escalation to weak all-document retrieval and added a document collection filter to the UI and API, retaining existing citation checks. Improved the citation failure message.
+- Files / evidence: `app.py`, `src/hr_navigator/server.py`, `src/hr_navigator/retrieval/draft_review.py`, `tests/test_server_language.py`, `README.md`.
+- Validation and results: 29 focused tests passed. With the Code on Wages filter, the real corpus retrieves its definition on PDF page 4; a simulated model passed the end-to-end draft and citation checks. A live model draft has not been verified.
+- Blockers / next action / owner: select the intended Code; actual model reliability and independent evaluation remain open.
+
+### 2026-11-23 — Verbatim statutory definition answers
+
+- Owner: AI agent.
+- Work and decisions: added a direct evidence result for simple inclusion questions when exactly one matching Act clause can be verified against its registered PDF page. The API displays the source wording as the answer without requesting a model citation.
+- Files / evidence: `src/hr_navigator/retrieval/review_adapter.py`, `src/hr_navigator/server.py`, and `tests/test_review_adapter.py`.
+- Validation and results: thirty focused tests passed. A real-corpus API smoke test returned Code on Wages PDF page 4 with and without the document filter, using a stub that fails if the model is called.
+- Blockers / next action / owner: general questions still depend on retrieval and model citation quality.
+
+### 2026-11-23 — Retrieve definitions from named Acts
+
+- Owner: AI agent.
+- Work and decisions: corrected the chat API's named-Code definition retrieval to start at the Act's definition heading and include nearby text for qualifications.
+- Files / evidence: `src/hr_navigator/retrieval/review_adapter.py`, `src/hr_navigator/server.py`.
+- Validation and results: real-corpus API smoke checks with a simulated model retrieved and cited the Code on Wages definition for both default and Code-filtered queries. Thirty focused checks passed.
+- Blockers / next action / owner: live model output remains unverified.
+
+### 2026-11-23 — Quote named statutory definitions directly
+
+- Owner: AI agent.
+- Work and decisions: added a direct source result for named-Code definition questions with a verified clause boundary. The result retains separate PDF citations for a definition that continues onto the next page.
+- Files / evidence: `src/hr_navigator/retrieval/review_adapter.py`, `tests/test_review_adapter.py`.
+- Validation and results: 31 focused tests passed. The real-corpus API returned Code on Wages PDF pages 4 and 5 for the reported question with and without the filter. The test client was configured to fail if it attempted a model call.
+- Blockers / next action / owner: broader questions still depend on the general drafting flow.
+
+### 2026-11-23 — Commit the document chat integration
+
+- Owner: AI agent.
+- Work and decisions: grouped draft failure diagnostics and the document chat integration into separate commits on the Track 5 branch.
+- Files / evidence: API, Streamlit chat, review adapter, focused tests, README and this log.
+- Validation and results: 31 focused tests passed, and the diff passed whitespace checks. Local model configuration, credentials and generated traces were excluded.
+- Blockers / next action / owner: broader live model behavior remains unverified.
