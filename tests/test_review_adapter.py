@@ -56,6 +56,26 @@ def test_interactive_draft_resolves_passage_ids_and_fails_closed_on_unknown_ids(
     assert client.calls == 1
 
 
+@pytest.mark.parametrize('second_verdict', ['supported', 'contradicted'])
+def test_interactive_draft_gets_one_checked_correction(second_verdict):
+    wrong = {'answer': 'Seven days.', 'sufficient': True, 'passage_ids': ['P1']}
+    corrected = {**wrong, 'answer': 'At least fourteen days.'}
+    client = Client(
+        wrong, {'verdict': 'contradicted', 'reason': 'Wrong number.'},
+        corrected, {'verdict': second_verdict, 'reason': 'Rechecked.'},
+        {'answers_question': True, 'requested_source_match': True, 'reason': 'yes'},
+    )
+    result = corpus().retrieve(ReviewRequest('How much advance notice is needed?', interactive=True), client)
+    if second_verdict == 'supported':
+        assert result.decision == 'review_required'
+        assert result.draft_not_verified == 'At least fourteen days.'
+        assert client.calls == 5
+    else:
+        assert result.decision == 'escalate'
+        assert result.draft_not_verified is None
+        assert client.calls == 4
+
+
 def test_unsupported_claim_and_bad_citation_escalate():
     client = Client(proposal('Seven days.'), {'verdict': 'contradicted', 'reason': 'wrong'})
     assert corpus().retrieve(ReviewRequest('How much notice?'), client).decision == 'escalate'
@@ -147,3 +167,45 @@ def test_verbatim_named_definition_keeps_continuation_and_stops_at_next_definiti
     assert [source['page_number'] for source in result.sources] == [4, 5]
     assert result.sources[1]['passage'] == 'must count qualifying payments.'
     assert client.calls == 0
+
+
+def test_interactive_draft_recovers_from_truncation_and_accepts_fenced_json():
+    class TruncatedThenFencedClient(Client):
+        def chat(self, messages, **kwargs):
+            payload = json.loads(messages[1]['content'])
+            if self.calls == 0:
+                assert kwargs['max_tokens'] > 512
+                self.calls += 1
+                return {'choices': [{'finish_reason': 'length', 'message': {'content': '{"answer":'}}]}
+            if self.calls == 1:
+                assert 'untrusted_feedback_on_previous_draft' in payload
+                self.calls += 1
+                draft = {'answer': 'At least fourteen days.', 'sufficient': True, 'passage_ids': ['P1']}
+                content = '\n'.join(['```json', json.dumps(draft), '```'])
+                return {'choices': [{'finish_reason': 'stop', 'message': {'content': content}}]}
+            return super().chat(messages, **kwargs)
+
+    client = TruncatedThenFencedClient(
+        {'verdict': 'supported', 'reason': 'stated'},
+        {'answers_question': True, 'requested_source_match': True, 'reason': 'yes'},
+    )
+    result = corpus().retrieve(ReviewRequest('How much advance notice?', interactive=True), client)
+    assert result.decision == 'review_required'
+    assert client.calls == 4
+
+
+def test_interactive_draft_escalates_when_both_responses_are_truncated():
+    class TruncatedClient:
+        def __init__(self):
+            self.calls = 0
+
+        def chat(self, *args, **kwargs):
+            self.calls += 1
+            return {'choices': [{'finish_reason': 'length', 'message': {'content': '{"answer":'}}]}
+
+    client = TruncatedClient()
+    result = corpus().retrieve(ReviewRequest('How much advance notice?', interactive=True), client)
+    assert result.decision == 'escalate'
+    assert 'ran out of response space' in result.reason
+    assert result.sources and result.draft_not_verified is None
+    assert client.calls == 2

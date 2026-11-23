@@ -210,8 +210,8 @@ class ReviewAdapter:
                 category = None
                 if code:
                     chunks = [chunk for chunk in chunks if code_title_matches(code, chunk['original_title'])]
-                    if (re.search(r'\bsections?\s+\d+\b', request.question, re.I)
-                            and not re.search(r'\b(?:rules?|notifications?|faqs?|circulars?)\b', request.question, re.I)):
+                    if not re.search(r'\b(?:rules?|notifications?|faqs?|circulars?|orders?)\b',
+                                     request.question, re.I):
                         category = 'Acts'
                 evidence = search(
                     request.question, chunks, source_scope=request.source_scope,

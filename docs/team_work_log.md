@@ -251,3 +251,51 @@ Copy this heading and fill it in for each session:
 - Files / evidence: API, Streamlit UI, retrieval and draft review, server audit, tests, README and this log.
 - Validation and results: the latest full suite passed with 138 passed and 2 skipped. Checked the diff for whitespace and excluded the local model configuration, credentials and generated traces.
 - Blockers / next action / owner: live hosted model behavior remains unverified.
+
+### 2026-11-23 — Prepare manual chat test prompts
+
+- Owner: AI agent.
+- Work and decisions: provided prompts with expected statutory answers and cases that should request clarification or escalate.
+- Files / evidence: official India Code texts for the Code on Wages and Industrial Relations Code.
+- Validation and results: checked expected answers against the cited Act sections. The prompts were prepared for manual UI testing.
+- Blockers / next action / owner: none.
+
+### 2026-11-23 — Clarify personal minimum-wage questions
+
+- Owner: AI agent.
+- Work and decisions: added an API clarification before retrieval for requests for a personal minimum-wage rate. Streamlit carries the original question into the next reply and offers a way to start a new question.
+- Files / evidence: `app.py`, `src/hr_navigator/server.py`, and `tests/test_server_language.py`.
+- Validation and results: 139 tests passed and 2 skipped. A Streamlit-to-API smoke check verified the exact reported prompt, the follow-up data reaching the pipeline, and escalation when no rate schedule is available.
+- Blockers / next action / owner: the app requires supporting corpus evidence to draft a rate. Hosted model output for a completed follow-up was not tested.
+
+### 2026-11-23 — Explain the minimum-wage corpus limit
+
+- Owner: AI agent.
+- Work and decisions: checked the indexed source registry for rate schedules and made personal rate follow-ups explain the missing source and the distinction between payday and the affected wage period.
+- Files / evidence: `src/hr_navigator/server.py`, `tests/test_server_language.py`, and the accepted OCR source metadata.
+- Validation and results: 139 tests passed and 2 skipped. The reported two-turn scenario now returns an explicit missing-source result without generic Code citations or a model call.
+- Blockers / next action / owner: exact-rate support requires verified rate notifications and a way to establish their applicability.
+
+### 2026-11-23 — Correct drafts after a failed support check
+
+- Owner: AI agent.
+- Work and decisions: prioritized the named Act when a question does not ask for a separate instrument, and added one correction attempt after a failed support check. A corrected draft must pass the same checks.
+- Files / evidence: `src/hr_navigator/retrieval/review_adapter.py`, `src/hr_navigator/retrieval/draft_review.py`, `tests/test_review_adapter.py`.
+- Validation and results: 141 tests passed and 2 skipped. The real-corpus streaming API ranked Code on Wages PDF page 9 first for the six-week wage-period example and accepted a simulated correction. A second failed check still escalates.
+- Blockers / next action / owner: live hosted model behavior remains unverified.
+
+### 2026-11-23 — Handle incomplete drafts for multi-part prompts
+
+- Owner: AI agent.
+- Work and decisions: increased the interactive draft response budget, clarified how to cover each requested item, and added one format-recovery attempt for cut-off or malformed drafts. Citation and support checks still apply.
+- Files / evidence: `src/hr_navigator/retrieval/draft_review.py` and `tests/test_review_adapter.py`.
+- Validation and results: 143 tests passed and 2 skipped. The reported multi-part prompt recovered from a simulated truncation with real corpus passages. Repeated truncation still escalates.
+- Blockers / next action / owner: the original provider response was not available to identify the exact format failure, and hosted behavior remains unverified.
+
+### 2026-11-23 — Publish chat clarification and draft fixes
+
+- Owner: AI agent.
+- Work and decisions: grouped the minimum-wage clarification flow and draft recovery fixes into separate commits for the existing Track 5 PR.
+- Files / evidence: Streamlit chat, API, retrieval and draft review, regression tests, and this log.
+- Validation and results: 143 tests passed and 2 skipped. Checked the diff and excluded local credentials, model settings, and generated traces.
+- Blockers / next action / owner: live hosted behavior remains unverified.
