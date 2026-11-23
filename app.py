@@ -20,13 +20,12 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-# Clean enterprise portal styling (removes generic chatbot look)
 st.markdown(
     """
     <style>
         .block-container {
             padding-top: 1.5rem;
-            padding-bottom: 2rem;
+            padding-bottom: 5.5rem;
             max-width: 1180px;
         }
         .portal-header {
@@ -117,7 +116,89 @@ def load_traces(path: Path) -> pd.DataFrame:
     return pd.DataFrame(rows) if rows else pd.DataFrame()
 
 
-# Session state initialization
+def format_citation_label(item: Any) -> str:
+    if isinstance(item, dict):
+        title = (
+            item.get("original_title")
+            or item.get("title")
+            or item.get("source_pdf_id")
+            or item.get("chunk_id")
+            or "Source"
+        )
+        page = item.get("pdf_page_number") or item.get("page")
+        return f"{title}, PDF page {page}" if page is not None else str(title)
+    return str(item)
+
+
+def render_message(msg: dict[str, Any]) -> None:
+    role = msg["role"]
+    role_label = "You" if role == "user" else "HR Navigator"
+    with st.chat_message(role, avatar=None):
+        st.markdown(f"**{role_label}**")
+        if msg.get("is_error"):
+            st.error(msg["content"])
+        else:
+            st.markdown(msg["content"])
+
+        citations = msg.get("citations") or []
+        if citations:
+            pills = "".join(f'<span class="cite-pill">{format_citation_label(c)}</span>' for c in citations)
+            st.markdown(pills, unsafe_allow_html=True)
+
+        if msg.get("meta"):
+            st.markdown(f'<div class="meta-line">{msg["meta"]}</div>', unsafe_allow_html=True)
+
+
+def submit_query(query: str) -> None:
+    st.session_state.messages.append({"role": "user", "content": query})
+
+    try:
+        resp = requests.post(
+            f"{st.session_state.api_url.rstrip('/')}/chat",
+            json={
+                "session_id": st.session_state.session_id,
+                "employee_id": st.session_state.employee_id or None,
+                "query": query,
+            },
+            timeout=45,
+        )
+        if not resp.ok:
+            try:
+                detail = resp.json().get("detail", resp.text)
+            except Exception:
+                detail = resp.text
+            err_text = f"Backend returned {resp.status_code}: {detail}"
+            st.session_state.messages.append(
+                {"role": "assistant", "content": err_text, "is_error": True}
+            )
+        else:
+            data = resp.json()
+            answer = data.get("answer") or data.get("response") or str(data)
+            citations = data.get("citations") or data.get("sources") or []
+            route = data.get("route_taken") or data.get("route") or "default"
+            latency = data.get("latency_ms")
+            status = data.get("status", "ok")
+
+            meta_bits = [f"Status: {status}", f"Route: {route}"]
+            if latency is not None:
+                meta_bits.append(f"Latency: {latency} ms")
+            meta_str = " ? ".join(meta_bits)
+
+            st.session_state.messages.append(
+                {
+                    "role": "assistant",
+                    "content": answer,
+                    "citations": citations,
+                    "meta": meta_str,
+                }
+            )
+    except requests.RequestException as exc:
+        err_text = f"Could not reach the backend API at `{st.session_state.api_url}` ({exc})."
+        st.session_state.messages.append(
+            {"role": "assistant", "content": err_text, "is_error": True}
+        )
+
+
 if "session_id" not in st.session_state:
     st.session_state.session_id = str(uuid.uuid4())
 if "messages" not in st.session_state:
@@ -127,7 +208,6 @@ if "api_url" not in st.session_state:
 if "employee_id" not in st.session_state:
     st.session_state.employee_id = "EMP-001"
 
-# Minimal, unobtrusive sidebar for connection settings only
 with st.sidebar:
     st.subheader("Workspace Settings")
     st.session_state.api_url = st.text_input("Backend API URL", value=st.session_state.api_url)
@@ -165,13 +245,15 @@ tab_desk, tab_eval = st.tabs(["Policy & HR Desk", "Evaluation & Telemetry"])
 with tab_desk:
     c_emp, c_clear = st.columns([4, 1])
     with c_emp:
-        st.caption(f"Context: Employee `{st.session_state.employee_id or 'None'}`  |  Session `{st.session_state.session_id[:8]}`")
+        st.caption(
+            f"Context: Employee `{st.session_state.employee_id or 'None'}`  |  "
+            f"Session `{st.session_state.session_id[:8]}`"
+        )
     with c_clear:
         if st.button("Clear Thread", use_container_width=True):
             st.session_state.messages = []
             st.rerun()
 
-    # Compact horizontal quick-ask bar (only shown when thread is empty or on demand)
     quick_queries = [
         "What is the annual leave policy?",
         f"Check leave balance for {st.session_state.employee_id or 'EMP-001'}",
@@ -184,80 +266,22 @@ with tab_desk:
 
     st.divider()
 
-    # Render conversation cleanly
+    pending_query = st.session_state.pop("pending_query", None)
+    if pending_query:
+        with st.spinner("Checking policy corpus and HR tools..."):
+            submit_query(pending_query)
+
     if not st.session_state.messages:
         st.info("Ask an HR policy question, look up employee leave balances, or select one of the quick prompts above.")
+    else:
+        for msg in st.session_state.messages:
+            render_message(msg)
 
-    for msg in st.session_state.messages:
-        role_label = "You" if msg["role"] == "user" else "HR Navigator"
-        with st.chat_message(msg["role"], avatar="👤" if msg["role"] == "user" else "📘"):
-            st.markdown(f"**{role_label}**")
-            st.markdown(msg["content"])
-
-            citations = msg.get("citations") or []
-            if citations:
-                pills = "".join(f'<span class="cite-pill">{c}</span>' for c in citations)
-                st.markdown(pills, unsafe_allow_html=True)
-
-            if msg.get("meta"):
-                st.markdown(f'<div class="meta-line">{msg["meta"]}</div>', unsafe_allow_html=True)
-
-    pending = st.session_state.pop("pending_query", None)
-    typed = st.chat_input("Ask about leave rules, benefits, or employee balances...")
-    query = pending or typed
-
-    if query:
-        st.session_state.messages.append({"role": "user", "content": query})
-        with st.chat_message("user", avatar="👤"):
-            st.markdown("**You**")
-            st.markdown(query)
-
-        with st.chat_message("assistant", avatar="📘"):
-            st.markdown("**HR Navigator**")
-            with st.spinner("Checking policy corpus and HR tools..."):
-                try:
-                    resp = requests.post(
-                        f"{st.session_state.api_url.rstrip('/')}/chat",
-                        json={
-                            "session_id": st.session_state.session_id,
-                            "employee_id": st.session_state.employee_id or None,
-                            "query": query,
-                        },
-                        timeout=45,
-                    )
-                    resp.raise_for_status()
-                    data = resp.json()
-
-                    answer = data.get("answer") or data.get("response") or str(data)
-                    citations = data.get("citations") or data.get("sources") or []
-                    route = data.get("route_taken") or data.get("route") or "default"
-                    latency = data.get("latency_ms")
-                    status = data.get("status", "ok")
-
-                    meta_bits = [f"Status: {status}", f"Route: {route}"]
-                    if latency is not None:
-                        meta_bits.append(f"Latency: {latency} ms")
-                    meta_str = "  •  ".join(meta_bits)
-
-                    st.markdown(answer)
-                    if citations:
-                        pills = "".join(f'<span class="cite-pill">{c}</span>' for c in citations)
-                        st.markdown(pills, unsafe_allow_html=True)
-                    st.markdown(f'<div class="meta-line">{meta_str}</div>', unsafe_allow_html=True)
-
-                    st.session_state.messages.append(
-                        {
-                            "role": "assistant",
-                            "content": answer,
-                            "citations": citations,
-                            "meta": meta_str,
-                        }
-                    )
-                except requests.RequestException as exc:
-                    err_text = f"Could not reach the backend API at `{st.session_state.api_url}` ({exc})."
-                    st.error(err_text)
-                    st.session_state.messages.append({"role": "assistant", "content": err_text})
-
+    typed_query = st.chat_input("Ask about leave rules, benefits, or employee balances...", key="desk_chat_input")
+    if typed_query:
+        with st.spinner("Checking policy corpus and HR tools..."):
+            submit_query(typed_query)
+        st.rerun()
 
 # ==========================================
 # TAB 2: EVALUATION & TELEMETRY
@@ -270,7 +294,6 @@ with tab_eval:
         if st.button("Refresh Data", use_container_width=True):
             st.rerun()
 
-    # Headline Reconciled Baseline Metrics (Official)
     b1, b2, b3, b4 = st.columns(4)
     b1.metric("Reconciled Baseline", "19 / 240")
     b2.metric("Zero-Shot Pass", "6")
@@ -334,7 +357,8 @@ with tab_eval:
 
         st.markdown("**Recent Requests**")
         display_cols = [
-            c for c in ["timestamp", "employee_id", "query", "route_taken", "status", "latency_ms", "citations"]
+            c
+            for c in ["timestamp", "employee_id", "query", "route_taken", "status", "latency_ms", "citations"]
             if c in df.columns
         ]
         st.dataframe(df[display_cols].iloc[::-1], use_container_width=True, hide_index=True)

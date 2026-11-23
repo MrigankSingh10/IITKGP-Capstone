@@ -27,11 +27,11 @@ class APIConfig:
 
     def __post_init__(self):
         url = urlsplit(self.base_url)
-        if (url.scheme != "https" or not url.hostname or url.username or url.password
+        if (url.scheme not in ("https", "http") or not url.hostname or url.username or url.password
                 or url.query or url.fragment or not self.base_url.rstrip('/').endswith('/v1')):
-            raise ValueError("Base URL must be HTTPS, without credentials, and end in /v1")
-        if not self.model or not self.api_key or not self.ca_file or self.timeout <= 0:
-            raise ValueError("Model, key, CA file and positive timeout are required")
+            raise ValueError("Base URL must be HTTP(S), without credentials, and end in /v1")
+        if not self.model or not self.api_key or self.timeout <= 0:
+            raise ValueError("Model, key, and positive timeout are required")
 
 
 class APIError(RuntimeError):
@@ -43,7 +43,8 @@ class HostedClient:
         if retries < 0:
             raise ValueError("retries must be nonnegative")
         self.config, self.retries, self.sleeper = config, retries, sleeper
-        context = ssl.create_default_context(cafile=config.ca_file)
+        cafile = config.ca_file if config.ca_file and config.ca_file.strip().lower() not in ('none', 'null') else None
+        context = ssl.create_default_context(cafile=cafile)
         self.client = httpx.Client(verify=context, timeout=config.timeout, transport=transport,
                                    trust_env=False)
         self.usage: dict[str, int] = {}
