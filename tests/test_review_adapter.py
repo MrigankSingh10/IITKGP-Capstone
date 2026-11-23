@@ -230,3 +230,48 @@ def test_hosted_draft_payload_omits_personal_identifiers():
     )
     assert corpus().retrieve(request, client).decision == 'review_required'
     assert client.calls == 3
+
+
+def test_requested_code_edition_is_not_silently_substituted():
+    text = '(y) "wages" means remuneration;\n(z) "worker" means someone else;'
+    adapter = corpus(text)
+    chunk = adapter._chunks[0]
+    page = adapter._pages[chunk['page_id']]
+    for record in (chunk, page):
+        record.update(category='Acts', original_title='The Code on Wages, 2019', labour_code='Code on Wages')
+    client = Client()
+    results = [
+        adapter.retrieve(ReviewRequest(
+            f'What is the definition of wages under the Code on Wages, {year}?',
+            prefer_verbatim=True, interactive=True,
+        ), client)
+        for year in (2050, 2019)
+    ]
+    assert results[0].decision == 'escalate'
+    assert 'edition was not found' in results[0].reason
+    assert not results[0].sources
+    assert results[1].decision == 'evidence_only'
+    assert results[1].sources[0]['original_title'] == 'The Code on Wages, 2019'
+    assert client.calls == 0
+
+
+def test_named_code_ranks_companion_documents_for_commencement():
+    documents = [
+        ('act', 'Acts', 'The Code on Wages, 2019',
+         'The Code on Wages shall come into force on dates appointed by the Government.'),
+        ('notice', 'Implementation and commencement', 'Implementation of Code on Wages, 2019',
+         'The Central Government appoints a date for commencement of the Code on Wages.'),
+    ]
+    pages, chunks = {}, []
+    for source_id, category, title, text in documents:
+        page_id = f'{source_id}:page_0001'
+        page = {'page_id': page_id, 'source_pdf_id': source_id, 'pdf_page_number': 1,
+                'scope': 'statutory', 'labour_code': 'Code on Wages', 'category': category,
+                'original_title': title, 'source_url': f'https://example.org/{source_id}',
+                'extraction_status': 'extracted', 'text': text}
+        pages[page_id] = page
+        chunks.append({**page, 'chunk_id': page_id, 'char_start': 0, 'char_end': len(text)})
+    result = ReviewAdapter(chunks, pages).retrieve(ReviewRequest(
+        'When did the Code on Wages come into force?', interactive=True,
+    ))
+    assert [source['source_pdf_id'] for source in result.sources] == ['notice', 'act']

@@ -7,7 +7,7 @@ from dataclasses import dataclass
 import re
 from typing import Any, Literal, Mapping, Protocol, Sequence
 
-from .draft_review import code_title_matches, draft_for_review, explicit_code, subsection_bounds
+from .draft_review import code_editions, code_title_matches, draft_for_review, explicit_code, subsection_bounds
 from .grounded import extractive_evidence
 from .search import english_eligible, search, unsupported_query
 
@@ -157,6 +157,20 @@ def add_page_context(question, evidence, pages):
     return expanded
 
 
+def companion_document_boosts(question):
+    """Prefer the supporting instrument when a question asks about an event."""
+    if re.search(r'\b(?:commenc\w*|(?:come|came|comes)\s+into\s+(?:force|effect)|'
+                 r'bring\w*\s+into\s+effect|effectiv\w*|implement\w*)\b', question, re.I):
+        return {'Implementation and commencement': 0.06, 'Notifications': 0.01}
+    if re.search(r'\b(?:appointed|appointments?|notifications?|circulars?|orders?)\b', question, re.I):
+        return {'Notifications': 0.06}
+    if re.search(r'\brules?\b', question, re.I):
+        return {'Rules': 0.04}
+    if re.search(r'\bfaqs?\b', question, re.I):
+        return {}
+    return {'Acts': 0.016}
+
+
 class ChatClient(Protocol):
     def chat(self, messages: list[dict[str, str]], **kwargs: Any) -> Mapping[str, Any]: ...
 
@@ -195,28 +209,34 @@ class ReviewAdapter:
             return ReviewResult('escalate', [], reason='Unsupported or invalid review request.')
         try:
             evidence = []
+            chunks = self._chunks
+            code = explicit_code(request.question) if request.interactive or request.prefer_verbatim else None
+            editions = code_editions(request.question, code) if code else set()
+            if editions:
+                chunks = [
+                    chunk for chunk in chunks
+                    if (not request.labour_code or chunk['labour_code'] == request.labour_code)
+                    and editions.intersection(code_editions(chunk['original_title'], code))
+                ]
+                if not chunks:
+                    return ReviewResult('escalate', [], reason='The requested Code edition was not found.')
             if request.prefer_verbatim:
-                direct = quoted_inclusion(request, self._chunks, self._pages)
+                direct = quoted_inclusion(request, chunks, self._pages)
                 if direct is not None:
                     return direct
-                evidence = definition_evidence(request, self._chunks)
+                evidence = definition_evidence(request, chunks)
                 if evidence:
                     direct = quoted_definition(request, evidence, self._pages)
                     if direct is not None:
                         return direct
             if not evidence:
-                chunks = self._chunks
-                code = explicit_code(request.question) if request.interactive else None
-                category = None
-                if code:
+                if code and request.interactive:
                     chunks = [chunk for chunk in chunks if code_title_matches(code, chunk['original_title'])]
-                    if not re.search(r'\b(?:rules?|notifications?|faqs?|circulars?|orders?)\b',
-                                     request.question, re.I):
-                        category = 'Acts'
                 evidence = search(
                     request.question, chunks, source_scope=request.source_scope,
-                    labour_code=request.labour_code, category=category, top_k=request.top_k,
+                    labour_code=request.labour_code, top_k=request.top_k,
                     mode='bm25_rerank' if request.interactive else 'bm25',
+                    category_boosts=companion_document_boosts(request.question) if code and request.interactive else None,
                 )
                 if request.interactive:
                     evidence = add_page_context(request.question, evidence, self._pages)

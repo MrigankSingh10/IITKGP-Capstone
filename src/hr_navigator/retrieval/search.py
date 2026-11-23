@@ -104,7 +104,7 @@ def dense(query_vector, chunks, vectors):
 
 def search(query, chunks, vectors=None, query_vector=None, source_scope='statutory',
            labour_code=None, category=None, top_k=5, mode='hybrid_rerank', date_filter=None,
-           section_candidates_enabled=True, proximity_enabled=True):
+           section_candidates_enabled=True, proximity_enabled=True, category_boosts=None):
     if date_filter is not None:
         raise ValueError('Date filtering unavailable until source dates are validated')
     if not 1 <= top_k <= 100:
@@ -136,6 +136,17 @@ def search(query, chunks, vectors=None, query_vector=None, source_scope='statuto
         # Section lookup supplies an independent candidate ranking before reranking.
         for rank, key in enumerate(section_candidates(query, selected), 1):
             scores[key] += 1 / (60 + rank)
+    if category_boosts:
+        requested_sections = set(re.findall(r'\bsections?\s+(\d+)\b', query, re.I))
+        if requested_sections:
+            for chunk in selected:
+                category_preferred = chunk['category'] != 'Acts' and chunk['category'] in category_boosts
+                if category_preferred and requested_sections.intersection(
+                    re.findall(r'\bsection\s+(\d+)\b', chunk['original_title'], re.I)
+                ):
+                    scores[chunk['chunk_id']] += 0.04
+        for key in scores:
+            scores[key] += category_boosts.get(by_id[key]['category'], 0.0)
     # Reward only a literal identifier found in the passage, not merely its title.
     # The passage and page provenance remain unchanged and require review.
     identifiers = instrument_ids(query)

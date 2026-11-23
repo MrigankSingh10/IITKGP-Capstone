@@ -299,3 +299,35 @@ Copy this heading and fill it in for each session:
 - Files / evidence: Streamlit chat, API, retrieval and draft review, regression tests, and this log.
 - Validation and results: 143 tests passed and 2 skipped. Checked the diff and excluded local credentials, model settings, and generated traces.
 - Blockers / next action / owner: live hosted behavior remains unverified.
+
+### 2026-11-23 — Review updated PR 13
+
+- Owner: AI review agent.
+- Work and decisions: reviewed PR 13 at `897667d` against `ab5eb01`, focusing on hosted request handling, retrieval scope and source identity.
+- Files / evidence: GitHub PR metadata, API and retrieval source, and accepted OCR corpus.
+- Validation and results: 143 tests passed and 2 skipped. Offline checks reproduced a named-edition mismatch, an excluded companion document and unchanged passage of a synthetic personal identifier through input validation.
+- Blockers / next action / owner: PR authors to assess and address the review findings. No GitHub review was submitted.
+
+### 2026-11-23 — Address PR 13 review findings
+
+- Owner: AI agent.
+- Work and decisions: masked common personal identifiers before drafting and tracing, enforced explicitly requested Code editions, and replaced the Acts-only filter with document ranking for relevant companion instruments.
+- Files / evidence: API and guardrails, drafting and retrieval, server audit, README, and regression tests.
+- Validation and results: 148 tests passed and 2 skipped. Offline corpus checks confirmed the requested-edition behavior and ranking for commencement, appointment and ordinary Act questions. A simulated hosted client verified that synthetic identifiers were absent from the outgoing messages.
+- Blockers / next action / owner: pattern-based masking does not identify all personal information. Historical local traces were left intact. No live hosted request, commit or push was made.
+
+### 2026-11-23 — Verify redaction test instructions
+
+- Owner: AI agent.
+- Work and decisions: located the API and hosted drafting redaction points and verified the commands for testing them with fictional identifiers.
+- Files / evidence: guardrails, server, draft review, and the privacy regression tests.
+- Validation and results: the three targeted privacy tests passed without a hosted model call.
+- Blockers / next action / owner: none.
+
+### 2026-11-23 — Publish PR 13 review fixes
+
+- Owner: AI agent.
+- Work and decisions: prepared separate privacy and source-selection commits for the existing Track 5 PR.
+- Files / evidence: input guardrails, API and model payload handling, retrieval, regression tests, and documentation.
+- Validation and results: 148 tests passed and 2 skipped. Local credentials, settings, generated traces and unrelated workspace files were excluded.
+- Blockers / next action / owner: hosted behavior remains unverified. Pattern-based privacy masking has limited coverage by design.

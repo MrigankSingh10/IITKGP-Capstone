@@ -36,16 +36,22 @@ _INJECTION = re.compile(r'(?i)\b(ignore|disregard|override)\b.{0,100}\b(instruct
 _ABSTENTION = re.compile(r'(?i)\b(not specified|not provided|insufficient evidence|cannot determine|unable to determine)\b')
 
 
+_CODE_NAMES = {
+    'wages': r'\bcode on wages\b',
+    'industrial': r'\bindustrial relations code\b',
+    'social': r'\b(?:code on social security|social security code)\b',
+    'osh': r'\b(?:osh(?:\s*&\s*wc)?\s+code|occupational safety,?\s+health,?\s+and working conditions code)\b',
+}
+
+
 def explicit_code(question):
     """Identify a named labour code only where the question is unambiguous."""
-    names = {
-        'wages': r'\bcode on wages\b',
-        'industrial': r'\bindustrial relations code\b',
-        'social': r'\b(?:code on social security|social security code)\b',
-        'osh': r'\b(?:osh(?:\s*&\s*wc)?\s+code|occupational safety,? health and working conditions code)\b',
-    }
-    found = [key for key, pattern in names.items() if re.search(pattern, question, re.I)]
+    found = [key for key, pattern in _CODE_NAMES.items() if re.search(pattern, question, re.I)]
     return found[0] if len(found) == 1 else None
+
+
+def code_editions(text, code):
+    return set(re.findall(rf'{_CODE_NAMES[code]}\s*,?\s*(\d{{4}})\b', text, re.I))
 
 
 def code_title_matches(code, title):
