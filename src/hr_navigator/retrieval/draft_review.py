@@ -244,5 +244,9 @@ def draft_for_review(client, question, evidence, pages):
                     'model_check': 'alignment_failed', 'sources': checked}
         return {'decision': 'review_required', 'draft_not_verified': answer, 'sources': checked,
                 'model_check': 'supported_and_aligned', 'uncertainty': 'Automated checks may be wrong; human verification of evidence and applicability is required.'}
-    except (APIError, ValueError, TypeError, KeyError, IndexError):
+    except APIError as exc:
+        return {'decision': 'escalate', 'reason': f'The chat service failed during the {stage} check: {exc}.', 'sources': []}
+    except (ValueError, TypeError, KeyError, IndexError):
+        if stage == 'citation':
+            return {'decision': 'escalate', 'reason': 'The model did not provide a verifiable quotation from the retrieved passages. Try selecting the relevant document collection or rephrasing the question.', 'sources': []}
         return {'decision': 'escalate', 'reason': f'The {stage} check failed validation.', 'sources': []}
