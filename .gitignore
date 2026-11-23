@@ -22,3 +22,5 @@ Track_B_Inference_API_Learner_Guide.docx.pdf
 .DS_Store
 
 data/processed/
+*.egg-info/
+src/*.egg-info/
