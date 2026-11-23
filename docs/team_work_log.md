@@ -101,3 +101,289 @@ Copy this heading and fill it in for each session:
 - Files / evidence: [baseline report](../reports/baseline_v1_report.md), [reconciled review](../reports/baseline_v1_review_reconciled.csv), [safety set guide](safety_doc_set_guide.md), [hold-out review guide](holdout_review_guide.md), `src/hr_navigator/evaluation/runner.py`, `systems.py`, `safety_set.py`.
 - Validation and results: offline tests with fake systems and a fake page registry only; no live model run on the safety or hold-out sets.
 - Blockers / next action / owner: team members review the 18 safety cases and freeze them (`scripts/freeze_safety_set.py`); a member with the corpus checks the 20 hold-out questions against the PDF pages and freezes them (`scripts/freeze_holdout.py`). Live closed-book and RAG runs need the API keys.
+
+
+---
+
+### 2026-11-23 — Track 5 (UI, FastAPI, Guardrails & Observability)
+
+- **Owner:** Track 5 (UI / FastAPI / Security / Observability)[cite: 2, 9]
+- **Changes Made:**
+  - Wired `src/hr_navigator/server.py` (`GET /health` and `POST /chat`) with rate limiting (`src/hr_navigator/security/guardrails.py`), query routing with safe fallbacks, and JSONL trace logging (`src/hr_navigator/observability/tracer.py`)[cite: 2, 9].
+  - Updated `app.py` with sample demo prompts, employee ID input, response metadata (status, route, latency, citations), and the **Metrics & Traces** view reading `reports/agent_traces.jsonl` and existing JSON reports under `reports/`[cite: 2, 9].
+  - Documented Track 5 components and local startup commands in `README.md`[cite: 9].
+- **Demo & Handoff Notes:**
+  - All requests (`ok`, `refused`, and `error`) log to `reports/agent_traces.jsonl` so live counts, latency, refusals, and estimated cost appear in the dashboard[cite: 2, 9].
+  - Ready for coordinator demo walkthrough with FastAPI running on port `8000` and Streamlit running `app.py`.
+
+### 2026-11-23 — FastAPI launch instructions
+
+- Owner: AI agent.
+- Work and decisions: provided local API setup and launch instructions.
+- Files / evidence: README and `pyproject.toml`.
+- Validation and results: checked the documented command and separately required API dependencies.
+- Blockers / next action / owner: none.
+
+### 2026-11-23 — Connect document retrieval to chat UI
+
+- Owner: AI agent.
+- Work and decisions: connected `/chat` to the local review adapter, enabled optional configured chat-model drafts, preserved review and escalation decisions, and displayed source passages and citations in the UI.
+- Files / evidence: `src/hr_navigator/server.py`, `app.py`, `tests/test_server_language.py`, `README.md`.
+- Validation and results: seven focused API/adapter tests passed; a real corpus query returned three sources; Streamlit AppTest displayed them without exceptions. The wider suite was interrupted after 79 passes when it stalled. Live model drafting was not tested because the authorized chat endpoint was not configured.
+- Blockers / next action / owner: set all four CHAT environment variables using the assigned endpoint to generate drafts; human review and evaluation gates remain open.
+
+### 2026-11-23 — API interpreter troubleshooting
+
+- Owner: AI agent.
+- Work and decisions: diagnosed the Python 3.14 Uvicorn launch missing httpx; made the launch instructions use the project Python 3.11 interpreter explicitly.
+- Files / evidence: `README.md`; user's traceback.
+- Validation and results: Python 3.11 imports httpx and Uvicorn and loads the API through application startup. The sandbox blocked binding a local port.
+- Blockers / next action / owner: restart the server with the documented interpreter.
+
+### 2026-11-23 — Local chat configuration
+
+- Owner: AI agent.
+- Work and decisions: added a Git-ignored local chat configuration using existing key and certificate files, retaining environment overrides; documented setup.
+- Files / evidence: `src/hr_navigator/server.py`, `.gitignore`, `README.md`, `tests/test_server_language.py`, local ignored configuration.
+- Validation and results: eight focused API/adapter tests passed, including local configuration and client cleanup. A live endpoint test was rejected by automatic approval review because it would send a local credential and document-derived request externally.
+- Blockers / next action / owner: confirm authorization for the configured endpoint and live test; independently evaluate retrieval and generated drafts.
+
+### 2026-11-23 — Draft failure diagnostics
+
+- Owner: AI agent.
+- Work and decisions: distinguished sanitized chat-service errors from draft validation failures so the API can report the cause without exposing response bodies or credentials.
+- Files / evidence: `src/hr_navigator/retrieval/draft_review.py`, `tests/test_review_adapter.py`.
+- Validation and results: nine focused review-adapter and server tests passed; no live external API request was made.
+- Blockers / next action / owner: user retries to provide the sanitized error; the earlier live test remains blocked by automatic approval review pending explicit authorization.
+
+### 2026-11-23 — Correct local chat endpoint pairing
+
+- Owner: AI agent.
+- Work and decisions: corrected the ignored local VM04 chat endpoint from port 1035 to port 1034, matching the supplied course guide's VM04 certificate and endpoint pairing.
+- Files / evidence: local ignored `configs/chat.local.json`; supplied Track B inference guide.
+- Validation and results: checked the guide's endpoint and certificate table; no external request was sent. User must retry to confirm connectivity and group authorization.
+- Blockers / next action / owner: group assignment remains to be confirmed; live generation and retrieval quality remain unverified.
+
+### 2026-11-23 — Document collection selection
+
+- Owner: AI agent.
+- Work and decisions: traced a citation escalation to weak all-document retrieval and added a document collection filter to the UI and API, retaining existing citation checks. Improved the citation failure message.
+- Files / evidence: `app.py`, `src/hr_navigator/server.py`, `src/hr_navigator/retrieval/draft_review.py`, `tests/test_server_language.py`, `README.md`.
+- Validation and results: 29 focused tests passed. With the Code on Wages filter, the real corpus retrieves its definition on PDF page 4; a simulated model passed the end-to-end draft and citation checks. A live model draft has not been verified.
+- Blockers / next action / owner: select the intended Code; actual model reliability and independent evaluation remain open.
+
+### 2026-11-23 — Verbatim statutory definition answers
+
+- Owner: AI agent.
+- Work and decisions: added a direct evidence result for simple inclusion questions when exactly one matching Act clause can be verified against its registered PDF page. The API displays the source wording as the answer without requesting a model citation.
+- Files / evidence: `src/hr_navigator/retrieval/review_adapter.py`, `src/hr_navigator/server.py`, and `tests/test_review_adapter.py`.
+- Validation and results: thirty focused tests passed. A real-corpus API smoke test returned Code on Wages PDF page 4 with and without the document filter, using a stub that fails if the model is called.
+- Blockers / next action / owner: general questions still depend on retrieval and model citation quality.
+
+### 2026-11-23 — Retrieve definitions from named Acts
+
+- Owner: AI agent.
+- Work and decisions: corrected the chat API's named-Code definition retrieval to start at the Act's definition heading and include nearby text for qualifications.
+- Files / evidence: `src/hr_navigator/retrieval/review_adapter.py`, `src/hr_navigator/server.py`.
+- Validation and results: real-corpus API smoke checks with a simulated model retrieved and cited the Code on Wages definition for both default and Code-filtered queries. Thirty focused checks passed.
+- Blockers / next action / owner: live model output remains unverified.
+
+### 2026-11-23 — Quote named statutory definitions directly
+
+- Owner: AI agent.
+- Work and decisions: added a direct source result for named-Code definition questions with a verified clause boundary. The result retains separate PDF citations for a definition that continues onto the next page.
+- Files / evidence: `src/hr_navigator/retrieval/review_adapter.py`, `tests/test_review_adapter.py`.
+- Validation and results: 31 focused tests passed. The real-corpus API returned Code on Wages PDF pages 4 and 5 for the reported question with and without the filter. The test client was configured to fail if it attempted a model call.
+- Blockers / next action / owner: broader questions still depend on the general drafting flow.
+
+### 2026-11-23 — Commit the document chat integration
+
+- Owner: AI agent.
+- Work and decisions: grouped draft failure diagnostics and the document chat integration into separate commits on the Track 5 branch.
+- Files / evidence: API, Streamlit chat, review adapter, focused tests, README and this log.
+- Validation and results: 31 focused tests passed, and the diff passed whitespace checks. Local model configuration, credentials and generated traces were excluded.
+- Blockers / next action / owner: broader live model behavior remains unverified.
+
+### 2026-11-23 — Make the chat input visible
+
+- Owner: AI agent.
+- Work and decisions: moved the Streamlit chat input above the conversation history in Assistant Demo.
+- Files / evidence: `app.py`.
+- Validation and results: Streamlit AppTest rendered the input, submitted a typed message to a mocked API, and displayed the reply.
+- Blockers / next action / owner: none.
+
+### 2026-11-23 — Retrieval interface handoff
+
+- Owner: AI agent.
+- Work and decisions: inspected the current retrieval, chat API and synthetic tool interfaces for a colleague handoff.
+- Files / evidence: `src/hr_navigator/retrieval/review_adapter.py`, `src/hr_navigator/server.py`, `src/hr_navigator/tools/synthetic_hr.py`.
+- Validation and results: checked function signatures, data models and routing directly against the source; no code behavior was changed.
+- Blockers / next action / owner: live model behavior and independent evaluation remain unverified; orchestration and synthetic tool integration remain open.
+
+### 2026-11-23 — Accept quoted terms in definition questions
+
+- Owner: AI agent.
+- Work and decisions: fixed named-Code definition lookup for terms surrounded by straight or curly quotation marks.
+- Files / evidence: `src/hr_navigator/retrieval/review_adapter.py` and `tests/test_review_adapter.py`.
+- Validation and results: 35 focused tests passed. Real-corpus API smoke checks returned the worker definition on PDF page 5 and the employee definition on PDF page 3 without a hosted model call.
+- Blockers / next action / owner: none for the reported questions.
+
+### 2026-11-23 — Improve the general document chat path
+
+- Owner: AI agent.
+- Work and decisions: reranked interactive search results locally, applied named-Code scope before ranking, and preserved context around the matching span. The hosted model now selects short passage IDs and the server attaches registered PDF text. Unsupported or invalid drafts escalate with candidate passages when available. The server audit now uses isolated fixtures for its model boundary.
+- Files / evidence: interactive retrieval, draft review and API code, server audit, focused tests, and README.
+- Validation and results: 137 tests passed and 2 skipped. Real-corpus API smoke checks retrieved the expected provision for five varied questions with a simulated chat model. The smoke checks also confirmed escalation for missing personal-record evidence.
+- Blockers / next action / owner: hosted model behavior and independent retrieval accuracy are still unverified. Paraphrases and questions outside the corpus can still return insufficient evidence.
+
+### 2026-11-23 — Dock the chat input and stream progress
+
+- Owner: AI agent.
+- Work and decisions: docked the composer at the viewport bottom in Assistant Demo. Added a streaming API route that emits retrieval, drafting and checking progress before the final checked response. The JSON chat route remains available.
+- Files / evidence: `app.py`, `src/hr_navigator/server.py`, review adapter and draft code, and `tests/test_server_language.py`.
+- Validation and results: 138 tests passed and 2 skipped. Streamlit AppTest confirmed the bottom container and displayed a response from a mocked stream. The API regression test verified event order and the checked result.
+- Blockers / next action / owner: live hosted model streaming was not exercised.
+
+### 2026-11-23 — Publish Track 5 chat updates
+
+- Owner: AI agent.
+- Work and decisions: prepared the general document retrieval, citation handling, and streaming chat updates for the existing Track 5 branch and PR 13.
+- Files / evidence: API, Streamlit UI, retrieval and draft review, server audit, tests, README and this log.
+- Validation and results: the latest full suite passed with 138 passed and 2 skipped. Checked the diff for whitespace and excluded the local model configuration, credentials and generated traces.
+- Blockers / next action / owner: live hosted model behavior remains unverified.
+
+### 2026-11-23 — Prepare manual chat test prompts
+
+- Owner: AI agent.
+- Work and decisions: provided prompts with expected statutory answers and cases that should request clarification or escalate.
+- Files / evidence: official India Code texts for the Code on Wages and Industrial Relations Code.
+- Validation and results: checked expected answers against the cited Act sections. The prompts were prepared for manual UI testing.
+- Blockers / next action / owner: none.
+
+### 2026-11-23 — Clarify personal minimum-wage questions
+
+- Owner: AI agent.
+- Work and decisions: added an API clarification before retrieval for requests for a personal minimum-wage rate. Streamlit carries the original question into the next reply and offers a way to start a new question.
+- Files / evidence: `app.py`, `src/hr_navigator/server.py`, and `tests/test_server_language.py`.
+- Validation and results: 139 tests passed and 2 skipped. A Streamlit-to-API smoke check verified the exact reported prompt, the follow-up data reaching the pipeline, and escalation when no rate schedule is available.
+- Blockers / next action / owner: the app requires supporting corpus evidence to draft a rate. Hosted model output for a completed follow-up was not tested.
+
+### 2026-11-23 — Explain the minimum-wage corpus limit
+
+- Owner: AI agent.
+- Work and decisions: checked the indexed source registry for rate schedules and made personal rate follow-ups explain the missing source and the distinction between payday and the affected wage period.
+- Files / evidence: `src/hr_navigator/server.py`, `tests/test_server_language.py`, and the accepted OCR source metadata.
+- Validation and results: 139 tests passed and 2 skipped. The reported two-turn scenario now returns an explicit missing-source result without generic Code citations or a model call.
+- Blockers / next action / owner: exact-rate support requires verified rate notifications and a way to establish their applicability.
+
+### 2026-11-23 — Correct drafts after a failed support check
+
+- Owner: AI agent.
+- Work and decisions: prioritized the named Act when a question does not ask for a separate instrument, and added one correction attempt after a failed support check. A corrected draft must pass the same checks.
+- Files / evidence: `src/hr_navigator/retrieval/review_adapter.py`, `src/hr_navigator/retrieval/draft_review.py`, `tests/test_review_adapter.py`.
+- Validation and results: 141 tests passed and 2 skipped. The real-corpus streaming API ranked Code on Wages PDF page 9 first for the six-week wage-period example and accepted a simulated correction. A second failed check still escalates.
+- Blockers / next action / owner: live hosted model behavior remains unverified.
+
+### 2026-11-23 — Handle incomplete drafts for multi-part prompts
+
+- Owner: AI agent.
+- Work and decisions: increased the interactive draft response budget, clarified how to cover each requested item, and added one format-recovery attempt for cut-off or malformed drafts. Citation and support checks still apply.
+- Files / evidence: `src/hr_navigator/retrieval/draft_review.py` and `tests/test_review_adapter.py`.
+- Validation and results: 143 tests passed and 2 skipped. The reported multi-part prompt recovered from a simulated truncation with real corpus passages. Repeated truncation still escalates.
+- Blockers / next action / owner: the original provider response was not available to identify the exact format failure, and hosted behavior remains unverified.
+
+### 2026-11-23 — Publish chat clarification and draft fixes
+
+- Owner: AI agent.
+- Work and decisions: grouped the minimum-wage clarification flow and draft recovery fixes into separate commits for the existing Track 5 PR.
+- Files / evidence: Streamlit chat, API, retrieval and draft review, regression tests, and this log.
+- Validation and results: 143 tests passed and 2 skipped. Checked the diff and excluded local credentials, model settings, and generated traces.
+- Blockers / next action / owner: live hosted behavior remains unverified.
+
+### 2026-11-23 — Review updated PR 13
+
+- Owner: AI review agent.
+- Work and decisions: reviewed PR 13 at `897667d` against `ab5eb01`, focusing on hosted request handling, retrieval scope and source identity.
+- Files / evidence: GitHub PR metadata, API and retrieval source, and accepted OCR corpus.
+- Validation and results: 143 tests passed and 2 skipped. Offline checks reproduced a named-edition mismatch, an excluded companion document and unchanged passage of a synthetic personal identifier through input validation.
+- Blockers / next action / owner: PR authors to assess and address the review findings. No GitHub review was submitted.
+
+### 2026-11-23 — Address PR 13 review findings
+
+- Owner: AI agent.
+- Work and decisions: masked common personal identifiers before drafting and tracing, enforced explicitly requested Code editions, and replaced the Acts-only filter with document ranking for relevant companion instruments.
+- Files / evidence: API and guardrails, drafting and retrieval, server audit, README, and regression tests.
+- Validation and results: 148 tests passed and 2 skipped. Offline corpus checks confirmed the requested-edition behavior and ranking for commencement, appointment and ordinary Act questions. A simulated hosted client verified that synthetic identifiers were absent from the outgoing messages.
+- Blockers / next action / owner: pattern-based masking does not identify all personal information. Historical local traces were left intact. No live hosted request, commit or push was made.
+
+### 2026-11-23 — Verify redaction test instructions
+
+- Owner: AI agent.
+- Work and decisions: located the API and hosted drafting redaction points and verified the commands for testing them with fictional identifiers.
+- Files / evidence: guardrails, server, draft review, and the privacy regression tests.
+- Validation and results: the three targeted privacy tests passed without a hosted model call.
+- Blockers / next action / owner: none.
+
+### 2026-11-23 — Publish PR 13 review fixes
+
+- Owner: AI agent.
+- Work and decisions: prepared separate privacy and source-selection commits for the existing Track 5 PR.
+- Files / evidence: input guardrails, API and model payload handling, retrieval, regression tests, and documentation.
+- Validation and results: 148 tests passed and 2 skipped. Local credentials, settings, generated traces and unrelated workspace files were excluded.
+- Blockers / next action / owner: hosted behavior remains unverified. Pattern-based privacy masking has limited coverage by design.
+
+### 2026-11-23 — Draft Member 1 and Member 2 team update
+
+- Owner: AI agent.
+- Work and decisions: prepared a team-facing recap of domain and corpus work, retrieval/RAG results, and contributions to the chat integration.
+- Files / evidence: Member 1 closeout and source verification, Phase 2 summary, retrieval regression report, and PR 13.
+- Validation and results: cross-checked the corpus counts, benchmark scope, and handoff status against the existing reports. No code changed.
+- Blockers / next action / owner: independent relevance and grounding review and written faculty clarification remain open.
+
+### 2026-11-23 — Re-review PR 13 privacy and source fixes
+
+- Owner: AI review agent.
+- Work and decisions: reviewed the updated PR 13 head at `1b54521` and retested the previous findings.
+- Files / evidence: guardrails, draft-review payload, edition matching, and the accepted OCR corpus.
+- Validation and results: 148 tests passed and 2 skipped. Offline checks confirmed commencement and appointment ranking. Two common identifier formats survived into a mock payload, and a parenthesized requested year bypassed edition filtering.
+- Blockers / next action / owner: PR authors to address the remaining findings. No GitHub review was submitted.
+
+### 2026-11-23 — Fix the two remaining PR 13 findings
+
+- Owner: AI agent.
+- Work and decisions: expanded redaction to cover 3-3-4 mobile grouping and employee IDs written after “is.” Shared the edition syntax between filtering and direct definition lookup so parenthesized years receive the same check.
+- Files / evidence: guardrails, draft review, review adapter, and regression tests.
+- Validation and results: 152 tests passed and 2 skipped. The original synthetic identifier examples were absent from the mock model payload. The real corpus rejected the parenthesized 2050 edition and returned the 2019 definition for the matching request.
+- Blockers / next action / owner: no hosted call, commit or push was made.
+
+### 2026-11-23 — Re-review the local PR 13 fixes
+
+- Owner: AI review agent.
+- Work and decisions: reviewed the uncommitted redaction and edition changes on top of `1b54521`.
+- Files / evidence: guardrails, edition parsing, review adapter, regression tests and accepted OCR corpus.
+- Validation and results: 152 tests passed and 2 skipped. The two original examples passed. Offline checks reproduced over-redaction of ordinary prose and an existing missing-edition gap in comparisons involving multiple Codes.
+- Blockers / next action / owner: findings reported for correction. No code changes or remote review were made.
+
+### 2026-11-23 — Preserve the employee ID label and ordinary prose
+
+- Owner: AI agent.
+- Work and decisions: changed employee-ID masking to replace the identifier value while preserving the label. The “employee ID is” form only masks a value containing a digit.
+- Files / evidence: `src/hr_navigator/security/guardrails.py` and `tests/test_server_language.py`.
+- Validation and results: 154 tests passed and 2 skipped. Confirmed that an identifier is masked and that questions about a missing or required ID remain intact.
+- Blockers / next action / owner: the separate multiple-Code edition finding remains open.
+
+### 2026-11-23 — Re-review label-preserving redaction
+
+- Owner: AI review agent.
+- Work and decisions: rechecked the updated employee-ID masking and the outstanding multi-Code edition behavior.
+- Files / evidence: guardrails, review adapter, and the accepted OCR corpus.
+- Validation and results: 154 tests passed and 2 skipped. The label and ordinary prose were preserved in redaction checks. An unavailable single-Code edition was refused, while a multi-Code comparison still bypassed the missing-edition check.
+- Blockers / next action / owner: validate explicitly requested editions in multi-Code questions.
+
+### 2026-11-23 — Publish the follow-up fixes
+
+- Owner: AI agent.
+- Work and decisions: grouped the label-preserving redaction and parenthesized single-Code edition fixes for PR 13. Deferred the multiple-Code edition finding at the requester’s direction.
+- Files / evidence: guardrails, draft review, review adapter, regression tests and this log.
+- Validation and results: 154 tests passed and 2 skipped. Diff whitespace check passed.
+- Blockers / next action / owner: multi-Code edition verification is deferred.

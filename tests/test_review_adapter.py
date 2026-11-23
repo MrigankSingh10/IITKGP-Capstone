@@ -1,4 +1,5 @@
 import json
+import pytest
 
 from hr_navigator.retrieval.review_adapter import ReviewAdapter, ReviewRequest
 
@@ -33,6 +34,46 @@ def test_valid_draft_is_review_only_and_preserves_provenance():
     assert result.sources[0]['source_pdf_id'] == 'hash'
     assert result.sources[0]['scope'] == 'statutory'
     assert result.sources[0]['source_warnings'] == ['check scan']
+
+
+def test_interactive_draft_resolves_passage_ids_and_fails_closed_on_unknown_ids():
+    text = 'The notice must be given at least fourteen days before the event.'
+    adapter = corpus(text)
+    request = ReviewRequest('How much advance notice is needed?', interactive=True)
+    draft = {'answer': 'At least fourteen days.', 'sufficient': True, 'passage_ids': ['P1']}
+    client = Client(draft, {'verdict': 'supported', 'reason': 'stated'},
+                    {'answers_question': True, 'requested_source_match': True, 'reason': 'yes'})
+    result = adapter.retrieve(request, client)
+    assert result.decision == 'review_required'
+    assert result.sources[0]['quote_or_section'] == text
+    assert client.calls == 3
+
+    client = Client({**draft, 'passage_ids': ['P99']})
+    result = adapter.retrieve(request, client)
+    assert result.decision == 'escalate'
+    assert result.draft_not_verified is None
+    assert result.sources[0]['passage'] == text
+    assert client.calls == 1
+
+
+@pytest.mark.parametrize('second_verdict', ['supported', 'contradicted'])
+def test_interactive_draft_gets_one_checked_correction(second_verdict):
+    wrong = {'answer': 'Seven days.', 'sufficient': True, 'passage_ids': ['P1']}
+    corrected = {**wrong, 'answer': 'At least fourteen days.'}
+    client = Client(
+        wrong, {'verdict': 'contradicted', 'reason': 'Wrong number.'},
+        corrected, {'verdict': second_verdict, 'reason': 'Rechecked.'},
+        {'answers_question': True, 'requested_source_match': True, 'reason': 'yes'},
+    )
+    result = corpus().retrieve(ReviewRequest('How much advance notice is needed?', interactive=True), client)
+    if second_verdict == 'supported':
+        assert result.decision == 'review_required'
+        assert result.draft_not_verified == 'At least fourteen days.'
+        assert client.calls == 5
+    else:
+        assert result.decision == 'escalate'
+        assert result.draft_not_verified is None
+        assert client.calls == 4
 
 
 def test_unsupported_claim_and_bad_citation_escalate():
@@ -71,3 +112,171 @@ def test_two_sources_with_conflicting_notice_periods_escalate_on_critic_verdict(
     result = ReviewAdapter(chunks, pages).retrieve(ReviewRequest('What is the notice period?'), client)
     assert result.decision == 'escalate' and result.draft_not_verified is None
     assert {source['source_pdf_id'] for source in result.sources} == {'hash1', 'hash2'}
+
+
+def test_chat_service_failure_identifies_transport_without_disclosing_response():
+    from hr_navigator.clients.api import APIError
+    class FailedClient:
+        def chat(self, *args, **kwargs):
+            raise APIError('API request failed (HTTP 401)')
+    result = corpus().retrieve(ReviewRequest('How much notice?'), FailedClient())
+    assert result.decision == 'escalate'
+    assert 'HTTP 401' in result.reason
+    assert result.sources == []
+
+
+def test_verbatim_inclusion_requires_matching_act_and_registered_text():
+    text = '(w) "State" includes a Union territory;'
+    adapter = corpus(text)
+    chunk = adapter._chunks[0]
+    chunk['category'] = 'Acts'
+    request = ReviewRequest('Does State include a Union territory?', prefer_verbatim=True)
+    client = Client()
+    result = adapter.retrieve(request, client)
+    assert result.decision == 'evidence_only'
+    assert result.sources[0]['passage'] == text
+    assert client.calls == 0
+
+    chunk['text'] = text.replace('(w)', '(x)')
+    result = adapter.retrieve(request, client)
+    assert result.decision == 'escalate'
+    assert not result.sources
+    assert client.calls == 0
+
+
+@pytest.mark.parametrize('term', ['wages', '"wages"', '“wages”', "'wages'", '‘wages’'])
+def test_verbatim_named_definition_keeps_continuation_and_stops_at_next_definition(term):
+    excerpts = [
+        '(y) "wages" means remuneration.\nProvided that the employer',
+        'must count qualifying payments.\n(z) "worker" means something else;',
+    ]
+    pages, chunks = {}, []
+    for number, text in enumerate(excerpts, 4):
+        page_id = f'code:page_{number:04d}'
+        page = {'page_id': page_id, 'source_pdf_id': 'code', 'pdf_page_number': number,
+                'scope': 'statutory', 'labour_code': 'Code on Wages', 'category': 'Acts',
+                'original_title': 'The Code on Wages, 2019', 'source_url': 'https://example.org',
+                'extraction_status': 'extracted', 'text': text}
+        pages[page_id] = page
+        chunks.append({**page, 'chunk_id': page_id, 'char_start': 0, 'char_end': len(text)})
+    client = Client()
+    result = ReviewAdapter(chunks, pages).retrieve(ReviewRequest(
+        f'What is the definition of {term} under the Code on Wages?', prefer_verbatim=True,
+    ), client)
+    assert result.decision == 'evidence_only'
+    assert [source['page_number'] for source in result.sources] == [4, 5]
+    assert result.sources[1]['passage'] == 'must count qualifying payments.'
+    assert client.calls == 0
+
+
+def test_interactive_draft_recovers_from_truncation_and_accepts_fenced_json():
+    class TruncatedThenFencedClient(Client):
+        def chat(self, messages, **kwargs):
+            payload = json.loads(messages[1]['content'])
+            if self.calls == 0:
+                assert kwargs['max_tokens'] > 512
+                self.calls += 1
+                return {'choices': [{'finish_reason': 'length', 'message': {'content': '{"answer":'}}]}
+            if self.calls == 1:
+                assert 'untrusted_feedback_on_previous_draft' in payload
+                self.calls += 1
+                draft = {'answer': 'At least fourteen days.', 'sufficient': True, 'passage_ids': ['P1']}
+                content = '\n'.join(['```json', json.dumps(draft), '```'])
+                return {'choices': [{'finish_reason': 'stop', 'message': {'content': content}}]}
+            return super().chat(messages, **kwargs)
+
+    client = TruncatedThenFencedClient(
+        {'verdict': 'supported', 'reason': 'stated'},
+        {'answers_question': True, 'requested_source_match': True, 'reason': 'yes'},
+    )
+    result = corpus().retrieve(ReviewRequest('How much advance notice?', interactive=True), client)
+    assert result.decision == 'review_required'
+    assert client.calls == 4
+
+
+def test_interactive_draft_escalates_when_both_responses_are_truncated():
+    class TruncatedClient:
+        def __init__(self):
+            self.calls = 0
+
+        def chat(self, *args, **kwargs):
+            self.calls += 1
+            return {'choices': [{'finish_reason': 'length', 'message': {'content': '{"answer":'}}]}
+
+    client = TruncatedClient()
+    result = corpus().retrieve(ReviewRequest('How much advance notice?', interactive=True), client)
+    assert result.decision == 'escalate'
+    assert 'ran out of response space' in result.reason
+    assert result.sources and result.draft_not_verified is None
+    assert client.calls == 2
+
+
+@pytest.mark.parametrize('phone', ['+91 98765 43210', '+91 987 654 3210', '+91-987-654-3210'])
+def test_hosted_draft_payload_omits_personal_identifiers(phone):
+    class InspectClient(Client):
+        def chat(self, messages, **kwargs):
+            serialized = json.dumps(messages)
+            for identifier in ('ABCDE1234F', phone, 'XQ1927', 'person@example.test'):
+                assert identifier not in serialized
+            assert '[phone removed]' in serialized
+            assert '[employee ID removed]' in serialized
+            return super().chat(messages, **kwargs)
+
+    client = InspectClient(
+        {'answer': 'At least fourteen days.', 'sufficient': True, 'passage_ids': ['P1']},
+        {'verdict': 'supported', 'reason': 'stated'},
+        {'answers_question': True, 'requested_source_match': True, 'reason': 'yes'},
+    )
+    request = ReviewRequest(
+        f'How much notice? PAN ABCDE1234F, phone {phone}, '
+        'employee ID is XQ1927, email person@example.test.',
+        interactive=True,
+    )
+    assert corpus().retrieve(request, client).decision == 'review_required'
+    assert client.calls == 3
+
+
+@pytest.mark.parametrize('edition_format', [', {}', ' {}', ' ({})'])
+def test_requested_code_edition_is_not_silently_substituted(edition_format):
+    text = '(y) "wages" means remuneration;\n(z) "worker" means someone else;'
+    adapter = corpus(text)
+    chunk = adapter._chunks[0]
+    page = adapter._pages[chunk['page_id']]
+    for record in (chunk, page):
+        record.update(category='Acts', original_title='The Code on Wages, 2019', labour_code='Code on Wages')
+    client = Client()
+    results = [
+        adapter.retrieve(ReviewRequest(
+            f'What is the definition of wages under the Code on Wages{edition_format.format(year)}?',
+            prefer_verbatim=True, interactive=True,
+        ), client)
+        for year in (2050, 2019)
+    ]
+    assert results[0].decision == 'escalate'
+    assert 'edition was not found' in results[0].reason
+    assert not results[0].sources
+    assert results[1].decision == 'evidence_only'
+    assert results[1].sources[0]['original_title'] == 'The Code on Wages, 2019'
+    assert client.calls == 0
+
+
+def test_named_code_ranks_companion_documents_for_commencement():
+    documents = [
+        ('act', 'Acts', 'The Code on Wages, 2019',
+         'The Code on Wages shall come into force on dates appointed by the Government.'),
+        ('notice', 'Implementation and commencement', 'Implementation of Code on Wages, 2019',
+         'The Central Government appoints a date for commencement of the Code on Wages.'),
+    ]
+    pages, chunks = {}, []
+    for source_id, category, title, text in documents:
+        page_id = f'{source_id}:page_0001'
+        page = {'page_id': page_id, 'source_pdf_id': source_id, 'pdf_page_number': 1,
+                'scope': 'statutory', 'labour_code': 'Code on Wages', 'category': category,
+                'original_title': title, 'source_url': f'https://example.org/{source_id}',
+                'extraction_status': 'extracted', 'text': text}
+        pages[page_id] = page
+        chunks.append({**page, 'chunk_id': page_id, 'char_start': 0, 'char_end': len(text)})
+    result = ReviewAdapter(chunks, pages).retrieve(ReviewRequest(
+        'When did the Code on Wages come into force?', interactive=True,
+    ))
+    assert [source['source_pdf_id'] for source in result.sources] == ['notice', 'act']

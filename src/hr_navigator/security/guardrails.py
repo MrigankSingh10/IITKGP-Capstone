@@ -23,6 +23,26 @@ OUT_OF_SCOPE_PATTERNS = [
     r"\blegal advice\b",
 ]
 
+_PERSONAL_IDENTIFIERS = (
+    (re.compile(r'\b[A-Z]{5}[0-9]{4}[A-Z]\b', re.I), '[PAN removed]'),
+    (re.compile(r'(?<!\d)[2-9]\d{3}[ -]?\d{4}[ -]?\d{4}(?!\d)'), '[Aadhaar removed]'),
+    (re.compile(r'(?<!\d)(?:\+91[ -]?)?[6-9](?:\d{4}[ -]?\d{5}|\d{2}[ -]\d{3}[ -]\d{4})(?!\d)'),
+     '[phone removed]'),
+    (re.compile(r'\b[\w.+-]+@[\w.-]+\.[A-Z]{2,}\b', re.I), '[email removed]'),
+    (re.compile(r'(\bemployee\s+(?:id|number)\s*[:=#]\s*["\']?)(?:EMP[ -]\d+|[\w-]+)\b', re.I),
+     r'\1[employee ID removed]'),
+    # In prose, "employee ID is" can be followed by an adjective rather than an ID.
+    (re.compile(r'(\bemployee\s+(?:id|number)\s+is\s+["\']?)(?=[\w-]*\d)[\w-]+\b', re.I),
+     r'\1[employee ID removed]'),
+    (re.compile(r'\bEMP[- ]\d+\b', re.I), '[employee ID removed]'),
+)
+
+
+def redact_personal_identifiers(text: str) -> str:
+    for pattern, replacement in _PERSONAL_IDENTIFIERS:
+        text = pattern.sub(replacement, text)
+    return text
+
 
 class RateLimiter:
     def __init__(self, max_requests: int = 20, window_seconds: int = 60) -> None:
@@ -44,6 +64,7 @@ class RateLimiter:
 
 def validate_user_input(query: str) -> GuardrailResult:
     cleaned = " ".join(query.strip().split())
+    sanitized = redact_personal_identifiers(cleaned)
     if not cleaned:
         return GuardrailResult(
             allowed=False,
@@ -57,7 +78,7 @@ def validate_user_input(query: str) -> GuardrailResult:
             return GuardrailResult(
                 allowed=False,
                 reason="Request refused: prompt-injection or instruction-override pattern detected.",
-                sanitized_query=cleaned,
+                sanitized_query=sanitized,
             )
 
     for pattern in OUT_OF_SCOPE_PATTERNS:
@@ -65,7 +86,7 @@ def validate_user_input(query: str) -> GuardrailResult:
             return GuardrailResult(
                 allowed=False,
                 reason="Request refused: outside supported HR policy scope.",
-                sanitized_query=cleaned,
+                sanitized_query=sanitized,
             )
 
-    return GuardrailResult(allowed=True, sanitized_query=cleaned)
+    return GuardrailResult(allowed=True, sanitized_query=sanitized)

@@ -2,7 +2,7 @@
 
 An IIT Kharagpur Track B capstone prototype for finding and citing information in Indian Labour Codes documents. The current document-focused scope answers questions about the supplied PDFs without needing employee details or external HR actions. The repository also contains a separate fictional Acme handbook and early UI/API scaffolding; these do not establish real employee entitlements.
 
-The retrieval workflow is experimental. Generated answers are drafts for review, and citation checks do not establish legal applicability or guarantee correctness. The FastAPI and Streamlit prototype is not yet connected to the retrieval workflow or a LangGraph agent.
+The retrieval workflow is experimental. Generated answers are drafts for review, and citation checks do not establish legal applicability or guarantee correctness. The FastAPI and Streamlit prototype uses the local document review adapter; it is not connected to a LangGraph agent.
 
 ## Team handoff and shared log
 
@@ -33,7 +33,7 @@ All members and AI agents: read and update the [shared team work log](docs/team_
 
 ### API and interface prototype
 
-The repository includes a FastAPI service (`src/hr_navigator/server.py`), a Streamlit interface (`app.py`), basic input checks, rate limiting and trace logging. The service's agent hook currently returns a stub response and a placeholder citation. **It does not answer from the PDF retrieval pipeline.** LangGraph, durable workflow state and real HR integrations are not implemented.
+The repository includes a FastAPI service (`src/hr_navigator/server.py`), a Streamlit interface (`app.py`), basic input checks, rate limiting and trace logging. The service searches the accepted-OCR statutory corpus and can produce an unverified review draft when a chat model is configured. LangGraph, durable workflow state and real HR integrations are not implemented.
 
 The prototype UI currently displays an employee-ID field and the API logs queries and the supplied ID to `reports/agent_traces.jsonl`. For the agreed document-only scope, use fictional test values and do not enter employee details. Trace files may contain what was entered and should not be shared or committed as project data.
 
@@ -110,17 +110,38 @@ Keep API keys and certificates local, use the appropriate credentials for each s
 
 ## Run the UI/API prototype
 
-After installing the separate UI/API dependencies, start the API and Streamlit in separate terminals:
+Build the accepted-OCR corpus as described above, then install the UI/API packages into the same environment used by the project:
 
 ```bash
-PYTHONPATH=src uvicorn hr_navigator.server:app --reload --host 127.0.0.1 --port 8000
+.venv/bin/python -m pip install fastapi uvicorn streamlit pandas requests
+```
+
+For generated answers, create `configs/chat.local.json` with the endpoint assigned to your group and paths to the local key and CA certificate. This file is ignored by Git; the key itself stays in its separate file:
+
+```json
+{
+  "base_url": "<your-authorized-https-endpoint-ending-in-/v1>",
+  "model": "Qwen/Qwen3-8B",
+  "key_file": "api-key.txt",
+  "ca_file": "vm04-ca.crt"
+}
+```
+
+Paths are relative to the repository root. Alternatively, all four `CHAT_*` environment variables in `.env.example` can be set in the API process; they take precedence over the local file. The application does not load `.env` automatically.
+
+Start the API, then start the UI in a second terminal from the repository root:
+
+```bash
+PYTHONPATH=src .venv/bin/python -m uvicorn hr_navigator.server:app --reload --host 127.0.0.1 --port 8000
 ```
 
 ```bash
-streamlit run app.py
+.venv/bin/python -m streamlit run app.py
 ```
 
-The API exposes `GET /health` and `POST /chat`. The UI shows chat and a trace dashboard. As noted above, `/chat` currently calls a stub, not retrieval or LangGraph; use fictional test values only.
+Without chat settings, the UI displays candidate passages for review. With them, the chat model selects passages by ID and the server attaches the registered source text. The UI shows a draft only when support and question alignment checks pass. If a draft cannot be verified, the app can still show candidate passages for manual review. The corpus covers statutory documents. It does not have personal leave records or an employer handbook. Use fictional queries. The API masks common identifiers before sending a question to the configured hosted model and before recording it in local traces.
+
+Name the Code in your question or select a **Document collection** to narrow the search. Plain keyword search can miss paraphrases or relevant text outside the indexed corpus.
 
 ## Remaining work
 
