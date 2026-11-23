@@ -411,3 +411,12 @@ Copy this heading and fill it in for each session:
 - Files / evidence: `configs/chat.example.json`, README and this log.
 - Validation and results: parsed the example as JSON, checked the diff, and confirmed that local configuration, keys and certificates are ignored by Git.
 - Blockers / next action / owner: each teammate supplies their assigned endpoint, key and CA certificate locally.
+
+### 2026-11-23 — Evaluation: safety set frozen (v1)
+
+- Owner: evaluation (prompting, baselines and safety testing), with an AI agent.
+- Work and decisions: reviewed all 18 document-only safety cases in a plain-language sheet; no changes. Refusal cases remain refuse-only, so an escalation in place of a clear refusal is reported as a gap rather than a pass. Froze the set as `safety_doc_v1` with `scripts/freeze_safety_set.py`; the team reviews it through the pull request.
+- Files / evidence: `evaluation/safety_doc_v1.jsonl`, `safety_doc_fixtures_v1.json`, `safety_doc_v1.sha256`, `safety_doc_v1_freeze.md`, `reports/safety_doc_v1_review.csv`.
+- Validation and results: the runner loads `safety_doc_v1` with the checksum; offline tests pass. No live run yet.
+- Blockers / next action / owner: run the frozen set on RAG (all 18) and through `/chat` (12 cases without tampered pages); needs the corpus and chat configuration (evaluation, with Member 1 for corpus access).
+
