@@ -43,11 +43,12 @@ def instrument_ids(text):
 # Keep negation, identifiers, and all other terms; fall back for short queries.
 _QUERY_BOILERPLATE = frozenset({'what', 'when', 'where', 'which', 'who', 'how',
                                 'does', 'do', 'did', 'is', 'are', 'was', 'were'})
+_CHAT_BOILERPLATE = frozenset('a an the of in under for to on please tell me about explain'.split())
 
 
-def bm25(query, chunks):
+def bm25(query, chunks, *, extra_stopwords=frozenset()):
     all_terms = set(terms(query))
-    q = all_terms - _QUERY_BOILERPLATE or all_terms
+    q = all_terms - _QUERY_BOILERPLATE - extra_stopwords or all_terms
     if not q or not chunks:
         return []
     docs = [terms(c['text']) for c in chunks]
@@ -115,18 +116,23 @@ def search(query, chunks, vectors=None, query_vector=None, source_scope='statuto
     selected = [c for c in chunks if english_eligible(c) and c['scope'] == source_scope
                 and (not labour_code or c['labour_code'] == labour_code)
                 and (not category or c['category'] == category)]
-    if mode not in ('bm25', 'dense', 'hybrid', 'hybrid_rerank'):
+    if mode not in ('bm25', 'bm25_rerank', 'dense', 'hybrid', 'hybrid_rerank'):
         raise ValueError('Unknown retrieval mode')
-    lexical = bm25(query, selected) if mode != 'dense' else []
-    if mode != 'bm25' and (vectors is None or query_vector is None):
+    uses_dense = mode in ('dense', 'hybrid', 'hybrid_rerank')
+    rerank = mode in ('bm25_rerank', 'hybrid_rerank')
+    if mode == 'bm25_rerank':
+        lexical = bm25(query, selected, extra_stopwords=_CHAT_BOILERPLATE)
+    else:
+        lexical = bm25(query, selected) if mode != 'dense' else []
+    if uses_dense and (vectors is None or query_vector is None):
         raise ValueError('Dense query requires embeddings')
-    semantic = dense(query_vector, selected, vectors) if mode != 'bm25' else []
+    semantic = dense(query_vector, selected, vectors) if uses_dense else []
     scores = Counter()
     for ranking in (lexical, semantic):
         for rank, (key, _) in enumerate(ranking[:100], 1):
             scores[key] += 1 / (60 + rank)
     by_id = {c['chunk_id']: c for c in selected}
-    if mode == 'hybrid_rerank' and section_candidates_enabled:
+    if rerank and section_candidates_enabled:
         # Section lookup supplies an independent candidate ranking before reranking.
         for rank, key in enumerate(section_candidates(query, selected), 1):
             scores[key] += 1 / (60 + rank)
@@ -154,10 +160,10 @@ def search(query, chunks, vectors=None, query_vector=None, source_scope='statuto
             continue
         seen.add(chunk['page_id'])
         results.append({**chunk, 'score': scores[key]})
-        limit = max(top_k, 30 if proximity_enabled else 10) if mode == 'hybrid_rerank' else top_k
+        limit = max(top_k, 30 if proximity_enabled else 10) if rerank else top_k
         if len(results) == limit:
             break
-    if mode == 'hybrid_rerank':
+    if rerank:
         # Reorder the existing ten-page pool only. A heading is a ranking hint,
         # not a relevance judgment, and must not displace a retrieved page.
         headings = section_heading_matches(query, selected)

@@ -86,10 +86,12 @@ def test_summary_and_corpus_counts():
 def test_server_checks_run_in_isolation():
     pytest.importorskip('fastapi')
     before = sorted(p.name for p in ROOT.iterdir())
+    trace = ROOT / 'reports/agent_traces.jsonl'
+    trace_before = trace.stat().st_mtime_ns if trace.exists() else None
     findings = redteam.server_checks()
     assert Path.cwd() == ROOT or Path.cwd().exists()
     assert sorted(p.name for p in ROOT.iterdir()) == before
-    assert not (ROOT / 'reports/agent_traces.jsonl').exists()
+    assert (trace.stat().st_mtime_ns if trace.exists() else None) == trace_before
     assert [f['id'] for f in findings] == [f'SRV-0{n}' for n in range(1, 10)]
     assert all(f['status'] in ('pass', 'fail') and f['evidence'] for f in findings)
 

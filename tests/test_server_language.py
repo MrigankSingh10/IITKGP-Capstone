@@ -84,3 +84,26 @@ def test_chat_passes_selected_document_collection(monkeypatch):
     })
     assert response.status_code == 200
     assert selected == ['Code on Wages']
+
+
+def test_chat_stream_sends_progress_and_only_the_checked_response(monkeypatch):
+    import json
+
+    def pipeline(query, labour_code, *, progress):
+        progress('retrieval')
+        progress('draft')
+        progress('support')
+        return ReviewResult('review_required', [], draft_not_verified='Checked draft'), {}
+
+    monkeypatch.setattr(server, 'run_hr_pipeline', pipeline)
+    response = TestClient(server.app).post('/chat/stream', json={
+        'session_id': 'stream-test', 'query': 'What is leave?',
+    })
+    assert response.headers['content-type'].startswith('application/x-ndjson')
+    events = [json.loads(line) for line in response.iter_lines()]
+    assert events[:-1] == [
+        {'type': 'progress', 'stage': stage} for stage in ('retrieval', 'draft', 'support')
+    ]
+    assert events[-1]['type'] == 'result'
+    assert events[-1]['response']['answer'] == 'Checked draft'
+    assert events[-1]['response']['status'] == 'review_required'

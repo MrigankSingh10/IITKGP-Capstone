@@ -203,3 +203,51 @@ Copy this heading and fill it in for each session:
 - Files / evidence: API, Streamlit chat, review adapter, focused tests, README and this log.
 - Validation and results: 31 focused tests passed, and the diff passed whitespace checks. Local model configuration, credentials and generated traces were excluded.
 - Blockers / next action / owner: broader live model behavior remains unverified.
+
+### 2026-11-23 — Make the chat input visible
+
+- Owner: AI agent.
+- Work and decisions: moved the Streamlit chat input above the conversation history in Assistant Demo.
+- Files / evidence: `app.py`.
+- Validation and results: Streamlit AppTest rendered the input, submitted a typed message to a mocked API, and displayed the reply.
+- Blockers / next action / owner: none.
+
+### 2026-11-23 — Retrieval interface handoff
+
+- Owner: AI agent.
+- Work and decisions: inspected the current retrieval, chat API and synthetic tool interfaces for a colleague handoff.
+- Files / evidence: `src/hr_navigator/retrieval/review_adapter.py`, `src/hr_navigator/server.py`, `src/hr_navigator/tools/synthetic_hr.py`.
+- Validation and results: checked function signatures, data models and routing directly against the source; no code behavior was changed.
+- Blockers / next action / owner: live model behavior and independent evaluation remain unverified; orchestration and synthetic tool integration remain open.
+
+### 2026-11-23 — Accept quoted terms in definition questions
+
+- Owner: AI agent.
+- Work and decisions: fixed named-Code definition lookup for terms surrounded by straight or curly quotation marks.
+- Files / evidence: `src/hr_navigator/retrieval/review_adapter.py` and `tests/test_review_adapter.py`.
+- Validation and results: 35 focused tests passed. Real-corpus API smoke checks returned the worker definition on PDF page 5 and the employee definition on PDF page 3 without a hosted model call.
+- Blockers / next action / owner: none for the reported questions.
+
+### 2026-11-23 — Improve the general document chat path
+
+- Owner: AI agent.
+- Work and decisions: reranked interactive search results locally, applied named-Code scope before ranking, and preserved context around the matching span. The hosted model now selects short passage IDs and the server attaches registered PDF text. Unsupported or invalid drafts escalate with candidate passages when available. The server audit now uses isolated fixtures for its model boundary.
+- Files / evidence: interactive retrieval, draft review and API code, server audit, focused tests, and README.
+- Validation and results: 137 tests passed and 2 skipped. Real-corpus API smoke checks retrieved the expected provision for five varied questions with a simulated chat model. The smoke checks also confirmed escalation for missing personal-record evidence.
+- Blockers / next action / owner: hosted model behavior and independent retrieval accuracy are still unverified. Paraphrases and questions outside the corpus can still return insufficient evidence.
+
+### 2026-11-23 — Dock the chat input and stream progress
+
+- Owner: AI agent.
+- Work and decisions: docked the composer at the viewport bottom in Assistant Demo. Added a streaming API route that emits retrieval, drafting and checking progress before the final checked response. The JSON chat route remains available.
+- Files / evidence: `app.py`, `src/hr_navigator/server.py`, review adapter and draft code, and `tests/test_server_language.py`.
+- Validation and results: 138 tests passed and 2 skipped. Streamlit AppTest confirmed the bottom container and displayed a response from a mocked stream. The API regression test verified event order and the checked result.
+- Blockers / next action / owner: live hosted model streaming was not exercised.
+
+### 2026-11-23 — Publish Track 5 chat updates
+
+- Owner: AI agent.
+- Work and decisions: prepared the general document retrieval, citation handling, and streaming chat updates for the existing Track 5 branch and PR 13.
+- Files / evidence: API, Streamlit UI, retrieval and draft review, server audit, tests, README and this log.
+- Validation and results: the latest full suite passed with 138 passed and 2 skipped. Checked the diff for whitespace and excluded the local model configuration, credentials and generated traces.
+- Blockers / next action / owner: live hosted model behavior remains unverified.

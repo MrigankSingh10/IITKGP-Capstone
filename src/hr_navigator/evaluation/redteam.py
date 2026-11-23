@@ -97,10 +97,14 @@ def server_checks() -> list[dict]:
                  'evidence': 'fastapi is not installed (it is missing from pyproject.toml)'}]
     from hr_navigator import server as server_module
     from hr_navigator.observability import tracer
+    from hr_navigator.retrieval.review_adapter import ReviewResult
     findings = []
     with _isolated_directory() as folder:
         def fresh():
             module = importlib.reload(server_module)  # resets the in-memory rate limiter
+            # These checks cover the HTTP boundary and tracing. The fixture queries
+            # must stay local even when the workspace has a hosted model configured.
+            module.run_hr_pipeline = lambda *_: (ReviewResult('evidence_only', []), {})
             return module, TestClient(module.app)
 
         _, client = fresh()
@@ -155,10 +159,10 @@ def server_checks() -> list[dict]:
 
         module, client = fresh()
 
-        def failing_agent(**_):
+        def failing_agent(*_):
             raise RuntimeError('database password=hunter2 at 10.0.0.5')
 
-        module.invoke_agent_or_stub = failing_agent
+        module.run_hr_pipeline = failing_agent
         client = TestClient(module.app, raise_server_exceptions=False)
         reply = client.post('/chat', json={'session_id': 's3', 'query': 'Holiday list?'})
         exposed = 'hunter2' in reply.text

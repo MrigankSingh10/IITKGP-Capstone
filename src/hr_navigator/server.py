@@ -1,10 +1,13 @@
+import asyncio
 import json
 import os
 import time
 from functools import lru_cache
 from pathlib import Path
+from threading import Event
 
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
 from hr_navigator.clients.api import APIConfig, HostedClient
@@ -46,9 +49,12 @@ def get_review_adapter() -> ReviewAdapter:
     return ReviewAdapter(chunks, pages)
 
 
-def run_hr_pipeline(query: str, labour_code: str | None = None):
+def run_hr_pipeline(query: str, labour_code: str | None = None, *, progress=None):
+    if progress is not None:
+        progress('retrieval')
     adapter = get_review_adapter()
-    review_request = ReviewRequest(query, labour_code=labour_code, top_k=5, prefer_verbatim=True)
+    review_request = ReviewRequest(query, labour_code=labour_code, top_k=5,
+                                   prefer_verbatim=True, interactive=True)
     names = ('CHAT_BASE_URL', 'CHAT_MODEL', 'CHAT_API_KEY', 'CHAT_CA_FILE')
     configured = [bool(os.environ.get(name)) for name in names]
     if any(configured) and not all(configured):
@@ -67,7 +73,8 @@ def run_hr_pipeline(query: str, labour_code: str | None = None):
     if config is not None:
         client = HostedClient(config, retries=0)
         try:
-            result = adapter.retrieve(review_request, client)
+            options = {'progress': progress} if progress is not None else {}
+            result = adapter.retrieve(review_request, client, **options)
             usage = client.usage
         finally:
             client.close()
@@ -88,6 +95,10 @@ def health() -> dict[str, str]:
 
 @app.post('/chat', response_model=ChatResponse)
 def chat(payload: ChatRequest) -> ChatResponse:
+    return answer_chat(payload)
+
+
+def answer_chat(payload: ChatRequest, progress=None) -> ChatResponse:
     if not rate_limiter.is_allowed(payload.session_id):
         raise HTTPException(status_code=429, detail='Rate limit exceeded. Try again shortly.')
     guard = validate_user_input(payload.query)
@@ -103,16 +114,19 @@ def chat(payload: ChatRequest) -> ChatResponse:
                             latency_ms=0.0, status='refused')
     start = time.perf_counter()
     try:
-        result, usage = run_hr_pipeline(guard.sanitized_query, payload.labour_code)
+        options = {'progress': progress} if progress is not None else {}
+        result, usage = run_hr_pipeline(guard.sanitized_query, payload.labour_code, **options)
         latency_ms = round((time.perf_counter() - start) * 1000, 2)
         citations = [citation_label(source) for source in result.sources]
         if result.decision == 'review_required':
             answer = result.draft_not_verified or 'No draft was returned.'
         elif result.decision == 'evidence_only':
-            answer = result.reason or ('Relevant source passages are shown below for review. Configure the chat model '
-                      'to generate a draft answer. Relevance and applicability are not verified.')
+            answer = result.reason or ('Candidate source passages are shown below for review. '
+                                       'Configure the chat model to generate a draft answer.')
         else:
             answer = result.reason or 'No verifiable source passages were found.'
+            if result.sources:
+                answer += ' The passages below are available for review.'
         prompt_tokens = usage.get('prompt_tokens', 0)
         completion_tokens = usage.get('completion_tokens', 0)
         log_trace(TraceEvent(timestamp=utc_now_iso(), session_id=payload.session_id,
@@ -125,3 +139,41 @@ def chat(payload: ChatRequest) -> ChatResponse:
                             route_taken='document_review', latency_ms=latency_ms, status=result.decision)
     except (OSError, ValueError, KeyError, TypeError) as exc:
         raise HTTPException(status_code=503, detail='Document retrieval is unavailable. Check the corpus and chat configuration.') from exc
+
+
+@app.post('/chat/stream')
+async def chat_stream(payload: ChatRequest) -> StreamingResponse:
+    async def events():
+        loop = asyncio.get_running_loop()
+        queue = asyncio.Queue()
+        disconnected = Event()
+
+        def publish(event):
+            if not disconnected.is_set():
+                loop.call_soon_threadsafe(queue.put_nowait, event)
+
+        def progress(stage):
+            publish({'type': 'progress', 'stage': stage})
+
+        def run():
+            try:
+                result = answer_chat(payload, progress)
+                publish({'type': 'result', 'response': result.model_dump()})
+            except HTTPException as exc:
+                publish({'type': 'error', 'message': exc.detail})
+            except Exception:
+                publish({'type': 'error', 'message': 'Unable to complete the chat request.'})
+
+        worker = asyncio.create_task(asyncio.to_thread(run))
+        try:
+            while True:
+                event = await queue.get()
+                yield json.dumps(event) + '\n'
+                if event['type'] != 'progress':
+                    break
+        finally:
+            disconnected.set()
+            worker.cancel()
+
+    return StreamingResponse(events(), media_type='application/x-ndjson',
+                             headers={'Cache-Control': 'no-cache', 'X-Accel-Buffering': 'no'})

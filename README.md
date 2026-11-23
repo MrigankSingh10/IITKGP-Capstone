@@ -139,9 +139,9 @@ PYTHONPATH=src .venv/bin/python -m uvicorn hr_navigator.server:app --reload --ho
 .venv/bin/python -m streamlit run app.py
 ```
 
-Without chat settings, the UI displays retrieved passages instead of a generated answer. With them, it shows an unverified draft only when the existing citation and model checks pass; otherwise it escalates. Check the cited passages and current applicability. The corpus contains statutory documents, not personal leave balances or an employer handbook. Use fictional queries only: the prototype records queries in local traces.
+Without chat settings, the UI displays candidate passages for review. With them, the chat model selects passages by ID and the server attaches the registered source text. The UI shows a draft only when support and question alignment checks pass. If a draft cannot be verified, the app can still show candidate passages for manual review. The corpus covers statutory documents. It does not have personal leave records or an employer handbook. Use fictional queries because the prototype records queries locally.
 
-Use the sidebar's **Document collection** selector when a question concerns a particular Code. For example, select **Code on Wages** before asking whether its definition of State includes a Union territory. Searching all collections can retrieve unrelated passages.
+Name the Code in your question or select a **Document collection** to narrow the search. Plain keyword search can miss paraphrases or relevant text outside the indexed corpus.
 
 ## Remaining work
 

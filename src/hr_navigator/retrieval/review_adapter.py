@@ -7,20 +7,28 @@ from dataclasses import dataclass
 import re
 from typing import Any, Literal, Mapping, Protocol, Sequence
 
-from .draft_review import code_title_matches, draft_for_review, explicit_code
+from .draft_review import code_title_matches, draft_for_review, explicit_code, subsection_bounds
 from .grounded import extractive_evidence
 from .search import english_eligible, search, unsupported_query
 
 
 _INCLUSION_QUESTION = re.compile(r'^does\s+([\w ]{1,60}?)\s+include\s+([\w ]{1,80})\?$', re.I)
 _NAMED_DEFINITION = re.compile(
-    r'^(?:what\s+is\s+the\s+definition\s+of|define)\s+([\w -]{1,80}?)\s+(?:under|in)\s+', re.I)
+    r"""^(?:what\s+is\s+the\s+definition\s+of|define)\s+"""
+    r"""(?P<quote>["'])?(?P<term>[\w -]{1,80}?)(?(quote)(?P=quote))\s+(?:under|in)\s+""",
+    re.I,
+)
+_QUESTION_QUOTES = str.maketrans({'“': '"', '”': '"', '‘': "'", '’': "'"})
 _DEFINITION_END = re.compile(r'(?m)^[ \t]*\([a-z]{1,3}\)\s*["“]|^[ \t]*\d+\.\s*\(1\)')
+
+
+def normalized_definition_question(question):
+    return ' '.join(question.translate(_QUESTION_QUOTES).split())
 
 
 def quoted_definition(request, evidence, pages):
     """Quote a named definition up to the next clause, keeping PDF pages separate."""
-    question = ' '.join(request.question.split())
+    question = normalized_definition_question(request.question)
     match = _NAMED_DEFINITION.match(question)
     if not match or not re.fullmatch(
         r'(?:the )?(?:code on wages|industrial relations code|code on social security|'
@@ -34,7 +42,7 @@ def quoted_definition(request, evidence, pages):
     }
     first = evidence[0]
     first_number = first['pdf_page_number']
-    term = r'\s+'.join(map(re.escape, match[1].split()))
+    term = r'\s+'.join(map(re.escape, match['term'].split()))
     heading = definition_heading(term)
     sources = []
     for number in (first_number, first_number + 1):
@@ -75,11 +83,11 @@ def definition_heading(term):
 
 def definition_evidence(request, chunks):
     """Start at a named Act's definition and include nearby passages for qualifiers."""
-    match = _NAMED_DEFINITION.match(' '.join(request.question.split()))
+    match = _NAMED_DEFINITION.match(normalized_definition_question(request.question))
     code = explicit_code(request.question)
     if not match or not code:
         return []
-    term = r'\s+'.join(map(re.escape, match[1].split()))
+    term = r'\s+'.join(map(re.escape, match['term'].split()))
     heading = definition_heading(term)
     act_chunks = [
         chunk for chunk in chunks
@@ -130,6 +138,25 @@ def quoted_inclusion(request, chunks, pages):
     return None
 
 
+def add_page_context(question, evidence, pages):
+    """Keep context contiguous on the registered page around a ranked hit."""
+    expanded = []
+    for chunk in evidence:
+        if not extractive_evidence([chunk], pages)['sources']:
+            continue
+        text = pages[chunk['page_id']]['text']
+        if len(text) <= 3400:
+            start, end = 0, len(text)
+        else:
+            start = max(0, chunk['char_start'] - 800)
+            end = min(len(text), chunk['char_end'] + 400)
+        bounds = subsection_bounds(question, text)
+        if bounds and bounds[1] - bounds[0] <= 2400:
+            start, end = bounds
+        expanded.append({**chunk, 'char_start': start, 'char_end': end, 'text': text[start:end]})
+    return expanded
+
+
 class ChatClient(Protocol):
     def chat(self, messages: list[dict[str, str]], **kwargs: Any) -> Mapping[str, Any]: ...
 
@@ -141,6 +168,7 @@ class ReviewRequest:
     labour_code: str | None = None
     top_k: int = 3
     prefer_verbatim: bool = False
+    interactive: bool = False
 
 
 @dataclass(frozen=True)
@@ -159,7 +187,7 @@ class ReviewAdapter:
         self._chunks = list(chunks)
         self._pages = dict(pages)
 
-    def retrieve(self, request: ReviewRequest, client: ChatClient | None = None) -> ReviewResult:
+    def retrieve(self, request: ReviewRequest, client: ChatClient | None = None, *, progress=None) -> ReviewResult:
         if (not isinstance(request.question, str) or not request.question.strip()
                 or unsupported_query(request.question) or request.source_scope != 'statutory'
                 or isinstance(request.top_k, bool) or not isinstance(request.top_k, int)
@@ -177,9 +205,23 @@ class ReviewAdapter:
                     if direct is not None:
                         return direct
             if not evidence:
-                evidence = search(request.question, self._chunks, source_scope=request.source_scope,
-                                  labour_code=request.labour_code, top_k=request.top_k, mode='bm25')
-            result = (draft_for_review(client, request.question, evidence, self._pages)
+                chunks = self._chunks
+                code = explicit_code(request.question) if request.interactive else None
+                category = None
+                if code:
+                    chunks = [chunk for chunk in chunks if code_title_matches(code, chunk['original_title'])]
+                    if (re.search(r'\bsections?\s+\d+\b', request.question, re.I)
+                            and not re.search(r'\b(?:rules?|notifications?|faqs?|circulars?)\b', request.question, re.I)):
+                        category = 'Acts'
+                evidence = search(
+                    request.question, chunks, source_scope=request.source_scope,
+                    labour_code=request.labour_code, category=category, top_k=request.top_k,
+                    mode='bm25_rerank' if request.interactive else 'bm25',
+                )
+                if request.interactive:
+                    evidence = add_page_context(request.question, evidence, self._pages)
+            result = (draft_for_review(client, request.question, evidence, self._pages,
+                                       select_passages=request.interactive, progress=progress)
                       if client is not None else extractive_evidence(evidence, self._pages))
             return ReviewResult(decision=result['decision'], sources=result['sources'],
                                 reason=result.get('reason') or (result.get('answer') if result['decision'] == 'escalate' else None),

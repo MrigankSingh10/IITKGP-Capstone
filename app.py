@@ -13,6 +13,29 @@ REPO_METRIC_FILES = [
     Path("reports/baseline_v1_metrics.json"),
     Path("reports/redteam/redteam_v1_summary.json"),
 ]
+PROGRESS_LABELS = {
+    "retrieval": "Searching the statutory documents…",
+    "draft": "Drafting an answer from the retrieved passages…",
+    "support": "Checking the draft against its sources…",
+    "alignment": "Checking that the draft answers your question…",
+}
+
+
+def stream_chat(api_url, payload, status):
+    with requests.post(f"{api_url.rstrip('/')}/chat/stream", json=payload,
+                       stream=True, timeout=(5, 120)) as response:
+        response.raise_for_status()
+        for line in response.iter_lines(chunk_size=None):
+            if not line:
+                continue
+            event = json.loads(line)
+            if event["type"] == "progress":
+                status.update(label=PROGRESS_LABELS.get(event["stage"], "Working…"))
+            elif event["type"] == "result":
+                return event["response"]
+            elif event["type"] == "error":
+                raise ValueError(event["message"])
+    raise ValueError("The chat stream ended before a response arrived.")
 
 st.set_page_config(page_title="HR Policy Navigator — Demo", layout="wide")
 
@@ -39,13 +62,18 @@ with st.sidebar:
     for sp in sample_prompts:
         if st.button(sp, key=f"sample_{sp}", width="stretch"):
             st.session_state["queued_prompt"] = sp
+            st.session_state["demo_view"] = "Assistant Demo"
 
     if st.button("Reset Session", width="stretch"):
         st.session_state.history = []
         st.session_state.session_id = str(uuid.uuid4())
         st.rerun()
 
-tab_chat, tab_metrics = st.tabs(["Assistant Demo", "Metrics & Traces"])
+tab_chat, tab_metrics = st.tabs(
+    ["Assistant Demo", "Metrics & Traces"], key="demo_view", on_change="rerun",
+)
+# Streamlit docks a chat input only when it is outside nested containers.
+typed_prompt = st.chat_input("Type your question here…", submit_mode="disable") if tab_chat.open else None
 
 with tab_chat:
     st.title("HR Policy Navigator")
@@ -67,7 +95,6 @@ with tab_chat:
                         st.warning(warning)
 
     queued = st.session_state.pop("queued_prompt", None)
-    typed_prompt = st.chat_input("Ask an HR policy, leave, or benefits question...")
     user_prompt = queued or typed_prompt
 
     if user_prompt:
@@ -76,18 +103,18 @@ with tab_chat:
             st.markdown(user_prompt)
 
         with st.chat_message("assistant"):
+            progress = st.status("Starting chat request…")
             try:
-                resp = requests.post(
-                    f"{api_url.rstrip('/')}/chat",
-                    json={
+                body = stream_chat(
+                    api_url,
+                    {
                         "session_id": st.session_state.session_id,
                         "labour_code": None if labour_code == 'All statutory documents' else labour_code,
                         "query": user_prompt,
                     },
-                    timeout=120,
+                    progress,
                 )
-                resp.raise_for_status()
-                body = resp.json()
+                progress.update(label="Response ready", state="complete")
                 answer = body.get("answer", "")
                 citations = body.get("citations", [])
                 route = body.get("route_taken", "unknown")
@@ -114,9 +141,10 @@ with tab_chat:
                 st.session_state.history.append(
                     {"role": "assistant", "content": answer, "meta": meta_line, "sources": sources, "status": status}
                 )
-            except requests.RequestException as exc:
+            except (requests.RequestException, ValueError) as exc:
+                progress.update(label="Chat request failed", state="error")
                 err_msg = f"API request failed: {exc}"
-                if exc.response is not None:
+                if isinstance(exc, requests.RequestException) and exc.response is not None:
                     try:
                         err_msg += f" — {exc.response.json().get('detail', '')}"
                     except ValueError:

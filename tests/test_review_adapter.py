@@ -1,4 +1,5 @@
 import json
+import pytest
 
 from hr_navigator.retrieval.review_adapter import ReviewAdapter, ReviewRequest
 
@@ -33,6 +34,26 @@ def test_valid_draft_is_review_only_and_preserves_provenance():
     assert result.sources[0]['source_pdf_id'] == 'hash'
     assert result.sources[0]['scope'] == 'statutory'
     assert result.sources[0]['source_warnings'] == ['check scan']
+
+
+def test_interactive_draft_resolves_passage_ids_and_fails_closed_on_unknown_ids():
+    text = 'The notice must be given at least fourteen days before the event.'
+    adapter = corpus(text)
+    request = ReviewRequest('How much advance notice is needed?', interactive=True)
+    draft = {'answer': 'At least fourteen days.', 'sufficient': True, 'passage_ids': ['P1']}
+    client = Client(draft, {'verdict': 'supported', 'reason': 'stated'},
+                    {'answers_question': True, 'requested_source_match': True, 'reason': 'yes'})
+    result = adapter.retrieve(request, client)
+    assert result.decision == 'review_required'
+    assert result.sources[0]['quote_or_section'] == text
+    assert client.calls == 3
+
+    client = Client({**draft, 'passage_ids': ['P99']})
+    result = adapter.retrieve(request, client)
+    assert result.decision == 'escalate'
+    assert result.draft_not_verified is None
+    assert result.sources[0]['passage'] == text
+    assert client.calls == 1
 
 
 def test_unsupported_claim_and_bad_citation_escalate():
@@ -103,7 +124,8 @@ def test_verbatim_inclusion_requires_matching_act_and_registered_text():
     assert client.calls == 0
 
 
-def test_verbatim_named_definition_keeps_continuation_and_stops_at_next_definition():
+@pytest.mark.parametrize('term', ['wages', '"wages"', '“wages”', "'wages'", '‘wages’'])
+def test_verbatim_named_definition_keeps_continuation_and_stops_at_next_definition(term):
     excerpts = [
         '(y) "wages" means remuneration.\nProvided that the employer',
         'must count qualifying payments.\n(z) "worker" means something else;',
@@ -119,7 +141,7 @@ def test_verbatim_named_definition_keeps_continuation_and_stops_at_next_definiti
         chunks.append({**page, 'chunk_id': page_id, 'char_start': 0, 'char_end': len(text)})
     client = Client()
     result = ReviewAdapter(chunks, pages).retrieve(ReviewRequest(
-        'What is the definition of wages under the Code on Wages?', prefer_verbatim=True,
+        f'What is the definition of {term} under the Code on Wages?', prefer_verbatim=True,
     ), client)
     assert result.decision == 'evidence_only'
     assert [source['page_number'] for source in result.sources] == [4, 5]
