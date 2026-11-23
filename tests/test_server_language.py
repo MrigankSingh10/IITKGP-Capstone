@@ -154,7 +154,7 @@ def test_chat_redacts_identifiers_in_pipeline_and_traces(monkeypatch, prefix, st
 
     monkeypatch.setattr(server, 'log_trace', traced.append)
     monkeypatch.setattr(server, 'run_hr_pipeline', pipeline)
-    query = prefix + 'What is the wage period? PAN ABCDE1234F, call +91 98765 43210.'
+    query = prefix + 'What is the wage period? PAN ABCDE1234F, call +91 987 654 3210. Employee ID is XQ1927.'
     reply = TestClient(server.app).post('/chat', json={
         'session_id': f'privacy-{status}', 'query': query, 'employee_id': 'demo-001',
     }).json()
@@ -162,5 +162,14 @@ def test_chat_redacts_identifiers_in_pipeline_and_traces(monkeypatch, prefix, st
     assert traced[0].employee_id is None
     assert reviewed == ([] if prefix else [traced[0].query])
     assert 'What is the wage period?' in traced[0].query
-    for identifier in ('ABCDE1234F', '98765 43210', 'demo-001'):
+    assert 'Employee ID is [employee ID removed].' in traced[0].query
+    for identifier in ('ABCDE1234F', '987 654 3210', 'XQ1927', 'demo-001'):
         assert identifier not in traced[0].query
+
+
+@pytest.mark.parametrize('question', [
+    'What should I do if my employee ID is missing?',
+    'When is an employee ID required?',
+])
+def test_employee_id_redaction_preserves_ordinary_questions(question):
+    assert server.validate_user_input(question).sanitized_query == question

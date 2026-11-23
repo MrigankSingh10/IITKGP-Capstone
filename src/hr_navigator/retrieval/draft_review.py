@@ -42,6 +42,7 @@ _CODE_NAMES = {
     'social': r'\b(?:code on social security|social security code)\b',
     'osh': r'\b(?:osh(?:\s*&\s*wc)?\s+code|occupational safety,?\s+health,?\s+and working conditions code)\b',
 }
+_CODE_EDITION = r'(?:\s*,?\s*(\d{4})\b|\s*\(\s*(\d{4})\s*\))'
 
 
 def explicit_code(question):
@@ -51,7 +52,13 @@ def explicit_code(question):
 
 
 def code_editions(text, code):
-    return set(re.findall(rf'{_CODE_NAMES[code]}\s*,?\s*(\d{{4}})\b', text, re.I))
+    return {plain or parenthesized for plain, parenthesized in
+            re.findall(rf'{_CODE_NAMES[code]}{_CODE_EDITION}', text, re.I)}
+
+
+def is_code_reference(text, code):
+    """Recognize a standalone Code name, optionally followed by its edition."""
+    return bool(re.fullmatch(rf'(?:the\s+)?{_CODE_NAMES[code]}{_CODE_EDITION}?\??', text, re.I))
 
 
 def code_title_matches(code, title):

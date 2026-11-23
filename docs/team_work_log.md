@@ -331,3 +331,59 @@ Copy this heading and fill it in for each session:
 - Files / evidence: input guardrails, API and model payload handling, retrieval, regression tests, and documentation.
 - Validation and results: 148 tests passed and 2 skipped. Local credentials, settings, generated traces and unrelated workspace files were excluded.
 - Blockers / next action / owner: hosted behavior remains unverified. Pattern-based privacy masking has limited coverage by design.
+
+### 2026-11-23 — Draft Member 1 and Member 2 team update
+
+- Owner: AI agent.
+- Work and decisions: prepared a team-facing recap of domain and corpus work, retrieval/RAG results, and contributions to the chat integration.
+- Files / evidence: Member 1 closeout and source verification, Phase 2 summary, retrieval regression report, and PR 13.
+- Validation and results: cross-checked the corpus counts, benchmark scope, and handoff status against the existing reports. No code changed.
+- Blockers / next action / owner: independent relevance and grounding review and written faculty clarification remain open.
+
+### 2026-11-23 — Re-review PR 13 privacy and source fixes
+
+- Owner: AI review agent.
+- Work and decisions: reviewed the updated PR 13 head at `1b54521` and retested the previous findings.
+- Files / evidence: guardrails, draft-review payload, edition matching, and the accepted OCR corpus.
+- Validation and results: 148 tests passed and 2 skipped. Offline checks confirmed commencement and appointment ranking. Two common identifier formats survived into a mock payload, and a parenthesized requested year bypassed edition filtering.
+- Blockers / next action / owner: PR authors to address the remaining findings. No GitHub review was submitted.
+
+### 2026-11-23 — Fix the two remaining PR 13 findings
+
+- Owner: AI agent.
+- Work and decisions: expanded redaction to cover 3-3-4 mobile grouping and employee IDs written after “is.” Shared the edition syntax between filtering and direct definition lookup so parenthesized years receive the same check.
+- Files / evidence: guardrails, draft review, review adapter, and regression tests.
+- Validation and results: 152 tests passed and 2 skipped. The original synthetic identifier examples were absent from the mock model payload. The real corpus rejected the parenthesized 2050 edition and returned the 2019 definition for the matching request.
+- Blockers / next action / owner: no hosted call, commit or push was made.
+
+### 2026-11-23 — Re-review the local PR 13 fixes
+
+- Owner: AI review agent.
+- Work and decisions: reviewed the uncommitted redaction and edition changes on top of `1b54521`.
+- Files / evidence: guardrails, edition parsing, review adapter, regression tests and accepted OCR corpus.
+- Validation and results: 152 tests passed and 2 skipped. The two original examples passed. Offline checks reproduced over-redaction of ordinary prose and an existing missing-edition gap in comparisons involving multiple Codes.
+- Blockers / next action / owner: findings reported for correction. No code changes or remote review were made.
+
+### 2026-11-23 — Preserve the employee ID label and ordinary prose
+
+- Owner: AI agent.
+- Work and decisions: changed employee-ID masking to replace the identifier value while preserving the label. The “employee ID is” form only masks a value containing a digit.
+- Files / evidence: `src/hr_navigator/security/guardrails.py` and `tests/test_server_language.py`.
+- Validation and results: 154 tests passed and 2 skipped. Confirmed that an identifier is masked and that questions about a missing or required ID remain intact.
+- Blockers / next action / owner: the separate multiple-Code edition finding remains open.
+
+### 2026-11-23 — Re-review label-preserving redaction
+
+- Owner: AI review agent.
+- Work and decisions: rechecked the updated employee-ID masking and the outstanding multi-Code edition behavior.
+- Files / evidence: guardrails, review adapter, and the accepted OCR corpus.
+- Validation and results: 154 tests passed and 2 skipped. The label and ordinary prose were preserved in redaction checks. An unavailable single-Code edition was refused, while a multi-Code comparison still bypassed the missing-edition check.
+- Blockers / next action / owner: validate explicitly requested editions in multi-Code questions.
+
+### 2026-11-23 — Publish the follow-up fixes
+
+- Owner: AI agent.
+- Work and decisions: grouped the label-preserving redaction and parenthesized single-Code edition fixes for PR 13. Deferred the multiple-Code edition finding at the requester’s direction.
+- Files / evidence: guardrails, draft review, review adapter, regression tests and this log.
+- Validation and results: 154 tests passed and 2 skipped. Diff whitespace check passed.
+- Blockers / next action / owner: multi-Code edition verification is deferred.

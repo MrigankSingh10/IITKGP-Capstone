@@ -211,12 +211,15 @@ def test_interactive_draft_escalates_when_both_responses_are_truncated():
     assert client.calls == 2
 
 
-def test_hosted_draft_payload_omits_personal_identifiers():
+@pytest.mark.parametrize('phone', ['+91 98765 43210', '+91 987 654 3210', '+91-987-654-3210'])
+def test_hosted_draft_payload_omits_personal_identifiers(phone):
     class InspectClient(Client):
         def chat(self, messages, **kwargs):
             serialized = json.dumps(messages)
-            for identifier in ('ABCDE1234F', '98765 43210', 'person@example.test'):
+            for identifier in ('ABCDE1234F', phone, 'XQ1927', 'person@example.test'):
                 assert identifier not in serialized
+            assert '[phone removed]' in serialized
+            assert '[employee ID removed]' in serialized
             return super().chat(messages, **kwargs)
 
     client = InspectClient(
@@ -225,14 +228,16 @@ def test_hosted_draft_payload_omits_personal_identifiers():
         {'answers_question': True, 'requested_source_match': True, 'reason': 'yes'},
     )
     request = ReviewRequest(
-        'How much notice? PAN ABCDE1234F, phone +91 98765 43210, email person@example.test.',
+        f'How much notice? PAN ABCDE1234F, phone {phone}, '
+        'employee ID is XQ1927, email person@example.test.',
         interactive=True,
     )
     assert corpus().retrieve(request, client).decision == 'review_required'
     assert client.calls == 3
 
 
-def test_requested_code_edition_is_not_silently_substituted():
+@pytest.mark.parametrize('edition_format', [', {}', ' {}', ' ({})'])
+def test_requested_code_edition_is_not_silently_substituted(edition_format):
     text = '(y) "wages" means remuneration;\n(z) "worker" means someone else;'
     adapter = corpus(text)
     chunk = adapter._chunks[0]
@@ -242,7 +247,7 @@ def test_requested_code_edition_is_not_silently_substituted():
     client = Client()
     results = [
         adapter.retrieve(ReviewRequest(
-            f'What is the definition of wages under the Code on Wages, {year}?',
+            f'What is the definition of wages under the Code on Wages{edition_format.format(year)}?',
             prefer_verbatim=True, interactive=True,
         ), client)
         for year in (2050, 2019)

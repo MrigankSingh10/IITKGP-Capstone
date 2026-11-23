@@ -26,12 +26,15 @@ OUT_OF_SCOPE_PATTERNS = [
 _PERSONAL_IDENTIFIERS = (
     (re.compile(r'\b[A-Z]{5}[0-9]{4}[A-Z]\b', re.I), '[PAN removed]'),
     (re.compile(r'(?<!\d)[2-9]\d{3}[ -]?\d{4}[ -]?\d{4}(?!\d)'), '[Aadhaar removed]'),
-    (re.compile(r'(?<!\d)(?:\+91[ -]?)?[6-9]\d{4}[ -]?\d{5}(?!\d)'), '[phone removed]'),
+    (re.compile(r'(?<!\d)(?:\+91[ -]?)?[6-9](?:\d{4}[ -]?\d{5}|\d{2}[ -]\d{3}[ -]\d{4})(?!\d)'),
+     '[phone removed]'),
     (re.compile(r'\b[\w.+-]+@[\w.-]+\.[A-Z]{2,}\b', re.I), '[email removed]'),
-    (re.compile(r'\b(?:employee\s+(?:id|number)\s*[:=#-]?\s*)?(?:EMP[- ]\d+)\b', re.I),
-     '[employee ID removed]'),
-    (re.compile(r'\bemployee\s+(?:id|number)\s*[:=#]\s*[\w-]+\b', re.I),
-     '[employee ID removed]'),
+    (re.compile(r'(\bemployee\s+(?:id|number)\s*[:=#]\s*["\']?)(?:EMP[ -]\d+|[\w-]+)\b', re.I),
+     r'\1[employee ID removed]'),
+    # In prose, "employee ID is" can be followed by an adjective rather than an ID.
+    (re.compile(r'(\bemployee\s+(?:id|number)\s+is\s+["\']?)(?=[\w-]*\d)[\w-]+\b', re.I),
+     r'\1[employee ID removed]'),
+    (re.compile(r'\bEMP[- ]\d+\b', re.I), '[employee ID removed]'),
 )
 
 

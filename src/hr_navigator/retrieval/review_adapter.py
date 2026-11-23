@@ -7,7 +7,9 @@ from dataclasses import dataclass
 import re
 from typing import Any, Literal, Mapping, Protocol, Sequence
 
-from .draft_review import code_editions, code_title_matches, draft_for_review, explicit_code, subsection_bounds
+from .draft_review import (
+    code_editions, code_title_matches, draft_for_review, explicit_code, is_code_reference, subsection_bounds,
+)
 from .grounded import extractive_evidence
 from .search import english_eligible, search, unsupported_query
 
@@ -30,11 +32,8 @@ def quoted_definition(request, evidence, pages):
     """Quote a named definition up to the next clause, keeping PDF pages separate."""
     question = normalized_definition_question(request.question)
     match = _NAMED_DEFINITION.match(question)
-    if not match or not re.fullmatch(
-        r'(?:the )?(?:code on wages|industrial relations code|code on social security|'
-        r'social security code|occupational safety,? health and working conditions code|'
-        r'osh(?: & wc)? code)(?:,? \d{4})?\??', question[match.end():], re.I
-    ):
+    code = explicit_code(question)
+    if not match or not code or not is_code_reference(question[match.end():], code):
         return None
     verified = {
         source['page_number']: source
