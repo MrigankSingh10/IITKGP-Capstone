@@ -107,3 +107,38 @@ def test_chat_stream_sends_progress_and_only_the_checked_response(monkeypatch):
     assert events[-1]['type'] == 'result'
     assert events[-1]['response']['answer'] == 'Checked draft'
     assert events[-1]['response']['status'] == 'review_required'
+
+
+def test_minimum_wage_follow_up_explains_missing_rate_schedule(monkeypatch):
+    import json
+
+    reviewed = []
+
+    def pipeline(query, labour_code):
+        reviewed.append(query)
+        return ReviewResult('escalate', [], reason='No applicable rate schedule found.'), {}
+
+    monkeypatch.setattr(server, 'run_hr_pipeline', pipeline)
+    question = 'Can you tell me the exact minimum wage I should be paid?'
+    details = 'I work in Haryana as a software engineer. I am paid on 5th of every month.'
+    with TestClient(server.app) as client:
+        response = client.post('/chat/stream', json={'session_id': 'rate-test', 'query': question})
+        events = [json.loads(line) for line in response.iter_lines()]
+        body = events[-1]['response']
+        assert body['status'] == 'clarification_required'
+        assert 'state or Union territory' in body['answer']
+        assert not body['citations']
+        assert reviewed == []
+
+        reply = client.post('/chat', json={
+            'session_id': 'rate-test', 'query': details, 'follow_up_to': question,
+        }).json()
+        assert reply['status'] == 'escalate'
+        assert reply['route_taken'] == 'minimum_wage_source_unavailable'
+        assert 'official rate schedule' in reply['answer']
+        assert 'usual payday' in reply['answer']
+        assert reply['sources'] == []
+        assert reviewed == []
+
+        client.post('/chat', json={'session_id': 'rate-test', 'query': 'Who sets the minimum wage?'})
+        assert reviewed[-1] == 'Who sets the minimum wage?'

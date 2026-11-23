@@ -63,21 +63,31 @@ with st.sidebar:
         if st.button(sp, key=f"sample_{sp}", width="stretch"):
             st.session_state["queued_prompt"] = sp
             st.session_state["demo_view"] = "Assistant Demo"
+            st.session_state.pop("follow_up_to", None)
 
     if st.button("Reset Session", width="stretch"):
         st.session_state.history = []
         st.session_state.session_id = str(uuid.uuid4())
+        st.session_state.pop("follow_up_to", None)
         st.rerun()
 
 tab_chat, tab_metrics = st.tabs(
     ["Assistant Demo", "Metrics & Traces"], key="demo_view", on_change="rerun",
 )
 # Streamlit docks a chat input only when it is outside nested containers.
-typed_prompt = st.chat_input("Type your question here…", submit_mode="disable") if tab_chat.open else None
+follow_up_to = st.session_state.get("follow_up_to")
+if tab_chat.open:
+    placeholder = "Reply with the requested details…" if follow_up_to else "Type your question here…"
+    typed_prompt = st.chat_input(placeholder, key="chat_message_input", submit_mode="disable")
+else:
+    typed_prompt = None
 
 with tab_chat:
     st.title("HR Policy Navigator")
     st.caption("Statutory documents · Draft answers require human review")
+    if tab_chat.open and follow_up_to and st.button("Start a new question"):
+        st.session_state.pop("follow_up_to", None)
+        st.rerun()
 
     for item in st.session_state.history:
         with st.chat_message(item["role"]):
@@ -111,16 +121,24 @@ with tab_chat:
                         "session_id": st.session_state.session_id,
                         "labour_code": None if labour_code == 'All statutory documents' else labour_code,
                         "query": user_prompt,
+                        "follow_up_to": follow_up_to,
                     },
                     progress,
                 )
-                progress.update(label="Response ready", state="complete")
                 answer = body.get("answer", "")
                 citations = body.get("citations", [])
                 route = body.get("route_taken", "unknown")
                 latency = body.get("latency_ms", 0.0)
                 status = body.get("status", "ok")
                 sources = body.get("sources", [])
+                progress.update(
+                    label="More details needed" if status == "clarification_required" else "Response ready",
+                    state="complete",
+                )
+                if status == "clarification_required":
+                    st.session_state["follow_up_to"] = user_prompt
+                elif status != "refused":
+                    st.session_state.pop("follow_up_to", None)
 
                 meta_parts = [f"Status: `{status}`", f"Route: `{route}`", f"Latency: `{latency} ms`"]
                 if citations:
@@ -141,6 +159,8 @@ with tab_chat:
                 st.session_state.history.append(
                     {"role": "assistant", "content": answer, "meta": meta_line, "sources": sources, "status": status}
                 )
+                if status == "clarification_required" or (follow_up_to and status != "refused"):
+                    st.rerun()
             except (requests.RequestException, ValueError) as exc:
                 progress.update(label="Chat request failed", state="error")
                 err_msg = f"API request failed: {exc}"

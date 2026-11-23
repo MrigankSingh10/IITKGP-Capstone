@@ -1,6 +1,7 @@
 import asyncio
 import json
 import os
+import re
 import time
 from functools import lru_cache
 from pathlib import Path
@@ -20,6 +21,25 @@ from hr_navigator.security.guardrails import RateLimiter, validate_user_input
 ROOT = Path(__file__).resolve().parents[2]
 app = FastAPI(title="HR Policy Navigator API", version="0.2.0")
 rate_limiter = RateLimiter(max_requests=30, window_seconds=60)
+_MINIMUM_WAGE = re.compile(r'\bminimum wages?\b', re.I)
+_PERSONAL_RATE = re.compile(
+    r'\b(?:exact|applicable)\s+minimum wages?\b'
+    r'|\b(?:my|our)\s+minimum wages?\b'
+    r'|\b(?:am i|are we|should i|must i|can i)\s+(?:be\s+)?(?:paid|pay|earn|get|receive)\b'
+    r'|\bminimum wages?\s+(?:applicable\s+)?(?:for me|for my\b|i\b|we\b)', re.I,
+)
+_RATE_CLARIFICATION = (
+    'The indexed documents explain how minimum wages are set, but don’t include verified rate schedules. '
+    'To identify the details you’d need for a rate lookup, where do you work '
+    '(state or Union territory and city or district), what kind of work do you do, '
+    'and what date or pay period are you asking about? Please include your industry and skill category '
+    'if you know them. You can reply with all the details in one message.'
+)
+_RATE_SOURCE_UNAVAILABLE = (
+    'I can’t verify your exact minimum wage from the documents indexed here. '
+    'I’d need an official rate schedule covering your work location, job classification, '
+    'and the month and year the wages are for. Your usual payday does not identify that pay period.'
+)
 
 
 class ChatRequest(BaseModel):
@@ -27,6 +47,7 @@ class ChatRequest(BaseModel):
     employee_id: str | None = None
     query: str
     labour_code: str | None = None
+    follow_up_to: str | None = None
 
 
 class ChatResponse(BaseModel):
@@ -98,10 +119,19 @@ def chat(payload: ChatRequest) -> ChatResponse:
     return answer_chat(payload)
 
 
+def asks_for_personal_minimum_wage(question: str) -> bool:
+    return bool(_MINIMUM_WAGE.search(question) and _PERSONAL_RATE.search(question))
+
+
 def answer_chat(payload: ChatRequest, progress=None) -> ChatResponse:
     if not rate_limiter.is_allowed(payload.session_id):
         raise HTTPException(status_code=429, detail='Rate limit exceeded. Try again shortly.')
     guard = validate_user_input(payload.query)
+    is_follow_up = bool(payload.follow_up_to and asks_for_personal_minimum_wage(payload.follow_up_to))
+    if guard.allowed and is_follow_up:
+        guard = validate_user_input(
+            f'{payload.follow_up_to} Additional details: {guard.sanitized_query}'
+        )
     if not guard.allowed:
         log_trace(TraceEvent(timestamp=utc_now_iso(), session_id=payload.session_id,
                              employee_id=payload.employee_id, query=payload.query,
@@ -112,6 +142,16 @@ def answer_chat(payload: ChatRequest, progress=None) -> ChatResponse:
     if unsupported_query(guard.sanitized_query):
         return ChatResponse(answer='Please ask your question in English.', route_taken='unsupported_language',
                             latency_ms=0.0, status='refused')
+    if is_follow_up or asks_for_personal_minimum_wage(guard.sanitized_query):
+        # The current corpus contains the statutory framework but no validated
+        # rate schedules for determining an individual worker's exact rate.
+        route = 'minimum_wage_source_unavailable' if is_follow_up else 'minimum_wage_clarification'
+        status = 'escalate' if is_follow_up else 'clarification_required'
+        log_trace(TraceEvent(timestamp=utc_now_iso(), session_id=payload.session_id,
+                             employee_id=payload.employee_id, query=guard.sanitized_query,
+                             route_taken=route, latency_ms=0.0, citations=[], status=status))
+        return ChatResponse(answer=_RATE_SOURCE_UNAVAILABLE if is_follow_up else _RATE_CLARIFICATION,
+                            route_taken=route, latency_ms=0.0, status=status)
     start = time.perf_counter()
     try:
         options = {'progress': progress} if progress is not None else {}
