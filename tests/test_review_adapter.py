@@ -209,3 +209,24 @@ def test_interactive_draft_escalates_when_both_responses_are_truncated():
     assert 'ran out of response space' in result.reason
     assert result.sources and result.draft_not_verified is None
     assert client.calls == 2
+
+
+def test_hosted_draft_payload_omits_personal_identifiers():
+    class InspectClient(Client):
+        def chat(self, messages, **kwargs):
+            serialized = json.dumps(messages)
+            for identifier in ('ABCDE1234F', '98765 43210', 'person@example.test'):
+                assert identifier not in serialized
+            return super().chat(messages, **kwargs)
+
+    client = InspectClient(
+        {'answer': 'At least fourteen days.', 'sufficient': True, 'passage_ids': ['P1']},
+        {'verdict': 'supported', 'reason': 'stated'},
+        {'answers_question': True, 'requested_source_match': True, 'reason': 'yes'},
+    )
+    request = ReviewRequest(
+        'How much notice? PAN ABCDE1234F, phone +91 98765 43210, email person@example.test.',
+        interactive=True,
+    )
+    assert corpus().retrieve(request, client).decision == 'review_required'
+    assert client.calls == 3

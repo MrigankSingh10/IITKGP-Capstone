@@ -125,7 +125,7 @@ def server_checks() -> list[dict]:
         leaked = [v for v in ('ABCDE1234F', '9876543210', 'demo-001') if v in logged]
         findings.append(_finding(
             'SRV-02', 'Traces mask personal data (PAN, phone, employee ID)', 'high', not leaked,
-            f'Unmasked in reports/agent_traces.jsonl: {leaked}. That path is not git-ignored.'
+            f'Unmasked identifiers in reports/agent_traces.jsonl: {len(leaked)}.'
             if leaked else 'No personal values found in the trace.'))
 
         _, client = fresh()

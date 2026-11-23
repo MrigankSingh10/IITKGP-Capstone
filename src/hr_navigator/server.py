@@ -16,7 +16,7 @@ from hr_navigator.observability.tracer import TraceEvent, estimate_cost, log_tra
 from hr_navigator.retrieval.review_adapter import ReviewAdapter, ReviewRequest
 from hr_navigator.retrieval.search import unsupported_query
 from hr_navigator.retrieval.source_context import enrich_pages, load_source_context
-from hr_navigator.security.guardrails import RateLimiter, validate_user_input
+from hr_navigator.security.guardrails import RateLimiter, redact_personal_identifiers, validate_user_input
 
 ROOT = Path(__file__).resolve().parents[2]
 app = FastAPI(title="HR Policy Navigator API", version="0.2.0")
@@ -127,14 +127,15 @@ def answer_chat(payload: ChatRequest, progress=None) -> ChatResponse:
     if not rate_limiter.is_allowed(payload.session_id):
         raise HTTPException(status_code=429, detail='Rate limit exceeded. Try again shortly.')
     guard = validate_user_input(payload.query)
+    trace_session_id = redact_personal_identifiers(payload.session_id)
     is_follow_up = bool(payload.follow_up_to and asks_for_personal_minimum_wage(payload.follow_up_to))
     if guard.allowed and is_follow_up:
         guard = validate_user_input(
             f'{payload.follow_up_to} Additional details: {guard.sanitized_query}'
         )
     if not guard.allowed:
-        log_trace(TraceEvent(timestamp=utc_now_iso(), session_id=payload.session_id,
-                             employee_id=payload.employee_id, query=payload.query,
+        log_trace(TraceEvent(timestamp=utc_now_iso(), session_id=trace_session_id,
+                             employee_id=None, query=guard.sanitized_query,
                              route_taken='guardrail_refusal', latency_ms=0.0,
                              citations=[], status='refused'))
         return ChatResponse(answer=guard.reason or 'Request refused.', route_taken='guardrail_refusal',
@@ -147,8 +148,8 @@ def answer_chat(payload: ChatRequest, progress=None) -> ChatResponse:
         # rate schedules for determining an individual worker's exact rate.
         route = 'minimum_wage_source_unavailable' if is_follow_up else 'minimum_wage_clarification'
         status = 'escalate' if is_follow_up else 'clarification_required'
-        log_trace(TraceEvent(timestamp=utc_now_iso(), session_id=payload.session_id,
-                             employee_id=payload.employee_id, query=guard.sanitized_query,
+        log_trace(TraceEvent(timestamp=utc_now_iso(), session_id=trace_session_id,
+                             employee_id=None, query=guard.sanitized_query,
                              route_taken=route, latency_ms=0.0, citations=[], status=status))
         return ChatResponse(answer=_RATE_SOURCE_UNAVAILABLE if is_follow_up else _RATE_CLARIFICATION,
                             route_taken=route, latency_ms=0.0, status=status)
@@ -169,8 +170,8 @@ def answer_chat(payload: ChatRequest, progress=None) -> ChatResponse:
                 answer += ' The passages below are available for review.'
         prompt_tokens = usage.get('prompt_tokens', 0)
         completion_tokens = usage.get('completion_tokens', 0)
-        log_trace(TraceEvent(timestamp=utc_now_iso(), session_id=payload.session_id,
-                             employee_id=payload.employee_id, query=guard.sanitized_query,
+        log_trace(TraceEvent(timestamp=utc_now_iso(), session_id=trace_session_id,
+                             employee_id=None, query=guard.sanitized_query,
                              route_taken='document_review', latency_ms=latency_ms,
                              prompt_tokens=prompt_tokens, completion_tokens=completion_tokens,
                              estimated_cost_usd=estimate_cost('default', prompt_tokens, completion_tokens),

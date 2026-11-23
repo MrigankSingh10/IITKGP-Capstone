@@ -5,6 +5,7 @@ import re
 from hr_navigator.clients.api import APIError
 from hr_navigator.retrieval.grounded import extractive_evidence
 from hr_navigator.retrieval.source_context import citation_context
+from hr_navigator.security.guardrails import redact_personal_identifiers
 
 
 class IncompleteModelResponse(ValueError):
@@ -177,6 +178,7 @@ def check_question_source_alignment(client, question, answer, citations):
 def draft_for_review(client, question, evidence, pages, *, select_passages=False, progress=None,
                      correction=None):
     """Return only a labeled draft after provenance and model checks; always require human review."""
+    question = redact_personal_identifiers(question)
     base = extractive_evidence(evidence, pages)
     if any(_INJECTION.search(source['passage']) for source in base['sources']):
         return {'decision': 'escalate', 'reason': 'Possible instruction in source evidence; review required.', 'sources': []}

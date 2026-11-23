@@ -139,7 +139,7 @@ PYTHONPATH=src .venv/bin/python -m uvicorn hr_navigator.server:app --reload --ho
 .venv/bin/python -m streamlit run app.py
 ```
 
-Without chat settings, the UI displays candidate passages for review. With them, the chat model selects passages by ID and the server attaches the registered source text. The UI shows a draft only when support and question alignment checks pass. If a draft cannot be verified, the app can still show candidate passages for manual review. The corpus covers statutory documents. It does not have personal leave records or an employer handbook. Use fictional queries because the prototype records queries locally.
+Without chat settings, the UI displays candidate passages for review. With them, the chat model selects passages by ID and the server attaches the registered source text. The UI shows a draft only when support and question alignment checks pass. If a draft cannot be verified, the app can still show candidate passages for manual review. The corpus covers statutory documents. It does not have personal leave records or an employer handbook. Use fictional queries. The API masks common identifiers before sending a question to the configured hosted model and before recording it in local traces.
 
 Name the Code in your question or select a **Document collection** to narrow the search. Plain keyword search can miss paraphrases or relevant text outside the indexed corpus.
 
