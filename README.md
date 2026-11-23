@@ -116,16 +116,13 @@ Build the accepted-OCR corpus as described above, then install the UI/API packag
 .venv/bin/python -m pip install fastapi uvicorn streamlit pandas requests
 ```
 
-For generated answers, create `configs/chat.local.json` with the endpoint assigned to your group and paths to the local key and CA certificate. This file is ignored by Git; the key itself stays in its separate file:
+For generated answers, copy the tracked [chat configuration example](configs/chat.example.json) to your local configuration:
 
-```json
-{
-  "base_url": "<your-authorized-https-endpoint-ending-in-/v1>",
-  "model": "Qwen/Qwen3-8B",
-  "key_file": "api-key.txt",
-  "ca_file": "vm04-ca.crt"
-}
+```bash
+cp -n configs/chat.example.json configs/chat.local.json
 ```
+
+Edit `configs/chat.local.json` with the endpoint and CA certificate assigned to your group and the path to your key file. Git ignores the local configuration, key, and certificate.
 
 Paths are relative to the repository root. Alternatively, all four `CHAT_*` environment variables in `.env.example` can be set in the API process; they take precedence over the local file. The application does not load `.env` automatically.
 

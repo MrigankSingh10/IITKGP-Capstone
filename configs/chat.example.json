@@ -1,0 +1,6 @@
+{
+  "base_url": "<your-authorized-https-endpoint-ending-in-/v1>",
+  "model": "Qwen/Qwen3-8B",
+  "key_file": "api-key.txt",
+  "ca_file": "vm04-ca.crt"
+}

@@ -387,3 +387,27 @@ Copy this heading and fill it in for each session:
 - Files / evidence: guardrails, draft review, review adapter, regression tests and this log.
 - Validation and results: 154 tests passed and 2 skipped. Diff whitespace check passed.
 - Blockers / next action / owner: multi-Code edition verification is deferred.
+
+### 2026-11-23 — Document local environment configuration
+
+- Owner: AI agent.
+- Work and decisions: verified environment variable precedence, local file configuration, and which files are ignored by Git.
+- Files / evidence: `.env.example`, `.gitignore`, README, and the server and evaluation configuration loaders.
+- Validation and results: checked tracked and ignored paths without reading any credential values.
+- Blockers / next action / owner: none.
+
+### 2026-11-23 — Locate local configuration files
+
+- Owner: AI agent.
+- Work and decisions: verified which configuration files exist locally and which are tracked.
+- Files / evidence: repository root and `.gitignore`.
+- Validation and results: checked file presence and tracked paths without opening credentials.
+- Blockers / next action / owner: none.
+
+### 2026-11-23 — Share the chat configuration template
+
+- Owner: AI agent.
+- Work and decisions: added a tracked chat configuration example and documented copying it to the ignored local configuration.
+- Files / evidence: `configs/chat.example.json`, README and this log.
+- Validation and results: parsed the example as JSON, checked the diff, and confirmed that local configuration, keys and certificates are ignored by Git.
+- Blockers / next action / owner: each teammate supplies their assigned endpoint, key and CA certificate locally.
