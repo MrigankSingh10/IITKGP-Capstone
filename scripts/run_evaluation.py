@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'src'))
 from hr_navigator.clients.api import APIConfig, HostedClient  # noqa: E402
 from hr_navigator.evaluation import runner  # noqa: E402
-from hr_navigator.evaluation.systems import CallableSystem, ClosedBookSystem, RagSystem  # noqa: E402
+from hr_navigator.evaluation.systems import ApiSystem, CallableSystem, ClosedBookSystem, RagSystem  # noqa: E402
 
 
 # Search indexes: (folder with pages.jsonl and chunks_<size>.jsonl, embedding cache)
@@ -70,6 +70,9 @@ def build_system(args):
         embed = HostedClient(embed_config, retries=3)
         return RagSystem(chat, embed, chunks, vectors, pages, top_k=args.top_k,
                          name=f'rag_{args.index}_{args.chunk_size}_top{args.top_k}'), [chat, embed]
+    if args.system == 'api':
+        name = args.name or ('api_chat_http' if args.api_url else 'api_chat')
+        return ApiSystem(args.api_url, name=name, keep_traces=args.keep_traces), []
     if not args.entrypoint:
         raise SystemExit('--entrypoint package.module:function is required for --system callable')
     return CallableSystem(args.entrypoint, args.name), []
@@ -94,7 +97,14 @@ def main():
 
     p_run = sub.add_parser('run')
     common(p_run)
-    p_run.add_argument('--system', required=True, choices=['closed_book', 'rag', 'callable'])
+    p_run.add_argument('--system', required=True, choices=['closed_book', 'rag', 'callable', 'api'],
+                       help='api = end-to-end through the chat API (POST /chat)')
+    p_run.add_argument('--api-url', help='for api: a running server, e.g. http://127.0.0.1:8000 '
+                       '(default: run the FastAPI app in-process)')
+    p_run.add_argument('--final', action='store_true',
+                       help='confirm the one-time run of a run-once set (grounding_holdout_v1)')
+    p_run.add_argument('--keep-traces', action='store_true',
+                       help='for api in-process: also write the demo trace file')
     p_run.add_argument('--strategy', default='few_shot', help='closed_book prompt from run_baselines.py')
     p_run.add_argument('--chunk-size', default='350', choices=['200', '350'])
     p_run.add_argument('--top-k', type=int, default=5)
@@ -129,11 +139,20 @@ def main():
     out_dir = Path('reports/evaluation')
 
     if args.command == 'run':
+        if runner.TEST_SETS[args.test_set].get('run_once') and not args.final:
+            raise SystemExit(f'{args.test_set} is the hold-out for the final measurement: run it once, after the '
+                             'pipeline is fixed, and never tune on it. Add --final to confirm.')
         system, clients = build_system(args)
+        if args.system == 'api':
+            skipped = [c['id'] for c in cases if c.get('injected_documents')]
+            cases = [c for c in cases if not c.get('injected_documents')]
+            if skipped:
+                print(f'{len(skipped)} tampered-document cases cannot go through /chat and were skipped '
+                      f'(run them with --system rag): {", ".join(skipped)}')
         output = args.output or out_dir / f'{args.test_set}__{system.name}.jsonl'
         try:
             count = runner.run(system, cases, output, args.test_set, set_sha, limit=args.limit,
-                               pause_seconds=args.pause if clients else 0)
+                               pause_seconds=args.pause if clients or args.system == 'api' else 0)
         finally:
             for client in clients:
                 client.close()

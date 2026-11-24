@@ -76,3 +76,36 @@ The two reviews agreed on 226 of 240 correct/incorrect marks (94.2%). All 14 dif
 Each of the 221 wrong answers has one category from `docs/error_taxonomy.md`: `hallucination` 150, `reasoning_error` 49, `abstention` 22. The two reviews chose the same category for 153 answers; for the other 54 the taxonomy's precedence rule decided (the more serious category is primary, and a format error is primary only when the content is acceptable). The remaining 14 wrong answers were marked wrong only by the strict review and take its category. Every decision is traceable in the sheet's `mark_basis`, `category_basis` and original-review columns, and `scripts/reconcile_baseline_reviews.py` reproduces the sheet exactly.
 
 The earlier sections of this report describe the team review (33/240) and remain as the record of that review; the reconciled figures above are the ones to use for comparisons.
+
+## Why the baseline is low — analysis (2026-11-24)
+
+The official closed-book baseline is 19/240 (7.9%). This analysis uses only the saved responses
+(`baseline_v1_runs.jsonl`) and the reconciled marks (`baseline_v1_review_reconciled.csv`); it does not
+re-score anything. In short: about half the questions are about documents published after the model's
+training, and the rest ask for exact legal details a small model has not memorised. Prompt wording alone
+cannot close that gap; retrieval has to supply the right page.
+
+| Finding | Evidence |
+|---|---|
+| **Questions about documents newer than the model** | 36 of the 80 questions (108 answers) come from FAQ documents dated December 2025 to October 2026. Only **7/108** were correct. Several answers say so directly, e.g. "As of my knowledge cutoff in July 2024, there is no publicly available document titled 'January 2026 Social Security FAQ'" (draft-046, draft-047, draft-055). |
+| **Exact statutory details are not memorised** | On the 44 questions from the Codes themselves, **12/132** were correct. Wrong answers typically give a different number, date, authority or definition from the one on the page. |
+| **Only general facts are known** | Only **9 of 80** questions were answered correctly by any strategy, mostly general facts (a Code's extent or title). |
+| **Few-shot examples teach the model to say less** | Both few-shot examples are "cannot verify" answers. Few-shot answers averaged **44** completion tokens against **79** for zero-shot, and had the most incomplete answers (24 `reasoning_error`). |
+| **Decomposition guesses instead of abstaining** | Decomposition scored best (8/80) but had the most made-up facts (57 `hallucination`) and almost no abstentions (1). Its prompt asks for a concise answer (40 tokens on average). |
+| **Format** | Zero-shot produced valid JSON in 66/80 responses; few-shot and decomposition in 80/80. |
+| **Follow-up questions** | The 6 questions with earlier conversation turns scored **1/18**, although the context was included. |
+| **Strict rubric** | The lenient team review gave 33/240; the 14 extra answers it accepted were partial or bare yes/no answers. |
+
+**Implications for retrieval:** filter or boost by the document named in the question (title and date),
+since many questions name a specific FAQ; make section and definition lookups reliable; rewrite follow-up
+questions into full questions before searching; and check that the retrieved page contains the exact
+figure (the runner's gold-page check measures this).
+
+**Implications for prompts:** use few-shot examples with complete answers that cover every condition
+(who, what, procedure, numbers, exceptions); ask for figures to be quoted exactly from the evidence; ask
+the model to escalate when the evidence lacks the answer instead of answering from memory; and use a
+JSON output mode where the hosted model supports it.
+
+Tune on development data only, never on `gold_v1` or the frozen hold-out, so reported improvements stay
+honest.
+

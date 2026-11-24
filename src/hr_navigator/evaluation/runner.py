@@ -33,6 +33,10 @@ TEST_SETS = {
                       'fixtures': 'evaluation/safety_doc_fixtures_v1.json'},
     'safety_doc_v0.1': {'cases': 'evaluation/safety_doc_v0.1.jsonl', 'checksum': None,
                         'fixtures': 'evaluation/safety_doc_fixtures_v0.1.json'},
+    # Final grounding measurement: run once, after the pipeline is fixed (needs --final in the CLI).
+    'grounding_holdout_v1': {'cases': 'evaluation/grounding_holdout_v1.jsonl',
+                             'checksum': 'evaluation/grounding_holdout_v1.sha256',
+                             'fixtures': None, 'format': 'grounding', 'run_once': True},
 }
 INJECTION_CATEGORIES = ('prompt_injection', 'document_injection')
 
@@ -65,6 +69,22 @@ def run_identity(cases_path: Path, fixtures_path: Path | None = None) -> str:
     return hashlib.sha256(combined.encode('utf-8')).hexdigest()
 
 
+def grounding_case(record: dict) -> dict:
+    """Turn a reviewed grounding record (hold-out / fresh format) into the runner's case format."""
+    where = f"{record['original_title']}, section {record.get('section') or '?'}, PDF page {record['pdf_page_number']}"
+    return {
+        'id': record['case_id'], 'question': record['question'], 'scope': 'statutory',
+        'gold_response_or_conditions': (f"{record['expected_conditions']} Expected source: {where}. "
+                                        f"Source quote: \"{record['source_quote']}\""),
+        'expected_decision': record.get('expected_decision') or 'answer',
+        'source': {'source_pdf_id': record['source_pdf_id'], 'title': record['original_title'],
+                   'source_url': record['source_url'], 'pdf_page_number': record['pdf_page_number']},
+        'required_tool_actions': [], 'forbidden_tool_actions': [], 'expected_approval_required': False,
+        'conversation_context': [], 'auth_context': {},
+        'scoring_method': 'Human review of each condition and citation; no partial correctness assumed.',
+    }
+
+
 def load_test_set(name: str, root: Path = Path('.'), allow_draft: bool = False):
     """Return (cases, run identity). Frozen sets are checksum-verified; drafts need allow_draft."""
     if name not in TEST_SETS:
@@ -74,14 +94,22 @@ def load_test_set(name: str, root: Path = Path('.'), allow_draft: bool = False):
     if spec['checksum'] is None and not allow_draft:
         raise ValueError(f'{name} is a draft; pass allow_draft to use it')
     if spec['checksum'] is not None:
+        checksum = root / spec['checksum']
+        if not checksum.exists():
+            raise ValueError(f'{name} is not frozen yet ({spec["checksum"]} is missing)')
         expected = {}
-        for line in (root / spec['checksum']).read_text().splitlines():
+        for line in checksum.read_text().splitlines():
             digest, file = line.split(maxsplit=1)
             expected[file] = digest
         for file, digest in expected.items():
-            if sha256(root / file) != digest:
+            target = root / file
+            if not target.exists():                 # some freeze notes list bare file names
+                target = checksum.parent / file
+            if sha256(target) != digest:
                 raise ValueError(f'Checksum mismatch for frozen file {file}')
     cases = load_jsonl(path)
+    if spec.get('format') == 'grounding':
+        cases = [grounding_case(c) for c in cases]
     if spec['fixtures']:
         fixtures = json.loads((root / spec['fixtures']).read_text(encoding='utf-8'))
         documents = {d['id']: d for d in fixtures['injected_documents']}
