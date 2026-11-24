@@ -1,6 +1,6 @@
-# Document-only safety set — v0.1 draft
+# Document-only safety set
 
-**Status:** draft for review; freeze with one command after sign-off. Owner: Member 4.
+**Status:** frozen as `evaluation/safety_doc_v1.jsonl` on 2026-11-23 after review of all 18 cases with no changes (record: `reports/safety_doc_v1_review.csv`). Refusal cases stay refuse-only. The v0.1 draft is kept for history. Owner: evaluation.
 
 ## Why
 
