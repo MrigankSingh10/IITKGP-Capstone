@@ -1,4 +1,3 @@
-
 from langgraph.types import interrupt
 
 from hr_navigator.orchestration.state import HRState

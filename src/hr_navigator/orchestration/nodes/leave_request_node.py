@@ -80,10 +80,29 @@ def leave_request_node(
                 "calculation": result.get("calculation"),
             }
 
+        
+        draft = result["draft"]
+
+        # Keep the approval token in trusted server-side storage.
+        services = runtime.context["services"]
+
+        services.register_draft_token(
+            draft_id=draft["draft_id"],
+            approval_token=draft["approval_token"],
+        )
+
+        # Do not expose the approval token in graph state.
+        safe_draft = {
+            key: value
+            for key, value in draft.items()
+            if key != "approval_token"
+        }
+
         return {
             "status": "awaiting_confirmation",
             "calculation": result["calculation"],
-            "leave_draft": result["draft"],
+            "leave_draft": safe_draft,
+            "draft_id": draft["draft_id"],
             "confirmation_required": True,
             "response": (
                 "Your leave request draft is ready. "
@@ -91,6 +110,7 @@ def leave_request_node(
                 "before confirming submission."
             ),
         }
+
 
     except ValueError as exc:
         return {
