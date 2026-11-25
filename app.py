@@ -226,6 +226,28 @@ with st.sidebar:
         st.session_state.session_id = str(uuid.uuid4())
         st.rerun()
 
+    st.header("Demo Controls")
+    api_url = st.text_input("FastAPI Base URL", value=DEFAULT_API_URL)
+    labour_code = st.selectbox('Document collection', [
+        'All statutory documents', 'Code on Wages', 'Code on Social Security',
+        'Industrial Relations Code', 'Occupational Safety Health and Working Conditions Code',
+    ], help='Choose a Code when your question concerns a particular law.')
+    demo_employees = {
+        "Asha Rao (demo-001)": "demo-001",
+        "Vikram Nair (demo-002)": "demo-002",
+        "Meera Iyer (demo-003)": "demo-003",
+        "Rahul Menon (demo-004)": "demo-004",
+    }
+    selected_employee = st.selectbox(
+        "Fictional demo employee", options=list(demo_employees)
+    )
+    employee_id = demo_employees[selected_employee]
+    st.caption(
+        "Local demo only: employee names and leave balances are simulated "
+        "fictional Acme data, not live HR records."
+    )
+    st.caption(f"Session ID: `{st.session_state.session_id[:8]}`")
+
 api_online = check_api_health(st.session_state.api_url)
 status_cls = "status-online" if api_online else "status-offline"
 status_txt = "API Connected" if api_online else "API Offline"
@@ -280,8 +302,115 @@ with tab_desk:
         with st.spinner("Checking policy corpus and HR tools..."):
             submit_query(pending_query)
 
+<<<<<<< HEAD
     if not st.session_state.messages:
         st.info("Ask an HR policy question, look up employee leave balances, or select one of the quick prompts above.")
+=======
+with tab_chat:
+    st.title("HR Policy Navigator")
+    st.caption("Statutory documents · Draft answers require human review")
+    if tab_chat.open and follow_up_to and st.button("Start a new question"):
+        st.session_state.pop("follow_up_to", None)
+        st.rerun()
+
+    for item in st.session_state.history:
+        with st.chat_message(item["role"]):
+            st.markdown(item["content"])
+            if item.get("status") == "review_required":
+                st.warning('Unverified draft. Check the sources and applicability before relying on it.')
+            if item.get("meta"):
+                st.caption(item["meta"])
+            for source in item.get("sources", []):
+                with st.expander(f"{source.get('original_title', 'Source')} — PDF page {source.get('page_number', '?')}"):
+                    st.text(source.get('passage') or source.get('quote_or_section', ''))
+                    if source.get('source_url'):
+                        st.write(source['source_url'])
+                    for warning in source.get('source_warnings', []):
+                        st.warning(warning)
+
+    queued = st.session_state.pop("queued_prompt", None)
+    user_prompt = queued or typed_prompt
+
+    if user_prompt:
+        st.session_state.history.append({"role": "user", "content": user_prompt})
+        with st.chat_message("user"):
+            st.markdown(user_prompt)
+
+        with st.chat_message("assistant"):
+            progress = st.status("Starting chat request…")
+            try:
+                body = stream_chat(
+                    api_url,
+                    {
+                        "session_id": st.session_state.session_id,
+                        "labour_code": None if labour_code == 'All statutory documents' else labour_code,
+                        "query": user_prompt,
+                        "follow_up_to": follow_up_to,
+                    },
+                    progress,
+                )
+                answer = body.get("answer", "")
+                citations = body.get("citations", [])
+                simulated = body.get("simulated", False)
+                route = body.get("route_taken", "unknown")
+                latency = body.get("latency_ms", 0.0)
+                status = body.get("status", "ok")
+                sources = body.get("sources", [])
+                progress.update(
+                    label="More details needed" if status == "clarification_required" else "Response ready",
+                    state="complete",
+                )
+                if status == "clarification_required":
+                    st.session_state["follow_up_to"] = user_prompt
+                elif status != "refused":
+                    st.session_state.pop("follow_up_to", None)
+
+                meta_parts = [f"Status: `{status}`", f"Route: `{route}`", f"Latency: `{latency} ms`"]
+                if citations:
+                    meta_parts.append(f"Citations: `{', '.join(citations)}`")
+                meta_line = " | ".join(meta_parts)
+
+                if simulated:
+                    st.info(
+                        "Simulated result: this answer uses fictional local demo "
+                        "data and does not represent a real employee balance."
+                    )
+                st.markdown(answer)
+                if status == 'review_required':
+                    st.warning('Unverified draft. Check the sources and applicability before relying on it.')
+                st.caption(meta_line)
+                for source in sources:
+                    with st.expander(f"{source.get('original_title', 'Source')} — PDF page {source.get('page_number', '?')}"):
+                        st.text(source.get('passage') or source.get('quote_or_section', ''))
+                        if source.get('source_url'):
+                            st.write(source['source_url'])
+                        for warning in source.get('source_warnings', []):
+                            st.warning(warning)
+                st.session_state.history.append(
+                    {"role": "assistant", "content": answer, "meta": meta_line, "sources": sources, "status": status}
+                )
+                if status == "clarification_required" or (follow_up_to and status != "refused"):
+                    st.rerun()
+            except (requests.RequestException, ValueError) as exc:
+                progress.update(label="Chat request failed", state="error")
+                err_msg = f"API request failed: {exc}"
+                if isinstance(exc, requests.RequestException) and exc.response is not None:
+                    try:
+                        err_msg += f" — {exc.response.json().get('detail', '')}"
+                    except ValueError:
+                        pass
+                st.error(err_msg)
+                st.session_state.history.append({"role": "assistant", "content": err_msg})
+
+with tab_metrics:
+    st.title("Live Session Metrics & Repo Evaluation Snapshots")
+    if st.button("Refresh Metrics"):
+        st.rerun()
+
+    st.subheader("1. Live Query Traces (`reports/agent_traces.jsonl`)")
+    if not TRACE_PATH.exists():
+        st.info("No live traces recorded yet. Send a prompt in the Assistant Demo tab.")
+>>>>>>> 7a574ba (E2E test related review comments)
     else:
         for msg in st.session_state.messages:
             render_message(msg)
