@@ -208,7 +208,6 @@ if "session_id" not in st.session_state:
     st.session_state.session_id = str(uuid.uuid4())
 if "messages" not in st.session_state:
     st.session_state.messages = []
-        st.session_state.follow_up_to = None
 if "api_url" not in st.session_state:
     st.session_state.api_url = DEFAULT_API_URL
 if "employee_id" not in st.session_state:
@@ -261,7 +260,7 @@ with tab_desk:
     with c_clear:
         if st.button("Clear Thread", use_container_width=True):
             st.session_state.messages = []
-        st.session_state.follow_up_to = None
+            st.session_state.follow_up_to = None
             st.rerun()
 
     quick_queries = [
