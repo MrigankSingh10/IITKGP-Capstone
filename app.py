@@ -343,6 +343,7 @@ with tab_chat:
                     api_url,
                     {
                         "session_id": st.session_state.session_id,
+                        "employee_id": employee_id,
                         "labour_code": None if labour_code == 'All statutory documents' else labour_code,
                         "query": user_prompt,
                         "follow_up_to": follow_up_to,

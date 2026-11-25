@@ -14,10 +14,10 @@ def test_chat_question_returns_displayable_synthetic_leave_balances(
     monkeypatch.setattr(server, "log_trace", lambda _event: None)
 
     # A balance question must be handled by the employee tool, not the fallback.
-    def unexpected_fallback(**_kwargs):
-        raise AssertionError("Leave-balance question reached the generic agent route")
+    def unexpected_fallback(*_args, **_kwargs):
+        raise AssertionError("Leave-balance question reached document retrieval")
 
-    monkeypatch.setattr(server, "invoke_agent_or_stub", unexpected_fallback)
+    monkeypatch.setattr(server, "run_hr_pipeline", unexpected_fallback)
 
     with TestClient(server.app) as client:
         response = client.post(
