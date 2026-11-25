@@ -80,15 +80,37 @@ def leave_request_node(
                 "calculation": result.get("calculation"),
             }
 
-        
         draft = result["draft"]
+        draft_id = draft["draft_id"]
 
-        # Keep the approval token in trusted server-side storage.
+        # An idempotent retry can find a request that is already submitted.
+        # In that case, there is no new confirmation step to perform.
+        if draft.get("status") == "submitted":
+            return {
+                "status": "submitted",
+                "draft_id": draft_id,
+                "request_id": draft.get("request_id") or draft_id,
+                "response": "This leave request has already been submitted.",
+            }
+
+        # Keep the approval token in trusted server-side storage. An active
+        # existing draft receives a rotated token from draft_leave_request().
+        approval_token = draft.get("approval_token")
+        if not approval_token:
+            return {
+                "status": "error",
+                "draft_id": draft_id,
+                "response": (
+                    "An existing leave draft was found, but no active "
+                    "confirmation token is available. Create a new request "
+                    "with a new idempotency key."
+                ),
+            }
+
         services = runtime.context["services"]
-
         services.register_draft_token(
-            draft_id=draft["draft_id"],
-            approval_token=draft["approval_token"],
+            draft_id=draft_id,
+            approval_token=approval_token,
         )
 
         # Do not expose the approval token in graph state.
@@ -102,7 +124,7 @@ def leave_request_node(
             "status": "awaiting_confirmation",
             "calculation": result["calculation"],
             "leave_draft": safe_draft,
-            "draft_id": draft["draft_id"],
+            "draft_id": draft_id,
             "confirmation_required": True,
             "response": (
                 "Your leave request draft is ready. "
@@ -110,7 +132,6 @@ def leave_request_node(
                 "before confirming submission."
             ),
         }
-
 
     except ValueError as exc:
         return {

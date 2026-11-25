@@ -7,13 +7,12 @@ lookup tools; it is not an authentication or production HR integration.
 
 from __future__ import annotations
 
-import json
 import os
 import re
 import sqlite3
 from pathlib import Path
 
-from hr_navigator.db import migrate
+from hr_navigator.db import migrate, seed_scenario_fixtures
 from hr_navigator.tools.employee import get_employee_profile, get_leave_balance
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -25,21 +24,40 @@ SUPPORTED_LEAVE_TYPES = ("annual", "sick")
 _LEAVE_TERMS = re.compile(
     r"\b(?:leave|annual|sick|vacation|time[ -]?off|pto)\b", re.IGNORECASE
 )
-_BALANCE_TERMS = re.compile(
-    r"\b(?:balance|balances|remaining|left|available|entitlement)\b",
+# A balance lookup is personal-data access. Require an explicit reference to
+# the employee's own balance rather than interpreting general policy wording.
+_PERSONAL_TERMS = re.compile(
+    r"\b(?:my|mine|i\s+(?:have|currently have|still have)|do\s+i\s+have)\b",
     re.IGNORECASE,
 )
+_BALANCE_TERMS = re.compile(
+    r"\b(?:balance|balances|remaining|left|available)\b", re.IGNORECASE
+)
 _QUANTITY_TERMS = re.compile(
-    r"\b(?:how many|how much|what is|what's|show|check)\b.*\b(?:days?|hours?)\b",
+    r"\b(?:how many|how much|what is|what's|show|check)\b.*"
+    r"\b(?:days?|hours?)\b",
+    re.IGNORECASE,
+)
+_POLICY_TERMS = re.compile(
+    r"\b(?:statutory|statute|legal|law|laws|policy|policies|"
+    r"entitlement|entitlements|rights?|provision|provisions)\b",
     re.IGNORECASE,
 )
 
 
 def is_leave_balance_question(query: str) -> bool:
-    """Return True for natural-language questions asking about leave remaining."""
-    return bool(_LEAVE_TERMS.search(query) and (
-        _BALANCE_TERMS.search(query) or _QUANTITY_TERMS.search(query)
-    ))
+    """Return True only for an explicitly personal leave-balance request.
+
+    General questions about statutory rights, policy rules, or leave
+    entitlements remain on the document-retrieval path.
+    """
+    if not isinstance(query, str) or _POLICY_TERMS.search(query):
+        return False
+
+    if not _LEAVE_TERMS.search(query) or not _PERSONAL_TERMS.search(query):
+        return False
+
+    return bool(_BALANCE_TERMS.search(query) or _QUANTITY_TERMS.search(query))
 
 
 def requested_leave_type(query: str) -> str | None:
@@ -53,17 +71,6 @@ def requested_leave_type(query: str) -> str | None:
     return None
 
 
-def _load_demo_fixtures() -> dict:
-    try:
-        fixtures = json.loads(DEMO_FIXTURES_PATH.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
-        raise RuntimeError("Synthetic demo fixtures could not be loaded") from exc
-
-    if not str(fixtures.get("label", "")).startswith("SYNTHETIC"):
-        raise RuntimeError("Refusing to load fixtures not labelled as synthetic")
-    return fixtures
-
-
 def connect_demo_database(db_path: str | Path | None = None) -> sqlite3.Connection:
     """Open and seed the local SQLite database with the fictional fixtures."""
     selected_path = Path(
@@ -75,22 +82,9 @@ def connect_demo_database(db_path: str | Path | None = None) -> sqlite3.Connecti
     connection.row_factory = sqlite3.Row
     try:
         migrate(connection)
-        fixtures = _load_demo_fixtures()
-        with connection:
-            for employee in fixtures["employees"]:
-                connection.execute(
-                    """INSERT INTO employees (id, display_name) VALUES (?, ?)
-                       ON CONFLICT(id) DO UPDATE SET display_name = excluded.display_name""",
-                    (employee["id"], employee["display_name"]),
-                )
-            for balance in fixtures["leave_balances"]:
-                connection.execute(
-                    """INSERT INTO leave_balances (employee_id, leave_type, days)
-                       VALUES (?, ?, ?)
-                       ON CONFLICT(employee_id, leave_type)
-                       DO UPDATE SET days = excluded.days""",
-                    (balance["employee_id"], balance["leave_type"], balance["days"]),
-                )
+        # Seed only missing fixture records. Existing employee balances may
+        # have been intentionally changed during the local demo and must persist.
+        seed_scenario_fixtures(connection, DEMO_FIXTURES_PATH)
     except Exception:
         connection.close()
         raise

@@ -259,7 +259,7 @@ def draft_leave_request(
     existing = connection.execute(
         """
         SELECT draft_id, status, leave_type, start_date,
-               end_date, leave_days
+               end_date, leave_days, policy_version
         FROM leave_requests
         WHERE employee_id = ? AND idempotency_key = ?
         """,
@@ -280,16 +280,75 @@ def draft_leave_request(
                 "error": "Idempotency key was already used for another request"
             }
 
-        return {
+        existing_draft = {
             "success": True,
             "already_exists": True,
             "draft_id": existing[0],
             "status": existing[1],
-            "message": (
-                "This request already exists. "
-                "Use the original confirmation process; "
-                "a new token has not been issued."
-            )
+            "employee_id": employee_id,
+            "leave_type": existing[2],
+            "start_date": existing[3],
+            "end_date": existing[4],
+            "leave_days": existing[5],
+            "policy_version": existing[6],
+            "approval_required": True,
+        }
+
+        if existing[1] == "draft":
+            # The original raw token is intentionally never stored in SQLite.
+            # On an idempotent retry, rotate the token hash and return a fresh
+            # token to the trusted caller so confirmation can safely continue.
+            confirmation_token = secrets.token_urlsafe(32)
+            now = _utc_now()
+            expires_at = now + timedelta(minutes=approval_ttl_minutes)
+            with connection:
+                connection.execute(
+                    """
+                    UPDATE leave_requests
+                    SET approval_token_hash = ?,
+                        token_expires_at = ?
+                    WHERE draft_id = ? AND employee_id = ? AND status = 'draft'
+                    """,
+                    (
+                        _hash_token(confirmation_token),
+                        _format_datetime(expires_at),
+                        existing[0],
+                        employee_id,
+                    ),
+                )
+                _audit(
+                    connection,
+                    existing[0],
+                    employee_id,
+                    "APPROVAL_TOKEN_REISSUED",
+                    "Idempotent retry; previous confirmation token invalidated",
+                )
+
+            return {
+                **existing_draft,
+                "approval_token": confirmation_token,
+                "token_expires_at": _format_datetime(expires_at),
+                "message": (
+                    "This draft already exists. A fresh confirmation token "
+                    "has been issued for this retry."
+                ),
+            }
+
+        if existing[1] == "submitted":
+            return {
+                **existing_draft,
+                "message": "This leave request has already been submitted.",
+            }
+
+        return {
+            "success": False,
+            "already_exists": True,
+            "draft_id": existing[0],
+            "status": existing[1],
+            "error": (
+                "The existing draft is no longer active. "
+                "Create a new request with a new idempotency key."
+            ),
         }
 
     # Check current leave balance.

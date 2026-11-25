@@ -158,3 +158,55 @@ def test_leave_request_draft_and_submission(test_db, auth_context):
 
     assert audit is not None
     assert len(audit) > 0
+
+
+
+def test_idempotent_draft_retry_reissues_confirmation_token(test_db, auth_context):
+    """An active draft retry preserves the draft and returns a fresh token."""
+    calculation = calculate_leave_days(
+        start=date(2027, 1, 25),
+        end=date(2027, 1, 26),
+        workweek={0, 1, 2, 3, 4},
+        holidays=set(),
+        policy_version="0.1-draft",
+    )
+
+    first = draft_leave_request(
+        connection=test_db,
+        auth_context=auth_context,
+        leave_type="annual",
+        calculation=calculation,
+        idempotency_key="pytest-idempotent-retry-001",
+    )
+    retry = draft_leave_request(
+        connection=test_db,
+        auth_context=auth_context,
+        leave_type="annual",
+        calculation=calculation,
+        idempotency_key="pytest-idempotent-retry-001",
+    )
+
+    assert first["success"] is True
+    assert retry["success"] is True
+    assert retry["already_exists"] is True
+    assert retry["draft_id"] == first["draft_id"]
+    assert retry["approval_token"]
+    assert retry["approval_token"] != first["approval_token"]
+
+    old_token_result = submit_leave_request(
+        connection=test_db,
+        auth_context=auth_context,
+        draft_id=first["draft_id"],
+        approval_token=first["approval_token"],
+    )
+    assert old_token_result["success"] is False
+    assert old_token_result["error"] == "Invalid confirmation token"
+
+    new_token_result = submit_leave_request(
+        connection=test_db,
+        auth_context=auth_context,
+        draft_id=retry["draft_id"],
+        approval_token=retry["approval_token"],
+    )
+    assert new_token_result["success"] is True
+    assert new_token_result["status"] == "submitted"
