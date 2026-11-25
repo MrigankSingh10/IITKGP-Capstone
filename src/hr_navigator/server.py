@@ -233,6 +233,7 @@ def answer_chat(payload: ChatRequest, progress=None) -> ChatResponse:
         raise HTTPException(status_code=503, detail='Document retrieval is unavailable. Check the corpus and chat configuration.') from exc
 
 
+
 @app.post('/chat/stream')
 async def chat_stream(payload: ChatRequest) -> StreamingResponse:
     async def events():
@@ -267,62 +268,8 @@ async def chat_stream(payload: ChatRequest) -> StreamingResponse:
             disconnected.set()
             worker.cancel()
 
-        return StreamingResponse(events(), media_type='application/x-ndjson',
-                             headers={'Cache-Control': 'no-cache', 'X-Accel-Buffering': 'no'})
-
-        simulated = False
-        if is_leave_balance_question(guard.sanitized_query):
-            # Route read-only employee balance questions to the synthetic tool,
-            # before the general document/agent fallback.
-            answer = answer_leave_balance_question(
-                query=guard.sanitized_query,
-                employee_id=payload.employee_id,
-            )
-            citations = []
-            route_taken = "leave_balance_tool"
-            p_tok = c_tok = 0
-            simulated = True
-        else:
-            answer, citations, route_taken, p_tok, c_tok = invoke_agent_or_stub(
-                session_id=payload.session_id,
-                employee_id=payload.employee_id,
-                query=guard.sanitized_query,
-            )
-        latency_ms = round((time.perf_counter() - start) * 1000.0, 2)
-        log_trace(
-            TraceEvent(
-                timestamp=utc_now_iso(),
-                session_id=payload.session_id,
-                employee_id=payload.employee_id,
-                query=guard.sanitized_query,
-                route_taken=route_taken,
-                latency_ms=latency_ms,
-                prompt_tokens=p_tok,
-                completion_tokens=c_tok,
-                estimated_cost_usd=estimate_cost("default", p_tok, c_tok),
-                citations=citations,
-                status="ok",
-            )
-        )
-        return ChatResponse(
-            answer=answer,
-            citations=citations,
-            route_taken=route_taken,
-            latency_ms=latency_ms,
-            simulated=simulated,
-        )
-        except Exception as exc:
-        latency_ms = round((time.perf_counter() - start) * 1000.0, 2)
-        log_trace(
-            TraceEvent(
-                timestamp=utc_now_iso(),
-                session_id=payload.session_id,
-                employee_id=payload.employee_id,
-                query=guard.sanitized_query,
-                route_taken="error_recovery",
-                latency_ms=latency_ms,
-                citations=[],
-                status="error",
-            )
-        )
-        raise HTTPException(status_code=500, detail=f"Agent execution failed: {exc}") from exc
+    return StreamingResponse(
+        events(),
+        media_type='application/x-ndjson',
+        headers={'Cache-Control': 'no-cache', 'X-Accel-Buffering': 'no-cache'}
+    )
