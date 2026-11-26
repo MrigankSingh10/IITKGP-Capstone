@@ -1,0 +1,140 @@
+
+from datetime import date
+
+from langgraph.runtime import Runtime
+
+from hr_navigator.orchestration.state import HRState, HRContext
+from hr_navigator.tools.leave_workflow import create_leave_draft
+
+
+def leave_request_node(
+    state: HRState,
+    runtime: Runtime[HRContext],
+) -> dict:
+    """
+    Prepare a leave-request draft.
+
+    Does not submit or approve the request.
+    Database connection and idempotency key are supplied
+    through trusted server-side runtime context.
+    """
+
+    required_fields = [
+        "auth_context",
+        "leave_type",
+        "start_date",
+        "end_date",
+        "state",
+        "year",
+    ]
+
+    missing = [
+        field for field in required_fields
+        if state.get(field) is None
+    ]
+
+    if missing:
+        return {
+            "status": "needs_clarification",
+            "response": (
+                "Please provide the following details: "
+                + ", ".join(missing)
+            ),
+        }
+
+    try:
+        start_date = date.fromisoformat(state["start_date"])
+        end_date = date.fromisoformat(state["end_date"])
+
+        if start_date > end_date:
+            return {
+                "status": "needs_clarification",
+                "response": "Start date cannot be after end date.",
+            }
+
+        # Read trusted server-side dependencies.
+        db_connection = runtime.context["db_connection"]
+        idempotency_key = runtime.context["idempotency_key"]
+
+        if not idempotency_key:
+            return {
+                "status": "error",
+                "error": "Missing server-generated idempotency key.",
+            }
+
+        result = create_leave_draft(
+            connection=db_connection,
+            auth_context=state["auth_context"],
+            leave_type=state["leave_type"],
+            start_date=start_date,
+            end_date=end_date,
+            state=state["state"],
+            year=state["year"],
+            idempotency_key=idempotency_key,
+        )
+
+        if not result.get("success"):
+            return {
+                "status": "error",
+                "error": result.get("error"),
+                "calculation": result.get("calculation"),
+            }
+
+        draft = result["draft"]
+        draft_id = draft["draft_id"]
+
+        # An idempotent retry can find a request that is already submitted.
+        # In that case, there is no new confirmation step to perform.
+        if draft.get("status") == "submitted":
+            return {
+                "status": "submitted",
+                "draft_id": draft_id,
+                "request_id": draft.get("request_id") or draft_id,
+                "response": "This leave request has already been submitted.",
+            }
+
+        # Keep the approval token in trusted server-side storage. An active
+        # existing draft receives a rotated token from draft_leave_request().
+        approval_token = draft.get("approval_token")
+        if not approval_token:
+            return {
+                "status": "error",
+                "draft_id": draft_id,
+                "response": (
+                    "An existing leave draft was found, but no active "
+                    "confirmation token is available. Create a new request "
+                    "with a new idempotency key."
+                ),
+            }
+
+        services = runtime.context["services"]
+        services.register_draft_token(
+            draft_id=draft_id,
+            approval_token=approval_token,
+        )
+
+        # Do not expose the approval token in graph state.
+        safe_draft = {
+            key: value
+            for key, value in draft.items()
+            if key != "approval_token"
+        }
+
+        return {
+            "status": "awaiting_confirmation",
+            "calculation": result["calculation"],
+            "leave_draft": safe_draft,
+            "draft_id": draft_id,
+            "confirmation_required": True,
+            "response": (
+                "Your leave request draft is ready. "
+                "Please review the dates and leave days "
+                "before confirming submission."
+            ),
+        }
+
+    except ValueError as exc:
+        return {
+            "status": "needs_clarification",
+            "response": str(exc),
+        }
