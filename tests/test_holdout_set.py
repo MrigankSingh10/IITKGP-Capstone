@@ -27,7 +27,7 @@ def test_v02_keeps_the_eight_originals_and_adds_twelve_unreviewed_drafts():
     added = draft[8:]
     assert all(d['pdf_page_number'] is None and d['source_quote'] == '' for d in added)
     assert all(d['review_status'] == 'draft' for d in draft)
-    assert all(not r['review_verdict'] and not r['reviewer'] for r in rows)   # nobody has signed off yet
+    assert all(r['review_verdict'] in ('approved', 'rejected') and r['reviewer'] for r in rows)   # review recorded
 
 
 def test_no_question_repeats_gold_or_fresh_sets():

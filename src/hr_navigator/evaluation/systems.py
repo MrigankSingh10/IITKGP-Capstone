@@ -5,6 +5,7 @@ contract, and (when it calls the model) a ``usage`` dict of cumulative token cou
 """
 import importlib
 import json
+import uuid
 
 DECISIONS = ('answer', 'refuse', 'clarify', 'escalate')
 DECISION_INSTRUCTION = (' Also include the key "decision" with exactly one of "answer", "refuse", '
@@ -172,3 +173,88 @@ class CallableSystem:
                 if isinstance(value, int):
                     self.usage[key] = self.usage.get(key, 0) + value
         return response
+
+
+API_STATUS_MAP = {'review_required': 'answer', 'evidence_only': 'answer', 'escalate': 'escalate',
+                  'refused': 'refuse', 'clarification_required': 'clarify'}
+
+
+class ApiSystem:
+    """End-to-end: ask each question through the chat API (POST /chat), as the Streamlit app does.
+
+    By default the FastAPI app runs in-process (no server needed) with the same guardrails,
+    language check, routing and RAG pipeline as the demo; pass base_url to call a running server.
+    Cases with injected_documents cannot be sent through /chat and must be run with RagSystem.
+    The API keeps no conversation state, so conversation_context is not sent (flagged in the
+    response). Demo traces are not written unless keep_traces is True. Token usage is counted
+    in-process only; over HTTP it is recorded as unavailable, so cost is not reported as zero.
+    """
+
+    def __init__(self, base_url: str | None = None, name: str = 'api_chat', keep_traces: bool = False,
+                 post=None):
+        self.name = name
+        self.usage = {}
+        self.base_url = base_url
+        # Tokens are only visible in-process; a running server's /chat reply does not include them.
+        self.usage_tracked = post is None and not base_url
+        if post is not None:
+            self._post = post
+        elif base_url:
+            self._post = self._http_post
+        else:
+            self._post = self._in_process(keep_traces)
+
+    def _in_process(self, keep_traces):
+        from fastapi.testclient import TestClient
+        from hr_navigator import server
+        original = server.run_hr_pipeline
+
+        def counted(*args, **kwargs):              # record model tokens for the cost summary
+            result, usage = original(*args, **kwargs)
+            for key, value in (usage or {}).items():
+                if isinstance(value, int) and not isinstance(value, bool):
+                    self.usage[key] = self.usage.get(key, 0) + value
+            return result, usage
+        server.run_hr_pipeline = counted
+        if not keep_traces:
+            server.log_trace = lambda *_args, **_kwargs: None
+        client = TestClient(server.app, raise_server_exceptions=False)
+
+        def post(path, body):
+            response = client.post(path, json=body)
+            return response.status_code, (response.json() if response.content else {})
+        return post
+
+    def _http_post(self, path, body):
+        import requests
+        response = requests.post(self.base_url.rstrip('/') + path, json=body, timeout=180)
+        try:
+            data = response.json()
+        except ValueError:
+            data = {}
+        return response.status_code, data
+
+    def answer(self, case):
+        if case.get('injected_documents'):
+            raise ValueError('cases with injected documents cannot be sent through /chat; use --system rag')
+        body = {'session_id': f"eval-{case['id']}-{uuid.uuid4().hex[:8]}", 'query': case['question']}
+        status_code, data = self._post('/chat', body)
+        if status_code != 200:
+            raise RuntimeError(f'/chat returned HTTP {status_code}: {str(data.get("detail", ""))[:200]}')
+        status = data.get('status')
+        sources = data.get('sources') or []
+        page_ids = [f"{s['source_pdf_id']}:page_{int(s['page_number']):04d}" for s in sources
+                    if s.get('source_pdf_id') and str(s.get('page_number', '')).isdigit()]
+        searched = data.get('route_taken') == 'document_review'
+        return {
+            'decision': API_STATUS_MAP.get(status, status), 'api_status': status,
+            'route_taken': data.get('route_taken'),
+            'needs_human_review': status in ('review_required', 'evidence_only'),
+            'answer': data.get('answer', ''), 'sources': sources, 'citations': data.get('citations', []),
+            'calculations': [],
+            'tool_actions': [{'tool': 'search_policy', 'args': {'source_scope': 'statutory'}}] if searched else [],
+            'uncertainty': None, 'approval_required': False, 'trace_id': None,
+            'retrieved_page_ids': list(dict.fromkeys(page_ids)),
+            'api_latency_ms': data.get('latency_ms'),
+            'conversation_context_dropped': bool(case.get('conversation_context')),
+        }

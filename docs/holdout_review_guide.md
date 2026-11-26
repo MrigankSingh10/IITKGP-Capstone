@@ -1,7 +1,8 @@
 # Grounding hold-out set — review and freeze guide (v0.2 draft)
 
-**Status:** 20 draft questions, none reviewed yet. Owner: Member 4. Reviewers: team members with the
-local corpus PDFs.
+**Status:** reviewed and frozen as `evaluation/grounding_holdout_v1.jsonl` on 2026-11-24 (20 approved, none
+rejected). An AI pre-review compared each expected answer with the page text; the evaluation owner confirmed
+every row. Three expected answers (012, 013, 016) were updated to the page wording. Owner: evaluation.
 
 ## Why a hold-out set
 
@@ -43,6 +44,21 @@ Open `evaluation/grounding_holdout_review_v0.2.csv` in Excel or Google Sheets. F
 Reject a question if the section is not in the corpus, the answer depends on state rules, or it is
 too similar to another question.
 
+## Match quotes to the OCR text
+
+The freeze compares each quote character for character with the OCR page. Quotes copied from another
+copy of a Code (for example India Code) can differ in line breaks, hyphenation or quote marks. Before
+freezing, run:
+
+```bash
+python scripts/locate_holdout_quotes.py --review path/to/filled_sheet.csv
+```
+
+It finds each quote in `data/processed/accepted_ocr/pages.jsonl` while ignoring those differences, and
+writes the exact OCR wording and PDF page number into `<sheet>_located.csv`. It lists any quote it can't
+find. It never approves anything: check each row, set `review_verdict` and `reviewer`, then copy the sheet
+to `evaluation/grounding_holdout_review_v0.2.csv`.
+
 ## Freeze (once)
 
 ```bash
@@ -54,3 +70,29 @@ The script uses the same checks as the fresh set (quote must appear on the cited
 must match the page registry), drops rejected rows, refuses to freeze fewer than 15 approved cases,
 rejects questions already in `gold_v1` or `grounding_fresh_v1`, and never overwrites
 `grounding_holdout_v1.*`.
+
+## Final run (once)
+
+After the pipeline is fixed, run the frozen hold-out once, directly on RAG and end-to-end through the
+chat API, then review and summarise as usual:
+
+```bash
+python scripts/run_evaluation.py run --test-set grounding_holdout_v1 --system rag --final
+python scripts/run_evaluation.py run --test-set grounding_holdout_v1 --system api --final
+python scripts/run_evaluation.py review-sheet --test-set grounding_holdout_v1 --runs reports/evaluation/grounding_holdout_v1__*.jsonl
+python scripts/run_evaluation.py summarize --test-set grounding_holdout_v1 --runs reports/evaluation/grounding_holdout_v1__*.jsonl
+```
+
+Without `--final` the runner refuses, so the set cannot be used for tuning by accident.
+
+Each system can measure the hold-out **once**. The first `--final` run of a system is recorded in
+`evaluation/run_once_log.jsonl` (test set, its checksum, system, output file, start time); commit that
+file with the results so the whole team sees it. After that, the runner refuses another run of the same
+system on the same hold-out, even with a different `--output` or `--name`. `rag` and `api` are separate
+systems, so the two documented runs above are each allowed once (for `callable`, each entrypoint counts
+as its own system).
+
+If a run stops part-way (network error, laptop sleeps, a `--limit` check), repeat **the same command**
+with the same `--output` and `--name`: it finishes the unanswered questions and does not ask the
+answered ones again. A complete run cannot be repeated; summarise its file instead.
+

@@ -28,7 +28,7 @@ All members and AI agents: read and update the [shared team work log](docs/team_
 - [`evaluation/gold_v1.jsonl`](evaluation/gold_v1.jsonl) contains 80 frozen document-only questions. Three closed-book prompting strategies generated 240 saved baseline responses.
 - The two reviews of those responses ([`baseline_v1_review.csv`](reports/baseline_v1_review.csv), strict; [`baseline_v1_review_team.csv`](reports/baseline_v1_review_team.csv), team) were reconciled under the strict rubric by team decision. The official closed-book baseline is **19/240 (7.9%)** in [`baseline_v1_review_reconciled.csv`](reports/baseline_v1_review_reconciled.csv); the reviews agreed on 226 of 240 marks (94.2%). Both original sheets are kept for traceability.
 - A separate 20-question grounding set was used to develop and test the retrieval checks. The recorded regression runs are **development results**, not independent accuracy estimates. The latest full run preceded two later targeted fixes; see [`reports/grounding_v3_regression.md`](reports/grounding_v3_regression.md).
-- Hold-out candidates: the eight drafts in [`grounding_holdout_candidates_v0.1.jsonl`](evaluation/grounding_holdout_candidates_v0.1.jsonl) plus twelve more are in [`grounding_holdout_candidates_v0.2.jsonl`](evaluation/grounding_holdout_candidates_v0.2.jsonl). None has been reviewed against the corpus pages or evaluated; see [`docs/holdout_review_guide.md`](docs/holdout_review_guide.md).
+- Grounding hold-out: 20 questions (eight from [`grounding_holdout_candidates_v0.1.jsonl`](evaluation/grounding_holdout_candidates_v0.1.jsonl) plus twelve more) were reviewed against the corpus page text and frozen as [`grounding_holdout_v1.jsonl`](evaluation/grounding_holdout_v1.jsonl) on 2026-11-24. It has not been evaluated; it is reserved for one final measurement (see [`docs/holdout_review_guide.md`](docs/holdout_review_guide.md)).
 - The behaviour scenarios were split: an 18-case document-only safety set, reviewed and frozen as [`safety_doc_v1.jsonl`](evaluation/safety_doc_v1.jsonl) on 2026-11-23 (see [`docs/safety_doc_set_guide.md`](docs/safety_doc_set_guide.md)) and the tool/approval cases kept as an agent draft until the agent exists.
 
 ### API and interface prototype
@@ -142,7 +142,7 @@ Name the Code in your question or select a **Document collection** to narrow the
 
 ## Remaining work
 
-- Review the hold-out questions against the corpus pages and freeze them before using them to measure performance. The safety set is frozen; run it against RAG and the chat API next.
+- The safety set and the grounding hold-out are frozen. Run the safety set against RAG and the chat API, and run the hold-out once, after the pipeline is fixed.
 - Improve and evaluate retrieval, source matching and grounded answers on questions not used to tune the workflow. Keep generated answers review-only until the evaluation supports a change.
 - Continue source-date, version, legal-status, sparse-page and redistribution checks. The user reported faculty acceptance of page counting; written confirmation and its scope are not attached.
 - Align the API/UI with the document-only scope, address trace handling and connect the retrieval workflow. Implement LangGraph and document-focused task completion in a later phase.
