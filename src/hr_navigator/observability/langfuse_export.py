@@ -8,8 +8,10 @@ Privacy: questions are already masked by the guardrail; they are masked again he
 the machine, the employee ID is never sent, and LANGFUSE_SEND_QUERY_TEXT=false sends no question
 text at all. Keys are read from the environment and never logged.
 
-Sending happens in a background thread with a short timeout. A failure is logged as a warning and
-never affects the chat response.
+Sending happens on a small fixed pool of background workers fed by a bounded queue, with a short
+timeout per request. If Langfuse is slow and the queue fills, new traces are dropped (and counted)
+rather than creating more threads; if a worker cannot be started, export is skipped. Neither ever
+affects the chat response.
 """
 import atexit
 from dataclasses import dataclass
@@ -17,6 +19,7 @@ from datetime import datetime, timedelta
 import ipaddress
 import logging
 import os
+import queue
 import re
 import threading
 import time
@@ -32,8 +35,12 @@ DEFAULT_HOST = 'https://cloud.langfuse.com'
 TIMEOUT_SECONDS = 5.0
 FLUSH_SECONDS = 10.0
 _VALID_ENVIRONMENT = re.compile(r'^(?!langfuse)[a-z0-9_-]{1,40}$')
-_pending: set[threading.Thread] = set()
-_pending_lock = threading.Lock()
+WORKERS = 2
+QUEUE_SIZE = 500
+_queue: 'queue.Queue[tuple]' = queue.Queue(maxsize=QUEUE_SIZE)
+_workers: list[threading.Thread] = []
+_workers_lock = threading.Lock()
+_dropped = 0
 
 
 def environment_name(value: str | None) -> str:
@@ -102,7 +109,8 @@ def build_batch(event, config: LangfuseConfig) -> dict:
              'metadata': metadata, 'tags': [event.route_taken, event.status]}
     span = {'id': uuid.uuid4().hex, 'traceId': trace_id, 'name': event.route_taken,
             'startTime': start, 'endTime': end, 'environment': config.environment,
-            'metadata': metadata, 'level': 'DEFAULT' if event.status != 'error' else 'ERROR'}
+            'metadata': metadata,
+            'level': {'error': 'ERROR', 'rate_limited': 'WARNING'}.get(event.status, 'DEFAULT')}
     batch = [{'id': uuid.uuid4().hex, 'timestamp': event.timestamp, 'type': 'trace-create', 'body': trace},
              {'id': uuid.uuid4().hex, 'timestamp': event.timestamp, 'type': 'span-create', 'body': span}]
     if event.prompt_tokens or event.completion_tokens:
@@ -141,43 +149,63 @@ def send(event, config: LangfuseConfig, client: httpx.Client | None = None) -> b
         return False
 
 
-def export_trace(event, env=None) -> threading.Thread | None:
-    """Send the event in the background if Langfuse is configured; otherwise do nothing."""
+def export_trace(event, env=None) -> bool:
+    """Queue the event for Langfuse if configured. Returns True when queued; never raises."""
+    global _dropped
     try:
         config = LangfuseConfig.from_env(env)
     except ValueError as exc:
         log.warning('Langfuse export disabled: %s', exc)
-        return None
-    if config is None:
-        return None
-    thread = threading.Thread(target=_send_and_forget, args=(event, config), daemon=True, name='langfuse-export')
-    with _pending_lock:
-        _pending.add(thread)
-    thread.start()
-    return thread
-
-
-def _send_and_forget(event, config: LangfuseConfig) -> None:
+        return False
+    if config is None or not _ensure_workers():
+        return False
     try:
-        send(event, config)
-    finally:
-        with _pending_lock:
-            _pending.discard(threading.current_thread())
+        _queue.put_nowait((event, config))
+        return True
+    except queue.Full:
+        _dropped += 1
+        if _dropped == 1 or _dropped % 100 == 0:
+            log.warning('Langfuse queue full; %d trace(s) dropped so far', _dropped)
+        return False
+
+
+def _ensure_workers() -> bool:
+    """Start the fixed worker pool once; False if no worker could be started."""
+    with _workers_lock:
+        _workers[:] = [w for w in _workers if w.is_alive()]
+        while len(_workers) < WORKERS:
+            worker = threading.Thread(target=_work, daemon=True, name='langfuse-export')
+            try:
+                worker.start()
+            except RuntimeError as exc:          # e.g. the process cannot create more threads
+                log.warning('Could not start a Langfuse export worker: %s', exc)
+                break
+            _workers.append(worker)
+        return bool(_workers)
+
+
+def _work() -> None:
+    while True:
+        event, config = _queue.get()
+        try:
+            send(event, config)
+        except Exception:   # send() already never raises; this keeps the worker alive regardless
+            log.warning('Langfuse worker error')
+        finally:
+            _queue.task_done()
 
 
 def flush(timeout: float = FLUSH_SECONDS) -> int:
-    """Wait up to timeout seconds for traces still being sent; return how many are left."""
+    """Wait up to timeout seconds for queued traces to be sent; return how many are left."""
     deadline = time.monotonic() + timeout
-    while True:
-        with _pending_lock:
-            waiting = list(_pending)
-        if not waiting:
-            return 0
-        remaining = deadline - time.monotonic()
-        if remaining <= 0:
-            log.warning('%d trace(s) not sent to Langfuse before exit', len(waiting))
-            return len(waiting)
-        waiting[0].join(remaining)
+    with _queue.all_tasks_done:
+        while _queue.unfinished_tasks:
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                log.warning('%d trace(s) not sent to Langfuse before exit', _queue.unfinished_tasks)
+                break
+            _queue.all_tasks_done.wait(remaining)
+        return _queue.unfinished_tasks
 
 
 atexit.register(flush)   # short runs (scripts, evaluation) send their last traces before exiting
