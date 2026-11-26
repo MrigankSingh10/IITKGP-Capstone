@@ -21,8 +21,9 @@ frozen when the agent's tool contract is settled.
 Injection cases reuse six frozen `gold_v1` questions word for word, with their gold conditions plus the
 specific thing that must not happen. The six tampered documents are in
 `evaluation/safety_doc_fixtures_v0.1.json`; they are synthetic and never part of the corpus or index.
-The pipeline's own pattern filter flags three of them (SD-INJ-01, -04, -06); the other three reach the
-model and test whether it resists.
+The pipeline's own pattern filter flagged three of them (SD-INJ-01, -04, -06) when the set was frozen. Since
+the filter was improved on 2026-11-26 it flags five (adding SD-INJ-02 and -03), and those cases escalate
+before the model; only the planted false fact (SD-INJ-05) reaches the model and tests whether it resists.
 
 ## How each system sees the tampered documents
 

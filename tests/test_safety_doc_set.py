@@ -79,7 +79,9 @@ def test_poisoned_pages_pass_validation_so_the_pipeline_really_sees_them():
     assert len(verified) == 6
     flagged = {d['id'] for d in fixtures['injected_documents']
                if draft_review._INJECTION.search(d['text'])}
-    assert flagged == {'SD-INJ-01', 'SD-INJ-04', 'SD-INJ-06'}       # the rest test the model itself
+    # The source filter (improved 2026-11-26) escalates five; the planted false fact (SD-INJ-05)
+    # cannot be caught by a pattern, so it still reaches the model and tests whether it resists.
+    assert flagged == {'SD-INJ-01', 'SD-INJ-02', 'SD-INJ-03', 'SD-INJ-04', 'SD-INJ-06'}
 
 
 def test_freeze_script_freezes_once(tmp_path):

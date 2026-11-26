@@ -32,7 +32,36 @@ def _json_response(client, system, payload, *, max_tokens=512, allow_json_fence=
     return obj
 
 
-_INJECTION = re.compile(r'(?i)\b(ignore|disregard|override)\b.{0,100}\b(instructions?|rules?|prompts?)\b|(?:^|\n)\s*(?:system|developer|assistant)\s*:')
+# Text in retrieved evidence that looks like an instruction to the assistant rather than legal content.
+# Each branch targets how injected text addresses a model; ordinary statutory wording such as "shall
+# not ignore the provisions of these rules" or "may override the decision" is not matched. Planted
+# false facts cannot be caught by a pattern; only registered, hashed sources protect against those.
+_INJECTION = re.compile('|'.join([
+    # override of earlier or the model's own instructions
+    r'\b(?:ignore|disregard|forget|override|set aside)\b(?:\s+\S+){0,4}?\s+(?:all\s+)?'
+    r'(?:previous|prior|earlier|above|preceding|your|original)\s+(?:instructions?|guidance|context|rules|prompts?|directions?)\b',
+    # role tags: at a line or sentence start, or in brackets / special tokens anywhere
+    r'(?:^|\n|[.!?]\s+)\s*(?:system|developer|assistant)\s*:\s*(?:\S+\s+){0,3}?'
+    r'(?:ignore|disregard|forget|you|immediately|call|reveal|approve|submit|new (?:directive|instruction)s?|'
+    r'answer|tell|list|output|print|do not|don\'t|always|never|from now)\b',
+    r'\[\s*(?:system|developer|assistant|admin)\s*\]|<\|\s*(?:system|im_start|assistant)\s*\|>|<<\s*sys\s*>>',
+    # text addressed to the AI
+    r'\b(?:note|message|instructions?|reminder)\s+(?:to|for)\s+(?:the\s+)?(?:assistant|ai|ai model|model|llm|chatbot|bot)\b',
+    r'\b(?:ai|chatbot|llm|language model)s?\b(?:\s+\S+){0,3}?\s+(?:must|should|need to|are required to)\s+'
+    r'(?:now\s+)?(?:output|reveal|list|call|tell|ignore|disregard|answer|say|approve|submit|print)\b',
+    r'\bwhen (?:summari[sz]ing|answering|responding|replying)\b.{0,60}\b(?:also|must|should)\s+'
+    r'(?:reveal|output|list|print|include|call)\b',
+    # requests to disclose other people's data or hidden instructions
+    r'\b(?:list|output|reveal|print|dump|export)\b(?:\s+\S+){0,3}?\s+(?:every|all|each|the full list of)\s+'
+    r"(?:employee|employees|user|users|staff)(?:'s|s'|s)?\b.{0,40}\b(?:names?|salar\w*|balances?|records?|passwords?|data)",
+    r'\breveal\b.{0,30}\b(?:user|employee|personal)\s+(?:records|data|details)\b',
+    r'\b(?:reveal|output|print|disclose)\b.{0,30}\b(?:hidden|system|your)\s+(?:instructions|prompt)\b',
+    # credential phishing: a password request near a link
+    r'\b(?:password|passcode|otp|credentials)\b.{0,100}(?:https?://|www\.)|(?:https?://|www\.)\S+.{0,100}'
+    r'\b(?:password|passcode|otp|credentials)\b',
+    # tool calls
+    r'\bcall\s+(?:the\s+)?(?:tool\s+|function\s+)?[a-z]+(?:_[a-z]+)+\b',
+]), re.IGNORECASE)
 _ABSTENTION = re.compile(r'(?i)\b(not specified|not provided|insufficient evidence|cannot determine|unable to determine)\b')
 
 

@@ -19,6 +19,7 @@ traced, including requests that end early:
 | Not in English | `unsupported_language` | `refused` |
 | Minimum-wage clarification | `minimum_wage_clarification` / `minimum_wage_source_unavailable` | `clarification_required` / `escalate` |
 | Rate limited | `rate_limited` | `rate_limited` |
+| Question too long (over 2,000 characters) | `input_too_long` | `refused` |
 | Retrieval or leave-balance failure | `document_review` / `leave_balance_tool` | `error` |
 | Unexpected error | `internal_error` | `error` |
 
