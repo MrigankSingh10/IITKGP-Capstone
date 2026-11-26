@@ -420,3 +420,11 @@ Copy this heading and fill it in for each session:
 - Validation and results: the runner loads `safety_doc_v1` with the checksum; offline tests pass. No live run yet.
 - Blockers / next action / owner: run the frozen set on RAG (all 18) and through `/chat` (12 cases without tampered pages); needs the corpus and chat configuration (evaluation, with Member 1 for corpus access).
 
+
+### 2026-11-26 — Fix demo employee selection
+
+- Owner: AI agent.
+- Work and decisions: wired the fictional employee selector to chat requests and made the balance shortcut use wording recognized by the balance router.
+- Files / evidence: `app.py`, `tests/test_ui_leave_balance.py`.
+- Validation and results: six focused UI and API tests passed, including a Streamlit interaction routed through the local API with a temporary SQLite database. The optional UI test also skips cleanly without UI dependencies (8 passed, 1 skipped).
+- Blockers / next action / owner: PR branch contains the UI fix; independent project evaluation remains open.
