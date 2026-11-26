@@ -5,6 +5,8 @@
   summarize     compute accuracy, refusal, injection, task completion, latency, tokens and cost
 
 Credentials come from flags or from CHAT_* / EMBEDDING_* environment variables (see .env.example).
+For --system api the chat server uses its own settings (CHAT_* variables or configs/chat.local.json),
+so the --chat-* and --embedding-* flags are refused there.
 """
 import argparse
 import importlib.util
@@ -71,11 +73,26 @@ def build_system(args):
         return RagSystem(chat, embed, chunks, vectors, pages, top_k=args.top_k,
                          name=f'rag_{args.index}_{args.chunk_size}_top{args.top_k}'), [chat, embed]
     if args.system == 'api':
+        given = sorted(f'--{flag.replace("_", "-")}' for flag in CREDENTIAL_FLAGS if getattr(args, flag))
+        if given:
+            raise SystemExit(f'{" ".join(given)} cannot be used with --system api: the chat server ignores them '
+                             'and uses its own settings, so the run could use a different model. Set CHAT_BASE_URL, '
+                             'CHAT_MODEL, CHAT_API_KEY and CHAT_CA_FILE in the shell (or configs/chat.local.json) '
+                             'for the in-process server, or configure the server behind --api-url.')
         name = args.name or ('api_chat_http' if args.api_url else 'api_chat')
         return ApiSystem(args.api_url, name=name, keep_traces=args.keep_traces), []
     if not args.entrypoint:
         raise SystemExit('--entrypoint package.module:function is required for --system callable')
     return CallableSystem(args.entrypoint, args.name), []
+
+
+CREDENTIAL_FLAGS = [f'{prefix}_{name}' for prefix in ('chat', 'embedding')
+                    for name in ('base_url', 'model', 'key_file', 'ca_file')]
+
+
+def run_once_key(args) -> str:
+    """Which system a run-once measurement belongs to; --name and --output do not change it."""
+    return f'callable:{args.entrypoint}' if args.system == 'callable' else args.system
 
 
 def load_checked_runs(args, set_sha):
@@ -150,6 +167,16 @@ def main():
                 print(f'{len(skipped)} tampered-document cases cannot go through /chat and were skipped '
                       f'(run them with --system rag): {", ".join(skipped)}')
         output = args.output or out_dir / f'{args.test_set}__{system.name}.jsonl'
+        if runner.TEST_SETS[args.test_set].get('run_once'):
+            try:
+                mode = runner.claim_run_once(args.test_set, set_sha, run_once_key(args), system.name, output,
+                                             [c['id'] for c in cases])
+            except ValueError as exc:
+                for client in clients:
+                    client.close()
+                raise SystemExit(str(exc))
+            print(f'{"Finishing the interrupted" if mode == "resume" else "Recorded the one-time"} '
+                  f'{args.test_set} run in {runner.RUN_ONCE_LOG}; commit that file with the results.')
         try:
             count = runner.run(system, cases, output, args.test_set, set_sha, limit=args.limit,
                                pause_seconds=args.pause if clients or args.system == 'api' else 0)

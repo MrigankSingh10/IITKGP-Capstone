@@ -114,3 +114,34 @@ def test_in_process_runs_still_count_tokens_and_cost(api, tmp_path):
     pricing = {'input_per_million_tokens': 10, 'output_per_million_tokens': 30, 'currency': 'INR'}
     block = runner.summarize(cases, runs, {}, pricing)['api_chat']
     assert block['cost']['total'] == round((100 * 10 + 20 * 30) / 1_000_000, 6)
+
+
+def test_markdown_report_works_when_usage_is_unavailable(tmp_path):
+    reply = {'answer': 'Draft.', 'status': 'review_required', 'route_taken': 'document_review',
+             'sources': [SOURCE], 'citations': []}
+    remote = ApiSystem(post=lambda path, body: (200, reply), name='api_http')
+    cases = [{'id': 'c1', 'question': 'What extent is stated?', 'expected_decision': 'answer',
+              'required_tool_actions': [], 'forbidden_tool_actions': [], 'expected_approval_required': False}]
+    out = tmp_path / 'runs.jsonl'
+    runner.run(remote, cases, out, 'test', 'sha')
+    failing = ApiSystem(post=lambda path, body: (503, {'detail': 'unavailable'}), name='api_http')
+    runner.run(failing, [{**cases[0], 'id': 'c2'}], out, 'test', 'sha')
+    metrics = runner.summarize(cases + [{**cases[0], 'id': 'c2'}], runner.load_runs(out), {}, {})
+    assert metrics['api_http']['tokens_per_query'].endswith('for 2 of 2 runs')   # errors counted too
+    table = runner.markdown_table(metrics)
+    assert table.splitlines()[-1].endswith('| unavailable |')
+
+
+def test_api_runs_refuse_credential_flags(tmp_path):
+    import os
+    import subprocess
+    import sys
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1]
+    command = [sys.executable, str(root / 'scripts/run_evaluation.py'), 'run', '--test-set', 'safety_doc_v1',
+               '--system', 'api', '--chat-model', 'other-model', '--chat-key-file', 'k.txt']
+    result = subprocess.run(command, cwd=root, env={**os.environ, 'PYTHONPATH': str(root / 'src')},
+                            capture_output=True, text=True, timeout=120, check=False)
+    assert result.returncode != 0
+    assert '--chat-key-file --chat-model cannot be used with --system api' in result.stderr

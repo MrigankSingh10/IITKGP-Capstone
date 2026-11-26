@@ -42,7 +42,7 @@ Use `--limit 3` for a quick check before a full run. A run on a changed test set
 | `scenarios_v1` | 40 behaviour cases (refusal, injection, policy, tools, approvals) | Available after freezing |
 | `scenarios_v0.1` | The draft of the above | Needs `--allow-draft`; for trying things out only, not for reported results |
 | `safety_doc_v1` | 18 frozen document-only safety cases (refusal, tampered document, out of scope, clarify) | Checksum covers the cases and the tampered pages |
-| `grounding_holdout_v1` | The 20-question grounding hold-out, after its freeze | **Run once**, for the final measurement only: `run` needs `--final`. Never tune on it |
+| `grounding_holdout_v1` | The 20-question grounding hold-out, after its freeze | **Run once per system**, for the final measurement only: `run` needs `--final`, and each run is recorded in `evaluation/run_once_log.jsonl` so it cannot be repeated (see [hold-out guide](holdout_review_guide.md#final-run-once)). Never tune on it |
 
 ## Systems
 
@@ -53,9 +53,14 @@ Use `--limit 3` for a quick check before a full run. A run on a changed test set
 | `callable` | Any function, e.g. the agent: `--entrypoint hr_navigator.agents.graph:answer --name agent` | Both |
 | `api` | **End-to-end:** each question goes through `POST /chat`, the same API the Streamlit app uses (guardrail, English check, minimum-wage clarification, RAG drafting and citation checks). Runs the FastAPI app in-process by default, or a running server with `--api-url http://127.0.0.1:8000`. | `safety_doc_v1` (12 cases; the 6 tampered-document cases are skipped because `/chat` cannot receive a fake page, so run those with `rag`) and later the hold-out. Needs the same local corpus and chat configuration as the demo. |
 
-Credentials: pass `--chat-base-url --chat-model --chat-key-file --chat-ca-file` (and `--embedding-*`
-for RAG), or set the `CHAT_*` / `EMBEDDING_*` variables from `.env.example` in your shell first
-(Mac/Linux: `set -a; source .env; set +a`).
+Credentials for `closed_book` and `rag`: pass `--chat-base-url --chat-model --chat-key-file --chat-ca-file`
+(and `--embedding-*` for RAG), or set the `CHAT_*` / `EMBEDDING_*` variables from `.env.example` in your
+shell first (Mac/Linux: `set -a; source .env; set +a`).
+
+For `api` the chat server uses its own settings, exactly as in the demo: the `CHAT_*` variables, or
+`configs/chat.local.json` when they are not set (in-process), or whatever the server behind `--api-url`
+was started with. The runner therefore refuses `--chat-*` and `--embedding-*` with `--system api`,
+rather than ignoring them and possibly running a different model.
 
 **How RAG results are recorded:** the pipeline either escalates or returns a draft labelled
 `review_required` (it never releases an answer automatically). For scoring, a draft counts as the
@@ -79,7 +84,7 @@ by people), `escalate` → escalate, `refused` (guardrail or non-English) → re
 uses those. The API keeps no conversation history, so follow-up questions lose their context (flagged
 as `conversation_context_dropped`). The in-process run does not write the demo trace file unless
 `--keep-traces` is given; model tokens are still counted for the cost summary. With `--api-url` the
-server's reply carries no token counts, so usage and cost are reported as unavailable, never as zero. Without the chat
+server's reply carries no token counts, so usage and cost are reported as unavailable, never as zero (the Markdown table shows "unavailable" in the tokens column). Without the chat
 configuration the API returns candidate passages only (`evidence_only`), which reviewers will mark as
 not answering the question.
 

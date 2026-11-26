@@ -85,3 +85,14 @@ python scripts/run_evaluation.py summarize --test-set grounding_holdout_v1 --run
 
 Without `--final` the runner refuses, so the set cannot be used for tuning by accident.
 
+Each system can measure the hold-out **once**. The first `--final` run of a system is recorded in
+`evaluation/run_once_log.jsonl` (test set, its checksum, system, output file, start time); commit that
+file with the results so the whole team sees it. After that, the runner refuses another run of the same
+system on the same hold-out, even with a different `--output` or `--name`. `rag` and `api` are separate
+systems, so the two documented runs above are each allowed once (for `callable`, each entrypoint counts
+as its own system).
+
+If a run stops part-way (network error, laptop sleeps, a `--limit` check), repeat **the same command**
+with the same `--output` and `--name`: it finishes the unanswered questions and does not ask the
+answered ones again. A complete run cannot be repeated; summarise its file instead.
+

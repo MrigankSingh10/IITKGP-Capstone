@@ -166,6 +166,53 @@ def run(system, cases, output: Path, test_set: str, set_sha: str, limit: int | N
     return len(todo)
 
 
+RUN_ONCE_LOG = Path('evaluation/run_once_log.jsonl')
+
+
+def _completed_cases(output: Path, system_name: str) -> set:
+    done = set()
+    if output.exists():
+        for line in output.read_text(encoding='utf-8').splitlines():
+            row = json.loads(line)
+            if row['system'] == system_name:
+                (done.add if row['status'] == 'ok' else done.discard)(row['case_id'])
+    return done
+
+
+def claim_run_once(test_set: str, set_sha: str, system_key: str, system_name: str, output: Path,
+                   case_ids: list, log_path: Path = RUN_ONCE_LOG, now=None) -> str:
+    """Allow one measurement per system on a run-once set (the hold-out); return 'new' or 'resume'.
+
+    The first run is recorded in log_path (committed to the repository, so the team can see it).
+    Later runs of the same system on the same set version are refused, whatever --output or --name
+    they use. The only exception is finishing an interrupted run: same output file and system
+    name, with some cases still unanswered. Raises ValueError when the run is not allowed.
+    """
+    entries = []
+    if log_path.exists():
+        entries = [json.loads(line) for line in log_path.read_text(encoding='utf-8').splitlines() if line.strip()]
+    previous = [e for e in entries if e['test_set'] == test_set and e['test_set_sha256'] == set_sha
+                and e['system_key'] == system_key]
+    if not previous:
+        log_path.parent.mkdir(parents=True, exist_ok=True)
+        stamp = (now or (lambda: time.strftime('%Y-%m-%dT%H:%M:%S%z')))()
+        with log_path.open('a', encoding='utf-8') as out:
+            out.write(json.dumps({'test_set': test_set, 'test_set_sha256': set_sha, 'system_key': system_key,
+                                  'system': system_name, 'output': output.as_posix(), 'started': stamp}) + '\n')
+        return 'new'
+    first = previous[0]
+    where = f"{first['output']} (system name {first['system']!r}, started {first['started']})"
+    if Path(first['output']) != output or first['system'] != system_name:
+        raise ValueError(f'{test_set} has already been run once with --system {system_key}: {where}. '
+                         'It is a one-time measurement, so it cannot be run again under another output or '
+                         'name. To finish an interrupted run, repeat the same command with the same --output '
+                         'and --name.')
+    if not set(case_ids) - _completed_cases(output, system_name):
+        raise ValueError(f'{test_set} has already been measured with --system {system_key}: {where}. '
+                         'All cases are answered; summarise that file instead of running again.')
+    return 'resume'
+
+
 def _matches(call, expected) -> bool:
     if tool_name(call) != tool_name(expected):
         return False
@@ -395,7 +442,7 @@ def summarize(cases, runs, review: dict, pricing: dict | None = None) -> dict:
             'mean_tool_calls': round(statistics.mean(tool_calls), 2) if tool_calls else 0,
             'latency_seconds': {'mean': round(statistics.mean(latencies), 3) if latencies else None,
                                 'p95': latencies[max(0, round(0.95 * len(latencies)) - 1)] if latencies else None},
-            'tokens_per_query': (f'unavailable: token usage not reported for {no_usage} of {count} runs'
+            'tokens_per_query': (f'unavailable: token usage not reported for {no_usage} of {len(records)} runs'
                                  if no_usage else
                                  {k: round(usage.get(k, 0) / count, 1)
                                   for k in ('prompt_tokens', 'completion_tokens', 'total_tokens')} if count else {}),
@@ -406,7 +453,7 @@ def summarize(cases, runs, review: dict, pricing: dict | None = None) -> dict:
         price_in = pricing.get('input_per_million_tokens')
         price_out = pricing.get('output_per_million_tokens')
         if no_usage:
-            block['cost'] = (f'unavailable: token usage not reported for {no_usage} of {count} runs '
+            block['cost'] = (f'unavailable: token usage not reported for {no_usage} of {len(records)} runs '
                              '(remote API run); not counted as zero')
         elif price_in is None or price_out is None or not count:
             block['cost'] = 'unknown; price not provided'
@@ -431,5 +478,12 @@ def markdown_table(metrics: dict) -> str:
                      f"{pct(m['decision_accuracy'])} | {pct(m['refusal_correctness'])} | "
                      f"{pct(m['injection_resistance'])} | {pct(m['task_completion'])} | "
                      f"{m['mean_tool_calls']} | {m['latency_seconds']['mean']} | "
-                     f"{m['tokens_per_query'].get('total_tokens', '—')} |")
+                     f"{_tokens_cell(m['tokens_per_query'])} |")
     return '\n'.join(lines) + '\n'
+
+
+def _tokens_cell(tokens) -> str:
+    """Tokens per query for the table: a number, 'unavailable' (remote API run) or '—'."""
+    if isinstance(tokens, dict):
+        return str(tokens.get('total_tokens', '—'))
+    return 'unavailable' if tokens else '—'
