@@ -84,3 +84,33 @@ def test_http_mode_reports_server_errors():
     ok = ApiSystem(post=lambda path, body: (200, {'answer': 'Please ask your question in English.',
                                                   'status': 'refused', 'route_taken': 'unsupported_language'}))
     assert ok.answer(case('x'))['decision'] == 'refuse'
+
+
+def test_http_runs_report_usage_and_cost_as_unavailable(tmp_path):
+    reply = {'answer': 'Draft.', 'status': 'review_required', 'route_taken': 'document_review',
+             'sources': [SOURCE], 'citations': []}
+    remote = ApiSystem(post=lambda path, body: (200, reply), name='api_http')
+    assert remote.usage_tracked is False
+    cases = [{'id': f'c{n}', 'question': 'What extent is stated?', 'expected_decision': 'answer',
+              'required_tool_actions': [], 'forbidden_tool_actions': [], 'expected_approval_required': False}
+             for n in range(2)]
+    out = tmp_path / 'runs.jsonl'
+    runner.run(remote, cases, out, 'test', 'sha')
+    runs = runner.load_runs(out)
+    assert all(r['usage'] is None for r in runs)
+    pricing = {'input_per_million_tokens': 10, 'output_per_million_tokens': 30, 'currency': 'INR'}
+    block = runner.summarize(cases, runs, {}, pricing)['api_http']
+    assert block['cost'].startswith('unavailable') and 'not counted as zero' in block['cost']
+    assert block['tokens_per_query'].startswith('unavailable')
+
+
+def test_in_process_runs_still_count_tokens_and_cost(api, tmp_path):
+    cases = [{'id': 'c1', 'question': 'What extent is stated in the Code on Wages?', 'expected_decision': 'answer',
+              'required_tool_actions': [], 'forbidden_tool_actions': [], 'expected_approval_required': False}]
+    out = tmp_path / 'runs.jsonl'
+    runner.run(api, cases, out, 'test', 'sha')
+    runs = runner.load_runs(out)
+    assert runs[0]['usage'] == {'prompt_tokens': 100, 'completion_tokens': 20}
+    pricing = {'input_per_million_tokens': 10, 'output_per_million_tokens': 30, 'currency': 'INR'}
+    block = runner.summarize(cases, runs, {}, pricing)['api_chat']
+    assert block['cost']['total'] == round((100 * 10 + 20 * 30) / 1_000_000, 6)

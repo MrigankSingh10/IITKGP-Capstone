@@ -78,7 +78,8 @@ by people), `escalate` → escalate, `refused` (guardrail or non-English) → re
 `clarification_required` → clarify. `/chat` returns only the verified sources, so the gold-page check
 uses those. The API keeps no conversation history, so follow-up questions lose their context (flagged
 as `conversation_context_dropped`). The in-process run does not write the demo trace file unless
-`--keep-traces` is given; model tokens are still counted for the cost summary. Without the chat
+`--keep-traces` is given; model tokens are still counted for the cost summary. With `--api-url` the
+server's reply carries no token counts, so usage and cost are reported as unavailable, never as zero. Without the chat
 configuration the API returns candidate passages only (`evidence_only`), which reviewers will mark as
 not answering the question.
 

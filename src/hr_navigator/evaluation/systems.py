@@ -186,7 +186,8 @@ class ApiSystem:
     language check, routing and RAG pipeline as the demo; pass base_url to call a running server.
     Cases with injected_documents cannot be sent through /chat and must be run with RagSystem.
     The API keeps no conversation state, so conversation_context is not sent (flagged in the
-    response). Demo traces are not written unless keep_traces is True.
+    response). Demo traces are not written unless keep_traces is True. Token usage is counted
+    in-process only; over HTTP it is recorded as unavailable, so cost is not reported as zero.
     """
 
     def __init__(self, base_url: str | None = None, name: str = 'api_chat', keep_traces: bool = False,
@@ -194,6 +195,8 @@ class ApiSystem:
         self.name = name
         self.usage = {}
         self.base_url = base_url
+        # Tokens are only visible in-process; a running server's /chat reply does not include them.
+        self.usage_tracked = post is None and not base_url
         if post is not None:
             self._post = post
         elif base_url:

@@ -154,8 +154,11 @@ def run(system, cases, output: Path, test_set: str, set_sha: str, limit: int | N
                 record['error'] = f'{type(exc).__name__}: {exc}'[:500]
             record['latency_seconds'] = round(clock() - start, 3)
             after = dict(getattr(system, 'usage', {}) or {})
-            record['usage'] = {k: after[k] - before.get(k, 0) for k in after
-                               if isinstance(after[k], int) and after[k] - before.get(k, 0)}
+            if getattr(system, 'usage_tracked', True):
+                record['usage'] = {k: after[k] - before.get(k, 0) for k in after
+                                   if isinstance(after[k], int) and after[k] - before.get(k, 0)}
+            else:                                  # e.g. a remote API that reports no tokens
+                record['usage'] = None
             out.write(json.dumps(record, ensure_ascii=False) + '\n')
             out.flush()
             if pause_seconds:
@@ -337,6 +340,7 @@ def summarize(cases, runs, review: dict, pricing: dict | None = None) -> dict:
         ok = [r for r in records if r['status'] == 'ok']
         latencies = sorted(r['latency_seconds'] for r in records)
         usage = collections.Counter()
+        no_usage = sum(1 for r in records if 'usage' in r and r['usage'] is None)
         for r in records:
             usage.update({k: v for k, v in (r.get('usage') or {}).items() if isinstance(v, int)})
         tool_calls = [len((r['response'] or {}).get('tool_actions') or []) for r in ok]
@@ -391,15 +395,20 @@ def summarize(cases, runs, review: dict, pricing: dict | None = None) -> dict:
             'mean_tool_calls': round(statistics.mean(tool_calls), 2) if tool_calls else 0,
             'latency_seconds': {'mean': round(statistics.mean(latencies), 3) if latencies else None,
                                 'p95': latencies[max(0, round(0.95 * len(latencies)) - 1)] if latencies else None},
-            'tokens_per_query': {k: round(usage.get(k, 0) / count, 1)
-                                 for k in ('prompt_tokens', 'completion_tokens', 'total_tokens')} if count else {},
+            'tokens_per_query': (f'unavailable: token usage not reported for {no_usage} of {count} runs'
+                                 if no_usage else
+                                 {k: round(usage.get(k, 0) / count, 1)
+                                  for k in ('prompt_tokens', 'completion_tokens', 'total_tokens')} if count else {}),
             'failure_categories': dict(sorted(failures.items())),
             'failure_layers': dict(sorted(layers.items())),
             'auto_detected_failures': dict(sorted(suggested.items())),
         }
         price_in = pricing.get('input_per_million_tokens')
         price_out = pricing.get('output_per_million_tokens')
-        if price_in is None or price_out is None or not count:
+        if no_usage:
+            block['cost'] = (f'unavailable: token usage not reported for {no_usage} of {count} runs '
+                             '(remote API run); not counted as zero')
+        elif price_in is None or price_out is None or not count:
             block['cost'] = 'unknown; price not provided'
         else:
             total = (usage.get('prompt_tokens', 0) * price_in
