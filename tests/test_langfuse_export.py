@@ -21,21 +21,34 @@ def event(**extra):
 
 
 class FakeLangfuse:
-    def __init__(self, ingestion_status=207, errors=None, projects=None):
+    def __init__(self, status=200, rejected=0, projects=None):
         self.requests = []
-        self.ingestion_status, self.errors = ingestion_status, errors or []
+        self.status, self.rejected = status, rejected
         self.projects = [{'id': 'proj123', 'name': 'hr-navigator'}] if projects is None else projects
 
     def __call__(self, request: httpx.Request) -> httpx.Response:
         self.requests.append(request)
+        if request.url.path == '/api/public/otel/v1/traces':
+            body = {'partialSuccess': {'rejectedSpans': self.rejected, 'errorMessage': 'bad span'}} \
+                if self.rejected else {}
+            return httpx.Response(self.status, json=body)
         if request.url.path == '/api/public/ingestion':
-            return httpx.Response(self.ingestion_status, json={'successes': [], 'errors': self.errors})
+            return httpx.Response(410)                  # removed by Langfuse on 2026-11-16
         if request.url.path == '/api/public/projects':
             return httpx.Response(200, json={'data': self.projects})
         return httpx.Response(404)
 
     def client(self):
         return httpx.Client(transport=httpx.MockTransport(self))
+
+
+def spans_of(payload):
+    spans = payload['resourceSpans'][0]['scopeSpans'][0]['spans']
+    return [(span, {a['key']: a['value'] for a in span['attributes']}) for span in spans]
+
+
+def text(value):
+    return value.get('stringValue')
 
 
 def test_disabled_without_keys():
@@ -51,34 +64,67 @@ def test_host_must_be_https_except_localhost():
             lf.LangfuseConfig.from_env({**ENV, 'LANGFUSE_HOST': bad})
 
 
-def test_batch_has_trace_span_and_generation_with_personal_data_removed():
+def test_spans_form_one_trace_with_personal_data_removed():
     config = lf.LangfuseConfig.from_env(ENV)
-    batch = lf.build_batch(event(), config)['batch']
-    assert [item['type'] for item in batch] == ['trace-create', 'span-create', 'generation-create']
-    trace, span, generation = (item['body'] for item in batch)
-    assert span['traceId'] == trace['id'] == generation['traceId']
-    assert trace['metadata']['route_taken'] == 'document_review' and span['name'] == 'document_review'
-    assert generation['usageDetails'] == {'input': 900, 'output': 120}
-    assert span['endTime'] == '2026-11-26T10:00:00+00:00' and span['startTime'] == '2026-11-26T09:59:59.187500+00:00'
-    text = json.dumps(batch)
+    payload = lf.build_spans(event(), config)
+    spans = spans_of(payload)
+    assert [span['name'] for span, _ in spans] == ['chat', 'document_review', 'chat-model']
+    (root, root_attrs), (route, _), (model, model_attrs) = spans
+    assert len(root['traceId']) == 32 and len(root['spanId']) == 16 and 'parentSpanId' not in root
+    assert route['traceId'] == model['traceId'] == root['traceId']
+    assert route['parentSpanId'] == model['parentSpanId'] == root['spanId']
+    for _, attrs in spans:                              # filterable on every span
+        assert text(attrs['langfuse.session.id']) == 's1' and text(attrs['langfuse.trace.name']) == 'chat'
+        assert text(attrs['langfuse.environment']) == 'development'
+        assert [text(v) for v in attrs['langfuse.trace.tags']['arrayValue']['values']] == \
+            ['document_review', 'review_required']
+    assert text(model_attrs['langfuse.observation.type']) == 'generation'
+    assert json.loads(text(model_attrs['langfuse.observation.usage_details'])) == {'input': 900, 'output': 120}
+    assert int(root['endTimeUnixNano']) - int(root['startTimeUnixNano']) == 812_500_000
+    assert root['endTimeUnixNano'] == str(1795687200 * 10**9)          # 2026-11-26T10:00:00Z
+    dumped = json.dumps(payload)
     for secret in ('ravi.kumar@example.com', '9876543210', 'EMP-001'):
-        assert secret not in text                       # masked question, employee ID never sent
-    assert '[email removed]' in trace['input']['question']
+        assert secret not in dumped                     # masked question, employee ID never sent
+    assert '[email removed]' in json.loads(text(root_attrs['langfuse.observation.input']))['question']
     quiet = lf.LangfuseConfig.from_env({**ENV, 'LANGFUSE_SEND_QUERY_TEXT': 'false'})
-    assert lf.build_batch(event(), quiet)['batch'][0]['body']['input'] == {'question': '[not sent]'}
-    no_model = lf.build_batch(event(prompt_tokens=0, completion_tokens=0), config)['batch']
-    assert [item['type'] for item in no_model] == ['trace-create', 'span-create']
+    quiet_root = spans_of(lf.build_spans(event(), quiet))[0][1]
+    assert json.loads(text(quiet_root['langfuse.observation.input'])) == {'question': '[not sent]'}
+    no_model = spans_of(lf.build_spans(event(prompt_tokens=0, completion_tokens=0), config))
+    assert [span['name'] for span, _ in no_model] == ['chat', 'document_review']
 
 
-def test_send_uses_basic_auth_and_reports_failures_without_raising():
+def test_errors_and_rate_limits_are_marked_in_the_dashboard():
+    config = lf.LangfuseConfig.from_env(ENV)
+    error = spans_of(lf.build_spans(event(status='error'), config))
+    assert all(text(a['langfuse.observation.level']) == 'ERROR' and s['status']['code'] == 2 for s, a in error[:2])
+    limited = spans_of(lf.build_spans(event(status='rate_limited'), config))
+    assert text(limited[0][1]['langfuse.observation.level']) == 'WARNING'
+
+
+def test_payload_follows_the_opentelemetry_schema():
+    json_format = pytest.importorskip('google.protobuf.json_format')
+    trace_service = pytest.importorskip('opentelemetry.proto.collector.trace.v1.trace_service_pb2')
+    payload = lf.build_spans(event(), lf.LangfuseConfig.from_env(ENV))
+    for span in payload['resourceSpans'][0]['scopeSpans'][0]['spans']:
+        for key in ('traceId', 'spanId', 'parentSpanId'):          # OTLP/JSON ids are hex; protobuf wants base64
+            if key in span:
+                span[key] = base64.b64encode(bytes.fromhex(span[key])).decode()
+    request = json_format.Parse(json.dumps(payload), trace_service.ExportTraceServiceRequest())
+    assert len(request.resource_spans[0].scope_spans[0].spans) == 3
+
+
+def test_send_uses_the_opentelemetry_endpoint_and_reports_failures_without_raising():
     config = lf.LangfuseConfig.from_env(ENV)
     fake = FakeLangfuse()
     assert lf.send(event(), config, fake.client()) is True
     request = fake.requests[0]
-    assert str(request.url) == 'https://cloud.langfuse.com/api/public/ingestion'
+    assert str(request.url) == 'https://cloud.langfuse.com/api/public/otel/v1/traces'
     assert request.headers['authorization'] == 'Basic ' + base64.b64encode(b'pk-lf-test:sk-lf-test').decode()
-    assert lf.send(event(), config, FakeLangfuse(errors=[{'id': 'x', 'status': 400}]).client()) is False
-    assert lf.send(event(), config, FakeLangfuse(ingestion_status=500).client()) is False
+    assert request.headers['x-langfuse-ingestion-version'] == '4'
+    assert request.headers['content-type'] == 'application/json'
+    assert lf.send(event(), config, FakeLangfuse(rejected=2).client()) is False
+    assert lf.send(event(), config, FakeLangfuse(status=500).client()) is False
+    assert lf.send(event(), config, FakeLangfuse(status=410).client()) is False
 
     def broken(request):
         raise httpx.ConnectError('offline')
@@ -140,10 +186,11 @@ def test_environment_names_are_made_valid_for_langfuse():
 
 def test_unknown_price_sends_tokens_but_no_cost():
     config = lf.LangfuseConfig.from_env(ENV)
-    generation = lf.build_batch(event(estimated_cost_usd=0.0), config)['batch'][2]['body']
-    assert generation['usageDetails'] == {'input': 900, 'output': 120} and 'costDetails' not in generation
-    priced = lf.build_batch(event(), config)['batch'][2]['body']
-    assert priced['costDetails'] == {'total': 0.0012}
+    for unknown in (0.0, None):
+        model = spans_of(lf.build_spans(event(estimated_cost_usd=unknown), config))[2][1]
+        assert 'langfuse.observation.usage_details' in model and 'langfuse.observation.cost_details' not in model
+    priced = spans_of(lf.build_spans(event(), config))[2][1]
+    assert json.loads(text(priced['langfuse.observation.cost_details'])) == {'total': 0.0012}
 
 
 def test_short_runs_send_their_last_trace_before_exiting(tmp_path):

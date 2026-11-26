@@ -1,8 +1,9 @@
 """Send chat traces to a Langfuse trace dashboard (Track B: trace runs through Langfuse).
 
 Optional and off by default. When LANGFUSE_PUBLIC_KEY and LANGFUSE_SECRET_KEY are set, every
-TraceEvent written by tracer.log_trace is also sent to Langfuse through its public ingestion API,
-so the runs appear in the Langfuse web dashboard. Nothing else in the app changes.
+TraceEvent written by tracer.log_trace is also sent to Langfuse as OpenTelemetry spans (OTLP over
+HTTP/JSON to /api/public/otel/v1/traces, the only trace ingestion Langfuse accepts since 16 November
+2026), so the runs appear in the Langfuse web dashboard. Nothing else in the app changes.
 
 Privacy: questions are already masked by the guardrail; they are masked again here before leaving
 the machine, the employee ID is never sent, and LANGFUSE_SEND_QUERY_TEXT=false sends no question
@@ -15,8 +16,9 @@ affects the chat response.
 """
 import atexit
 from dataclasses import dataclass
-from datetime import datetime, timedelta
+from datetime import UTC, datetime
 import ipaddress
+import json
 import logging
 import os
 import queue
@@ -89,59 +91,111 @@ def check_host(host: str) -> None:
                          '(http:// is allowed only for localhost)')
 
 
-def build_batch(event, config: LangfuseConfig) -> dict:
-    """Turn one TraceEvent into a Langfuse ingestion batch: a trace, a route span and, if the model
-    was called, a generation carrying the token usage and cost."""
-    trace_id = uuid.uuid4().hex
-    end = event.timestamp                     # the tracer stamps the event when the request finishes
+OTEL_PATH = '/api/public/otel/v1/traces'
+SERVICE_NAME = 'hr-policy-navigator'
+
+
+def _value(value) -> dict:
+    """One OTLP/JSON attribute value."""
+    if isinstance(value, bool):
+        return {'boolValue': value}
+    if isinstance(value, int):
+        return {'intValue': str(value)}
+    if isinstance(value, float):
+        return {'doubleValue': value}
+    if isinstance(value, (list, tuple)):
+        return {'arrayValue': {'values': [_value(v) for v in value]}}
+    return {'stringValue': str(value)}
+
+
+def _attributes(values: dict) -> list:
+    return [{'key': key, 'value': _value(value)} for key, value in values.items() if value is not None]
+
+
+def _unix_nano(iso: str) -> int:
+    moment = datetime.fromisoformat(iso)
+    if moment.tzinfo is None:
+        moment = moment.replace(tzinfo=UTC)
+    return int(moment.timestamp() * 1_000_000) * 1000
+
+
+def build_spans(event, config: LangfuseConfig) -> dict:
+    """Turn one TraceEvent into an OTLP/JSON export request for Langfuse: a root span 'chat' (the
+    trace), a child span named after the route and, if the model was called, a child generation
+    carrying the token usage and cost."""
+    trace_id = uuid.uuid4().hex                     # 32 hex characters
+    root_id, route_id, model_id = (uuid.uuid4().hex[:16] for _ in range(3))
     try:
-        start = (datetime.fromisoformat(end) - timedelta(milliseconds=event.latency_ms or 0)).isoformat()
+        end = _unix_nano(event.timestamp)          # the tracer stamps the event when the request finishes
     except ValueError:
-        start = end
+        end = time.time_ns()
+    start = end - int((event.latency_ms or 0) * 1_000_000)
     question = redact_personal_identifiers(event.query) if config.send_query_text else '[not sent]'
-    metadata = {'route_taken': event.route_taken, 'status': event.status, 'latency_ms': event.latency_ms,
-                'citation_count': len(event.citations)}
-    trace = {'id': trace_id, 'timestamp': event.timestamp, 'name': 'chat',
-             'sessionId': event.session_id, 'environment': config.environment,
-             'input': {'question': question},
-             'output': {'status': event.status, 'route_taken': event.route_taken,
-                        'citations': list(event.citations)},
-             'metadata': metadata, 'tags': [event.route_taken, event.status]}
-    span = {'id': uuid.uuid4().hex, 'traceId': trace_id, 'name': event.route_taken,
-            'startTime': start, 'endTime': end, 'environment': config.environment,
-            'metadata': metadata,
-            'level': {'error': 'ERROR', 'rate_limited': 'WARNING'}.get(event.status, 'DEFAULT')}
-    batch = [{'id': uuid.uuid4().hex, 'timestamp': event.timestamp, 'type': 'trace-create', 'body': trace},
-             {'id': uuid.uuid4().hex, 'timestamp': event.timestamp, 'type': 'span-create', 'body': span}]
+    level = {'error': 'ERROR', 'rate_limited': 'WARNING'}.get(event.status, 'DEFAULT')
+    shared = {                                      # on every span so the dashboard can filter by them
+        'langfuse.trace.name': 'chat', 'langfuse.session.id': event.session_id,
+        'langfuse.trace.tags': [event.route_taken, event.status], 'langfuse.environment': config.environment,
+        'langfuse.trace.metadata.route_taken': event.route_taken, 'langfuse.trace.metadata.status': event.status,
+    }
+    output = json.dumps({'status': event.status, 'route_taken': event.route_taken,
+                         'citations': list(event.citations)}, ensure_ascii=False)
+    root = {'name': 'chat', 'attrs': {
+        **shared, 'langfuse.observation.type': 'span', 'langfuse.observation.level': level,
+        'langfuse.observation.input': json.dumps({'question': question}, ensure_ascii=False),
+        'langfuse.observation.output': output,
+        'langfuse.trace.input': json.dumps({'question': question}, ensure_ascii=False),
+        'langfuse.trace.output': output,
+        'langfuse.trace.metadata.latency_ms': event.latency_ms,
+        'langfuse.trace.metadata.citation_count': len(event.citations)}}
+    route = {'name': event.route_taken, 'parent': root_id, 'attrs': {
+        **shared, 'langfuse.observation.type': 'span', 'langfuse.observation.level': level,
+        'langfuse.observation.metadata.latency_ms': event.latency_ms}}
+    spans = [(root_id, root), (route_id, route)]
     if event.prompt_tokens or event.completion_tokens:
-        generation = {'id': uuid.uuid4().hex, 'traceId': trace_id, 'name': 'chat-model',
-                      'startTime': start, 'endTime': end, 'environment': config.environment,
-                      'usageDetails': {'input': event.prompt_tokens, 'output': event.completion_tokens}}
+        attrs = {**shared, 'langfuse.observation.type': 'generation',
+                 'langfuse.observation.usage_details': json.dumps(
+                     {'input': event.prompt_tokens, 'output': event.completion_tokens})}
         if event.estimated_cost_usd and event.estimated_cost_usd > 0:   # unknown price: no cost, not zero
-            generation['costDetails'] = {'total': event.estimated_cost_usd}
-        batch.append({'id': uuid.uuid4().hex, 'timestamp': event.timestamp,
-                      'type': 'generation-create', 'body': generation})
-    return {'batch': batch}
+            attrs['langfuse.observation.cost_details'] = json.dumps({'total': event.estimated_cost_usd})
+        spans.append((model_id, {'name': 'chat-model', 'parent': root_id, 'attrs': attrs}))
+    otlp = []
+    for span_id, span in spans:
+        item = {'traceId': trace_id, 'spanId': span_id, 'name': span['name'], 'kind': 1,
+                'startTimeUnixNano': str(start), 'endTimeUnixNano': str(end),
+                'attributes': _attributes(span['attrs']),
+                'status': {'code': 2 if level == 'ERROR' else 0}}
+        if span.get('parent'):
+            item['parentSpanId'] = span['parent']
+        otlp.append(item)
+    return {'resourceSpans': [{
+        'resource': {'attributes': _attributes({'service.name': SERVICE_NAME,
+                                                'deployment.environment': config.environment})},
+        'scopeSpans': [{'scope': {'name': 'hr_navigator.observability'}, 'spans': otlp}]}]}
 
 
 def send(event, config: LangfuseConfig, client: httpx.Client | None = None) -> bool:
     """Send one event now. Returns True when Langfuse accepted it; never raises."""
     try:
-        payload = build_batch(event, config)
+        payload = build_spans(event, config)
         owned = client is None
         client = client or httpx.Client(timeout=TIMEOUT_SECONDS)
         try:
-            response = client.post(f'{config.host}/api/public/ingestion', json=payload,
-                                   auth=(config.public_key, config.secret_key))
+            response = client.post(f'{config.host}{OTEL_PATH}', json=payload,
+                                   auth=(config.public_key, config.secret_key),
+                                   headers={'x-langfuse-ingestion-version': '4'})
         finally:
             if owned:
                 client.close()
-        if response.status_code >= 300 and response.status_code != 207:
+        if response.status_code >= 300:
             log.warning('Langfuse rejected a trace: HTTP %s', response.status_code)
             return False
-        errors = (response.json() or {}).get('errors') if response.content else None
-        if errors:
-            log.warning('Langfuse reported %d trace error(s)', len(errors))
+        try:
+            partial = (response.json() or {}).get('partialSuccess') or {}
+        except ValueError:
+            partial = {}
+        if int(partial.get('rejectedSpans') or 0):
+            log.warning('Langfuse rejected %s span(s): %s', partial.get('rejectedSpans'),
+                        str(partial.get('errorMessage', ''))[:200])
             return False
         return True
     except Exception as exc:  # tracing must never break the app

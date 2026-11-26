@@ -19,6 +19,7 @@ traced, including requests that end early:
 | Not in English | `unsupported_language` | `refused` |
 | Minimum-wage clarification | `minimum_wage_clarification` / `minimum_wage_source_unavailable` | `clarification_required` / `escalate` |
 | Rate limited | `rate_limited` | `rate_limited` |
+| Question too long (over 2,000 characters) | `input_too_long` | `refused` |
 | Retrieval or leave-balance failure | `document_review` / `leave_balance_tool` | `error` |
 | Unexpected error | `internal_error` | `error` |
 
@@ -29,6 +30,10 @@ Each trace is made up of:
 | Trace `chat` | Masked question, status, route, citations, session ID; tagged with route and status |
 | Span (named after the route, e.g. `document_review`, `guardrail_refusal`, `leave_balance_tool`) | Start and end time (latency), route, status; `ERROR` level for errors, `WARNING` for rate limits |
 | Generation `chat-model` (only when the model was called) | Prompt and completion tokens; cost only when a price is configured (an unknown price is left out, never sent as 0) |
+
+How it is sent: as OpenTelemetry spans (OTLP over HTTP/JSON) to `/api/public/otel/v1/traces`, with the
+`x-langfuse-ingestion-version: 4` header so traces appear in real time. Langfuse Cloud removed its older
+ingestion API (`/api/public/ingestion`) on 16 November 2026; code that still uses it gets HTTP 410.
 
 Privacy: questions are masked by the guardrail and masked again before sending (PAN, Aadhaar, phone,
 email, employee IDs). The employee ID is never sent. Set `LANGFUSE_SEND_QUERY_TEXT=false` to send no question
@@ -55,6 +60,15 @@ text at all. Keys are read from the environment, never logged, and must not be c
 4. Start the API and UI as in the README and ask a few questions. They appear in the dashboard within
    seconds.
 
+### If the check fails
+
+| Message | Fix |
+|---|---|
+| `Langfuse is not configured` | Set both keys in the same terminal you run the command in |
+| `rejected the keys (HTTP 401)` | Re-copy the project keys; set `LANGFUSE_HOST` if your project is in another region (e.g. `https://us.cloud.langfuse.com`) |
+| `Langfuse rejected a trace: HTTP 410` | You are on code from before the OpenTelemetry update; pull the latest `main` |
+| `Could not reach Langfuse` | Check the internet connection or VPN |
+
 ## The link for the report
 
 `scripts/trace_dashboard.py` prints the project's trace page, for example
@@ -71,6 +85,5 @@ their last traces are sent. `LANGFUSE_HOST` must use HTTPS (plain HTTP only for 
 
 To fill the dashboard now, use the app (the Streamlit UI or `POST /chat`); every request is traced.
 
-Evaluation runs through the chat API (`--system api`) are part of the end-to-end evaluation change, which is
-not on `main` yet. Once it is merged, add `--keep-traces` so those runs are also traced, for example
+Evaluation runs through the chat API (`--system api`, in-process) are traced too when you add `--keep-traces`, for example
 `python scripts/run_evaluation.py run --test-set gold_v1 --system api --keep-traces`.
