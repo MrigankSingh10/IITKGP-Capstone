@@ -36,10 +36,19 @@ def _json_response(client, system, payload, *, max_tokens=512, allow_json_fence=
 # Each branch targets how injected text addresses a model; ordinary statutory wording such as "shall
 # not ignore the provisions of these rules" or "may override the decision" is not matched. Planted
 # false facts cannot be caught by a pattern; only registered, hashed sources protect against those.
+# Statutory wording such as "override any rules made under section 12" or "ignore the instructions issued by
+# the appropriate Government" is not an attack.
+_NOT_STATUTORY = (r'(?!\s+(?:issued|given|laid|framed|made|notified|prescribed|under|by\s+the|'
+                  r'of\s+the\s+(?:appropriate|central|state)))')
 _INJECTION = re.compile('|'.join([
     # override of earlier or the model's own instructions
     r'\b(?:ignore|disregard|forget|override|set aside)\b(?:\s+\S+){0,4}?\s+(?:all\s+)?'
     r'(?:previous|prior|earlier|above|preceding|your|original)\s+(?:instructions?|guidance|context|rules|prompts?|directions?)\b',
+    # ... or of instructions in general: "ignore all instructions", "disregard any rules", "forget the instructions"
+    r'\b(?:ignore|disregard|forget|override|set aside)\s+(?:all|any|every)\s+(?:of\s+)?(?:the\s+|your\s+|these\s+|those\s+|other\s+)?'
+    r'(?:instructions?|guidance|guidelines|rules|prompts?|directions?)\b' + _NOT_STATUTORY,
+    r'\b(?:ignore|disregard|forget)\s+(?:the\s+|these\s+|those\s+)?(?:instructions?|prompts?|guidelines)\b'
+    + _NOT_STATUTORY,
     # role tags: at a line or sentence start, or in brackets / special tokens anywhere
     r'(?:^|\n|[.!?]\s+)\s*(?:system|developer|assistant)\s*:\s*(?:\S+\s+){0,3}?'
     r'(?:ignore|disregard|forget|you|immediately|call|reveal|approve|submit|new (?:directive|instruction)s?|'

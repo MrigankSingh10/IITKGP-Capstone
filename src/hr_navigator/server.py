@@ -178,8 +178,9 @@ def asks_for_personal_minimum_wage(question: str) -> bool:
 
 
 def answer_chat(payload: ChatRequest, progress=None, client_address: str | None = None) -> ChatResponse:
-    if not rate_limiter.is_allowed(payload.session_id) or (
-            client_address and not address_limiter.is_allowed(f'address:{client_address}')):
+    # Address first: once an address is over its limit, new session IDs from it are not recorded at all.
+    if (client_address and not address_limiter.is_allowed(f'address:{client_address}')) \
+            or not rate_limiter.is_allowed(payload.session_id):
         trace_outcome(payload, 'rate_limited', 'rate_limited')
         raise HTTPException(status_code=429, detail='Rate limit exceeded. Try again shortly.')
     if len(payload.query) > MAX_QUERY_CHARS or len(payload.follow_up_to or '') > MAX_QUERY_CHARS:

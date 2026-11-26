@@ -3,7 +3,6 @@ import binascii
 import re
 import time
 import unicodedata
-from collections import defaultdict
 from pydantic import BaseModel
 
 
@@ -133,21 +132,39 @@ def redact_personal_identifiers(text: str) -> str:
 
 
 class RateLimiter:
-    def __init__(self, max_requests: int = 20, window_seconds: int = 60) -> None:
+    """Sliding-window limit per key (a session ID or a client address).
+
+    Keys whose requests have all expired are removed once per window, so memory stays bounded by the
+    keys seen within roughly the last two windows. A denied request is not recorded.
+    """
+
+    def __init__(self, max_requests: int = 20, window_seconds: int = 60, clock=time.monotonic) -> None:
         self.max_requests = max_requests
         self.window_seconds = window_seconds
-        self._requests: dict[str, list[float]] = defaultdict(list)
+        self._clock = clock
+        self._requests: dict[str, list[float]] = {}
+        self._last_prune = clock()
 
     def is_allowed(self, session_id: str) -> bool:
-        now = time.monotonic()
+        now = self._clock()
         cutoff = now - self.window_seconds
-        active = [ts for ts in self._requests[session_id] if ts > cutoff]
+        if now - self._last_prune >= self.window_seconds:
+            self._prune(cutoff)
+            self._last_prune = now
+        active = [ts for ts in self._requests.get(session_id, ()) if ts > cutoff]
         if len(active) >= self.max_requests:
             self._requests[session_id] = active
             return False
         active.append(now)
         self._requests[session_id] = active
         return True
+
+    def _prune(self, cutoff: float) -> None:
+        for key in [k for k, stamps in self._requests.items() if not stamps or stamps[-1] <= cutoff]:
+            del self._requests[key]
+
+    def __len__(self) -> int:          # number of tracked keys (for tests and monitoring)
+        return len(self._requests)
 
 
 def validate_user_input(query: str) -> GuardrailResult:
