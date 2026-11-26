@@ -181,13 +181,13 @@ def submit_query(query: str) -> None:
             status = data.get("status", "ok")
             if status == "clarification_required":
                 st.session_state.follow_up_to = query
-            else:
+            elif status != "refused":
                 st.session_state.follow_up_to = None
 
             meta_bits = [f"Status: {status}", f"Route: {route}"]
             if latency is not None:
                 meta_bits.append(f"Latency: {latency} ms")
-            meta_str = " ? ".join(meta_bits)
+            meta_str = " | ".join(meta_bits)
 
             st.session_state.messages.append(
                 {
@@ -277,6 +277,7 @@ with tab_desk:
 
     pending_query = st.session_state.pop("pending_query", None)
     if pending_query:
+        st.session_state.follow_up_to = None
         with st.spinner("Checking policy corpus and HR tools..."):
             submit_query(pending_query)
 
@@ -285,6 +286,15 @@ with tab_desk:
     else:
         for msg in st.session_state.messages:
             render_message(msg)
+
+    if st.session_state.follow_up_to:
+        c_info, c_cancel = st.columns([5, 1])
+        with c_info:
+            st.caption(f"Replying to clarification for: *{st.session_state.follow_up_to}*")
+        with c_cancel:
+            if st.button("Cancel", key="cancel_follow_up", use_container_width=True):
+                st.session_state.follow_up_to = None
+                st.rerun()
 
     typed_query = st.chat_input("Ask about leave rules, benefits, or employee balances...", key="desk_chat_input")
     if typed_query:
