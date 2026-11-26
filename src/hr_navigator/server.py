@@ -2,6 +2,7 @@ import asyncio
 import json
 import os
 import re
+import sqlite3
 import time
 from functools import lru_cache
 from pathlib import Path
@@ -12,11 +13,21 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
 from hr_navigator.clients.api import APIConfig, HostedClient
-from hr_navigator.observability.tracer import TraceEvent, estimate_cost, log_trace, utc_now_iso
 from hr_navigator.retrieval.review_adapter import ReviewAdapter, ReviewRequest
 from hr_navigator.retrieval.search import unsupported_query
 from hr_navigator.retrieval.source_context import enrich_pages, load_source_context
-from hr_navigator.security.guardrails import RateLimiter, redact_personal_identifiers, validate_user_input
+from hr_navigator.security.guardrails import (
+    RateLimiter,
+    redact_personal_identifiers,
+    validate_user_input,
+)
+from hr_navigator.observability.tracer import (
+    TraceEvent,
+    estimate_cost,
+    log_trace,
+    utc_now_iso,
+)
+from hr_navigator.demo import answer_leave_balance_question, is_leave_balance_question
 
 ROOT = Path(__file__).resolve().parents[2]
 app = FastAPI(title="HR Policy Navigator API", version="0.2.0")
@@ -56,6 +67,7 @@ class ChatResponse(BaseModel):
     sources: list[dict] = Field(default_factory=list)
     route_taken: str
     latency_ms: float
+    simulated: bool = False
     status: str = "ok"
 
 
@@ -153,6 +165,45 @@ def answer_chat(payload: ChatRequest, progress=None) -> ChatResponse:
                              route_taken=route, latency_ms=0.0, citations=[], status=status))
         return ChatResponse(answer=_RATE_SOURCE_UNAVAILABLE if is_follow_up else _RATE_CLARIFICATION,
                             route_taken=route, latency_ms=0.0, status=status)
+
+    # Handle read-only leave-balance questions with the synthetic employee tools.
+    # This branch must run before document retrieval so balance questions are not
+    # incorrectly routed to PDF search.
+    if is_leave_balance_question(guard.sanitized_query):
+        start = time.perf_counter()
+        try:
+            answer = answer_leave_balance_question(
+                query=guard.sanitized_query,
+                employee_id=payload.employee_id,
+            )
+        except (OSError, RuntimeError, ValueError, sqlite3.Error) as exc:
+            raise HTTPException(
+                status_code=503,
+                detail='Synthetic leave-balance demo is unavailable. Check the local fixtures and database.',
+            ) from exc
+
+        latency_ms = round((time.perf_counter() - start) * 1000.0, 2)
+        log_trace(
+            TraceEvent(
+                timestamp=utc_now_iso(),
+                session_id=trace_session_id,
+                employee_id=None,
+                query=guard.sanitized_query,
+                route_taken='leave_balance_tool',
+                latency_ms=latency_ms,
+                citations=[],
+                status='ok',
+            )
+        )
+        return ChatResponse(
+            answer=answer,
+            citations=[],
+            route_taken='leave_balance_tool',
+            latency_ms=latency_ms,
+            simulated=True,
+            status='ok',
+        )
+
     start = time.perf_counter()
     try:
         options = {'progress': progress} if progress is not None else {}
@@ -180,6 +231,7 @@ def answer_chat(payload: ChatRequest, progress=None) -> ChatResponse:
                             route_taken='document_review', latency_ms=latency_ms, status=result.decision)
     except (OSError, ValueError, KeyError, TypeError) as exc:
         raise HTTPException(status_code=503, detail='Document retrieval is unavailable. Check the corpus and chat configuration.') from exc
+
 
 
 @app.post('/chat/stream')
@@ -216,5 +268,8 @@ async def chat_stream(payload: ChatRequest) -> StreamingResponse:
             disconnected.set()
             worker.cancel()
 
-    return StreamingResponse(events(), media_type='application/x-ndjson',
-                             headers={'Cache-Control': 'no-cache', 'X-Accel-Buffering': 'no'})
+    return StreamingResponse(
+        events(),
+        media_type='application/x-ndjson',
+        headers={'Cache-Control': 'no-cache', 'X-Accel-Buffering': 'no-cache'}
+    )

@@ -420,28 +420,11 @@ Copy this heading and fill it in for each session:
 - Validation and results: the runner loads `safety_doc_v1` with the checksum; offline tests pass. No live run yet.
 - Blockers / next action / owner: run the frozen set on RAG (all 18) and through `/chat` (12 cases without tampered pages); needs the corpus and chat configuration (evaluation, with Member 1 for corpus access).
 
-### 2026-11-24 — Evaluation: end-to-end runs through the chat API
 
-- Owner: evaluation (prompting, baselines and safety testing), with an AI agent.
-- Work and decisions: added `ApiSystem` (`--system api`) so the evaluation runner sends each question through `POST /chat`, the path the Streamlit app uses, and scores the reply like the other systems. Statuses map to decisions (review_required/evidence_only → answer, escalate, refused → refuse, clarification_required → clarify). Tampered-document cases are skipped for the API and run with `--system rag`. Demo traces are not written by default; tokens are still counted.
-- Also registered the frozen grounding hold-out (`grounding_holdout_v1`) in the runner, converting its reviewed format, with a run-once guard: `run` requires `--final`.
-- Files / evidence: `src/hr_navigator/evaluation/systems.py`, `runner.py`, `scripts/run_evaluation.py`, `tests/test_end_to_end_api.py`, `tests/test_holdout_runner.py`, `docs/evaluation_runner_guide.md`, `docs/holdout_review_guide.md`.
-- Validation and results: offline tests with the real FastAPI app and a stubbed retrieval pipeline; no live run yet.
-- Blockers / next action / owner: live runs need the local corpus and chat configuration (evaluation, with Member 1 for corpus access).
+### 2026-11-26 — Fix demo employee selection
 
-### 2026-11-24 — Evaluation: grounding hold-out frozen (v1)
-
-- Owner: evaluation (prompting, baselines and safety testing), with an AI agent.
-- Work and decisions: matched all 20 hold-out quotes to the accepted-OCR page text supplied by Member 1 (`scripts/locate_holdout_quotes.py`; each quote found on exactly one page). An AI pre-review compared every expected answer with its page; the evaluation owner confirmed all 20. Expected answers 012, 013 and 016 were updated to the page wording (notified days, higher notified threshold and seasonal exclusion, the 12/6-week proviso). Froze the set with `scripts/freeze_holdout.py`; none rejected.
-- Files / evidence: `evaluation/grounding_holdout_v1.jsonl`, `.sha256`, `_freeze.md`, `evaluation/grounding_holdout_review_v0.2.csv`.
-- Validation and results: the runner loads `grounding_holdout_v1` with the checksum; not yet evaluated.
-- Blockers / next action / owner: run once with `--final` on RAG and through `/chat` after the pipeline is fixed (evaluation).
-
-### 2026-11-24 — Evaluation: why the closed-book baseline is low
-
-- Owner: evaluation (prompting, baselines and safety testing), with an AI agent.
-- Work and decisions: analysed the 240 saved baseline responses and reconciled marks; added a "Why the baseline is low" section with implications for retrieval and prompts. No scores changed.
-- Files / evidence: [baseline report](../reports/baseline_v1_report.md).
-- Validation and results: numbers recomputed from `baseline_v1_runs.jsonl` and `baseline_v1_review_reconciled.csv`. Key results: FAQ questions 7/108, statutory questions 12/132, any-strategy correct 9/80.
-- Blockers / next action / owner: retrieval and prompt owners may use the implications; tune on development data only.
-
+- Owner: AI agent.
+- Work and decisions: wired the fictional employee selector to chat requests and made the balance shortcut use wording recognized by the balance router.
+- Files / evidence: `app.py`, `tests/test_ui_leave_balance.py`.
+- Validation and results: six focused UI and API tests passed, including a Streamlit interaction routed through the local API with a temporary SQLite database. The optional UI test also skips cleanly without UI dependencies (8 passed, 1 skipped).
+- Blockers / next action / owner: PR branch contains the UI fix; independent project evaluation remains open.
