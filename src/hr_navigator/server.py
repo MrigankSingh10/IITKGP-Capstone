@@ -121,6 +121,21 @@ def citation_label(source: dict) -> str:
     return f"{source.get('original_title', source.get('source_pdf_id', 'Source'))}, PDF page {source.get('page_number', '?')}"
 
 
+def trace_outcome(payload: ChatRequest, route: str, status: str, latency_ms: float = 0.0,
+                  query: str | None = None) -> None:
+    """Record a request that ends before the normal trace (refusals, limits, errors).
+
+    The question is masked and shortened; tracing problems never affect the response.
+    """
+    try:
+        text = query if query is not None else redact_personal_identifiers(' '.join(payload.query.split()))
+        log_trace(TraceEvent(timestamp=utc_now_iso(), session_id=redact_personal_identifiers(payload.session_id),
+                             employee_id=None, query=text[:500], route_taken=route,
+                             latency_ms=latency_ms, citations=[], status=status))
+    except Exception:  # noqa: BLE001 - tracing must never break the request
+        pass
+
+
 @app.get('/health')
 def health() -> dict[str, str]:
     return {'status': 'ok'}
@@ -128,7 +143,13 @@ def health() -> dict[str, str]:
 
 @app.post('/chat', response_model=ChatResponse)
 def chat(payload: ChatRequest) -> ChatResponse:
-    return answer_chat(payload)
+    try:
+        return answer_chat(payload)
+    except HTTPException:
+        raise                                   # already traced where it was raised
+    except Exception:
+        trace_outcome(payload, 'internal_error', 'error')
+        raise
 
 
 def asks_for_personal_minimum_wage(question: str) -> bool:
@@ -137,6 +158,7 @@ def asks_for_personal_minimum_wage(question: str) -> bool:
 
 def answer_chat(payload: ChatRequest, progress=None) -> ChatResponse:
     if not rate_limiter.is_allowed(payload.session_id):
+        trace_outcome(payload, 'rate_limited', 'rate_limited')
         raise HTTPException(status_code=429, detail='Rate limit exceeded. Try again shortly.')
     guard = validate_user_input(payload.query)
     trace_session_id = redact_personal_identifiers(payload.session_id)
@@ -153,6 +175,7 @@ def answer_chat(payload: ChatRequest, progress=None) -> ChatResponse:
         return ChatResponse(answer=guard.reason or 'Request refused.', route_taken='guardrail_refusal',
                             latency_ms=0.0, status='refused')
     if unsupported_query(guard.sanitized_query):
+        trace_outcome(payload, 'unsupported_language', 'refused', query=guard.sanitized_query)
         return ChatResponse(answer='Please ask your question in English.', route_taken='unsupported_language',
                             latency_ms=0.0, status='refused')
     if is_follow_up or asks_for_personal_minimum_wage(guard.sanitized_query):
@@ -177,6 +200,8 @@ def answer_chat(payload: ChatRequest, progress=None) -> ChatResponse:
                 employee_id=payload.employee_id,
             )
         except (OSError, RuntimeError, ValueError, sqlite3.Error) as exc:
+            trace_outcome(payload, 'leave_balance_tool', 'error',
+                          round((time.perf_counter() - start) * 1000.0, 2), guard.sanitized_query)
             raise HTTPException(
                 status_code=503,
                 detail='Synthetic leave-balance demo is unavailable. Check the local fixtures and database.',
@@ -230,6 +255,8 @@ def answer_chat(payload: ChatRequest, progress=None) -> ChatResponse:
         return ChatResponse(answer=answer, citations=citations, sources=result.sources,
                             route_taken='document_review', latency_ms=latency_ms, status=result.decision)
     except (OSError, ValueError, KeyError, TypeError) as exc:
+        trace_outcome(payload, 'document_review', 'error',
+                      round((time.perf_counter() - start) * 1000, 2), guard.sanitized_query)
         raise HTTPException(status_code=503, detail='Document retrieval is unavailable. Check the corpus and chat configuration.') from exc
 
 
@@ -255,6 +282,7 @@ async def chat_stream(payload: ChatRequest) -> StreamingResponse:
             except HTTPException as exc:
                 publish({'type': 'error', 'message': exc.detail})
             except Exception:
+                trace_outcome(payload, 'internal_error', 'error')
                 publish({'type': 'error', 'message': 'Unable to complete the chat request.'})
 
         worker = asyncio.create_task(asyncio.to_thread(run))

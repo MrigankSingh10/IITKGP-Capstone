@@ -3,6 +3,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from pydantic import BaseModel, Field
 
+from hr_navigator.observability.langfuse_export import export_trace
+
 TRACE_LOG_PATH = Path("reports/agent_traces.jsonl")
 PRICING_PATH = Path("configs/pricing.json")
 
@@ -45,6 +47,7 @@ def log_trace(event: TraceEvent, trace_path: Path = TRACE_LOG_PATH) -> None:
     trace_path.parent.mkdir(parents=True, exist_ok=True)
     with trace_path.open("a", encoding="utf-8") as handle:
         handle.write(event.model_dump_json() + "\n")
+    export_trace(event)  # also sends to the Langfuse dashboard when LANGFUSE_* keys are set
 
 
 def utc_now_iso() -> str:

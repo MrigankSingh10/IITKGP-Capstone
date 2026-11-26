@@ -140,6 +140,8 @@ Without chat settings, the UI displays candidate passages for review. With them,
 
 Name the Code in your question or select a **Document collection** to narrow the search. Plain keyword search can miss paraphrases or relevant text outside the indexed corpus.
 
+**Trace dashboard:** set `LANGFUSE_PUBLIC_KEY` and `LANGFUSE_SECRET_KEY` to also send each chat trace to Langfuse, then run `python scripts/trace_dashboard.py --send-test` to get the dashboard link. See [`docs/trace_dashboard.md`](docs/trace_dashboard.md).
+
 ## Remaining work
 
 - The safety set and the grounding hold-out are frozen. Run the safety set against RAG and the chat API, and run the hold-out once, after the pipeline is fixed.
