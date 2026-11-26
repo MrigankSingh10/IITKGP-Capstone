@@ -1,93 +1,72 @@
 # HR Policy Navigator
 
-An IIT Kharagpur Track B capstone prototype for finding and citing information in Indian Labour Codes documents. The current document-focused scope answers questions about the supplied PDFs without needing employee details or external HR actions. The repository also contains a separate fictional Acme handbook and early UI/API scaffolding; these do not establish real employee entitlements.
+**IIT Kharagpur capstone project · Track B**
 
-The retrieval workflow is experimental. Generated answers are drafts for review, and citation checks do not establish legal applicability or guarantee correctness. The FastAPI and Streamlit prototype uses the local document review adapter; it is not connected to a LangGraph agent.
+HR Policy Navigator is a prototype for finding evidence in Indian Labour Codes documents and producing cited drafts for human review. It combines a searchable PDF corpus, a FastAPI backend, a Streamlit interface, safety checks and a local trace dashboard. A separate demonstration uses fictional employee records to show a read-only leave-balance lookup.
 
-## Team handoff and shared log
 
-All members and AI agents: read and update the [shared team work log](docs/team_work_log.md) each session. It contains the Member 1/2 handoff, current ownership, decisions, validation and next actions.
+## Problem and approach
 
-## What is implemented
+Finding the relevant provision in a large collection of labour documents can be slow, and an unsupported generated answer can mislead users. This prototype retrieves passages with source and PDF-page provenance, then optionally generates a draft from selected evidence. Citation and support checks can reject a draft or escalate it for review. They do not establish legal correctness or current applicability.
 
-### Corpus, OCR and provenance
+The indexed corpus audit covers **126 source PDFs**, **1,767 PDF pages**, and **9,615 page-contained chunks** in the accepted-OCR 200-token configuration (or 5,605 in the alternative 350-token configuration). Eleven reviewed OCR transcriptions are included with warnings; original scans remain the source of truth. The active document workflow supports English questions and evidence, with script-based filtering limitations.
 
-- Audited **126 original source PDFs** comprising **1,767 PDF pages**. Each page record retains the source PDF ID, title, original page number, URL and extraction information. Source-document, page-document and retrieval-chunk counts are distinct.
-- Identified 25 pages with sparse native text. Eleven user-accepted OCR transcriptions are included in a separate indexed corpus with source warnings; 14 pages remain sparse or low-content, including two that appeared blank. Original PDF pages remain the source of truth.
-- The accepted-OCR corpus contains **9,615 chunks** with the 200-token configuration and **5,605 chunks** with the 350-token configuration. These are two alternative indexes, not additional source documents.
-- Document-status notes for the five sources used in the fresh evaluation are in [`reports/evaluation_document_status_2026-11-20.md`](reports/evaluation_document_status_2026-11-20.md). They do not establish the current status of every provision or document.
+### Workflow
 
-### Search and grounded drafts
+1. The user submits a question through Streamlit; the API applies input checks and routes it.
+2. For document questions, the retrieval workflow searches indexed passages and retains source identity, page number and extraction warnings.
+3. When a chat model is configured, the workflow can produce a cited draft and run citation, support and alignment checks. Uncertain cases escalate; accepted drafts still require human review. Without chat configuration, candidate passages can be shown for review.
+4. Explicit personal leave-balance questions can instead use a locally seeded, fictional Acme employee database. This is a separate demo and does not establish real entitlements.
+5. Request metadata is written to a local JSONL trace and displayed in **Evaluation & Telemetry**, alongside saved evaluation summaries.
 
-- Page-contained chunks support BM25 keyword search, dense search using the hosted BGE embeddings API, hybrid rank fusion and lexical reranking. FAISS is used for vector search; a local SQLite cache stores embeddings.
-- Search results include original PDF/page provenance. The review-only drafting workflow checks quote existence and applies source, subsection and selected wording checks; uncertain results escalate. Model support and alignment checks can still be wrong, so successful drafts remain labelled `review_required`.
-- Dense indexing was built for text heuristically classified as Latin script; multilingual coverage has not been validated. Source dates and legal applicability remain incompletely verified.
+The UI/API does not provide real employee authentication or a real HR integration. The repository contains additional workflow and tool code; the document chat path is not a LangGraph agent. See [product specification](docs/product_spec.md) and [phase reports](reports/phase_3_summary.md) for design goals and historical implementation status.
 
-### Evaluation
+## Evaluation status
 
-- [`evaluation/gold_v1.jsonl`](evaluation/gold_v1.jsonl) contains 80 frozen document-only questions. Three closed-book prompting strategies generated 240 saved baseline responses.
-- The two reviews of those responses ([`baseline_v1_review.csv`](reports/baseline_v1_review.csv), strict; [`baseline_v1_review_team.csv`](reports/baseline_v1_review_team.csv), team) were reconciled under the strict rubric by team decision. The official closed-book baseline is **19/240 (7.9%)** in [`baseline_v1_review_reconciled.csv`](reports/baseline_v1_review_reconciled.csv); the reviews agreed on 226 of 240 marks (94.2%). Both original sheets are kept for traceability.
-- A separate 20-question grounding set was used to develop and test the retrieval checks. The recorded regression runs are **development results**, not independent accuracy estimates. The latest full run preceded two later targeted fixes; see [`reports/grounding_v3_regression.md`](reports/grounding_v3_regression.md).
-- Grounding hold-out: 20 questions (eight from [`grounding_holdout_candidates_v0.1.jsonl`](evaluation/grounding_holdout_candidates_v0.1.jsonl) plus twelve more) were reviewed against the corpus page text and frozen as [`grounding_holdout_v1.jsonl`](evaluation/grounding_holdout_v1.jsonl) on 2026-11-24. It has not been evaluated; it is reserved for one final measurement (see [`docs/holdout_review_guide.md`](docs/holdout_review_guide.md)).
-- The behaviour scenarios were split: an 18-case document-only safety set, reviewed and frozen as [`safety_doc_v1.jsonl`](evaluation/safety_doc_v1.jsonl) on 2026-11-23 (see [`docs/safety_doc_set_guide.md`](docs/safety_doc_set_guide.md)) and the tool/approval cases kept as an agent draft until the agent exists.
+- The frozen [gold set](evaluation/gold_v1.jsonl) contains 80 document-only questions. The reconciled closed-book baseline was 19 correct out of 240 responses (7.9%); see the [baseline report](reports/baseline_v1_report.md).
+- The separate 20-question grounding set was used for development, not an independent accuracy estimate; see [grounding regression results](reports/grounding_v3_regression.md).
+- The [20-question grounding hold-out](evaluation/grounding_holdout_v1.jsonl) is frozen and reserved for one final measurement. The 18-case [document safety set](evaluation/safety_doc_v1.jsonl) is also frozen; see the [evaluation guide](docs/evaluation_runner_guide.md).
 
-### API and interface prototype
+## Responsible AI and model card
 
-The repository includes a FastAPI service (`src/hr_navigator/server.py`), a Streamlit interface (`app.py`), basic input checks, rate limiting and trace logging. The service searches the accepted-OCR statutory corpus and can produce an unverified review draft when a chat model is configured. LangGraph, durable workflow state and real HR integrations are not implemented.
-
-The prototype UI currently displays an employee-ID field and the API logs queries and the supplied ID to `reports/agent_traces.jsonl`. For the agreed document-only scope, use fictional test values and do not enter employee details. Trace files may contain what was entered and should not be shared or committed as project data.
-
-## Repository layout
-
-| Path | Contents |
+| Topic | Project position |
 | --- | --- |
-| `src/hr_navigator/ingestion/` | Corpus audit and page extraction |
-| `src/hr_navigator/retrieval/` | Embeddings, search, citation checks and review-only drafts |
-| `src/hr_navigator/clients/` | Hosted model and embedding API adapters |
-| `src/hr_navigator/server.py`, `app.py` | FastAPI and Streamlit prototypes |
-| `scripts/` | Corpus, indexing, search and evaluation commands |
-| `evaluation/` | Frozen questions, draft candidates and review worksheets |
-| `reports/` | Corpus audit, evaluation results and review notes |
-| `docs/` | Product specification and review guides |
-| `data/synthetic/` | Fictional handbook data |
+| Intended use | Help a human locate evidence and review draft responses against the supplied documents; demonstrate synthetic leave-balance lookup. |
+| Out of scope | Autonomous legal advice, verified current-law determinations, real HR decisions or processing real employee information. |
+| Model and data | Hosted model and embedding endpoints are configured separately. The source corpus comprises supplied labour-document PDFs and accepted OCR; the leave demo uses fictional fixtures. No model training is claimed. |
+| Adversarial tests | Offline red-team tests cover prompt attacks, evidence injection and API checks. [Findings and limitations](reports/redteam_v1_report.md); re-test the current system before making safety claims. |
+| Human oversight | Check the original source and page, applicable dates and jurisdiction, and the full context before relying on a draft. |
+| Privacy | Local traces can contain queries and identifiers. Pattern-based masking is incomplete; use fictional data and do not publish trace files containing sensitive information. |
 
-## Setup and tests
+## Run locally
 
-Python 3.11 or newer is required. From the repository root:
+### Prerequisites
+
+- Python 3.11 or newer and the source corpus ZIP, which is excluded from Git and must be obtained separately.
+- Optional hosted chat and embedding services for generated drafts and dense/hybrid retrieval. Keep credentials and certificates local.
+- The Streamlit interface, Uvicorn, pandas and requests are installed separately from the package metadata.
+
+From the repository root:
 
 ```bash
-python -m venv .venv
+python3 -m venv .venv
 source .venv/bin/activate
 pip install -e '.[dev]'
-make test
-make lint
+pip install uvicorn streamlit pandas requests
 ```
 
-For OCR tooling, install `pip install -e '.[ocr]'`. The current package metadata does not include the UI/API packages; to run that prototype, separately install `fastapi`, `uvicorn`, `streamlit`, `pandas` and `requests` in the environment.
+For OCR tooling, install `pip install -e '.[ocr]'`. The supplied Docker Compose configuration runs a corpus-audit task; it is not an application deployment.
 
-At the last recorded merge check, **58 tests passed and one was skipped** because the scenario set was not frozen. The current local test result may differ as the project changes.
+### Prepare the document corpus
 
-## Build the corpus and search
-
-The input corpus ZIP, raw PDFs, credentials, certificates, generated pages and embedding caches are local files excluded from version control. Obtain the supplied files separately, place the corpus ZIP in `inputs/`, then run:
+Place the authorized corpus ZIP in `inputs/` and replace the placeholder below with its actual filename:
 
 ```bash
 python scripts/audit_corpus.py 'inputs/<corpus-archive>.zip'
 python scripts/build_pages.py
 ```
 
-Replace the placeholder with the real ZIP filename. The audit stores PDFs by SHA256 and records source metadata; inspect extraction and manifest errors before use. Generated files are written under `data/processed/`.
-
-To search the original extracted corpus locally with BM25:
-
-```bash
-python scripts/search_corpus.py \
-  'Does State include a Union territory?' \
-  --mode bm25 --code 'Code on Wages' \
-  --data-dir data/processed
-```
-
-Search defaults to the separately built accepted-OCR corpus at `data/processed/accepted_ocr/`. To build its embedding cache and index, use the course-provided key and CA files and set the authorized endpoint locally:
+For the accepted-OCR corpus and embedding index, configure the authorized embedding endpoint and use your own local key and CA certificate paths:
 
 ```bash
 export EMBEDDING_BASE_URL='<authorized-embedding-base-url>'
@@ -104,29 +83,24 @@ python scripts/embed_ocr_candidate.py \
 python scripts/build_accepted_ocr_index.py
 ```
 
-Run `python scripts/search_corpus.py --help` for dense and hybrid options. Those modes require the embedding API configuration; BM25 does not. Run `python scripts/ask_documents.py --help` for the experimental question workflow. Its `--draft-for-review` option needs both hosted APIs and returns a draft or escalation, not a verified final answer. `scripts/review_evidence.py` can display source excerpts for review.
-
-Keep API keys and certificates local, use the appropriate credentials for each service and retain TLS verification. `.env.example` documents configuration names; the application does not automatically load `.env`.
-
-## Run the UI/API prototype
-
-Build the accepted-OCR corpus as described above, then install the UI/API packages into the same environment used by the project:
+Inspect audit and extraction errors. Generated pages, indexes, caches, keys and certificates are local and excluded from Git. See `python scripts/search_corpus.py --help` for search modes and configuration. Local BM25 can search the original extracted corpus without a hosted API:
 
 ```bash
-.venv/bin/python -m pip install fastapi uvicorn streamlit pandas requests
+python scripts/search_corpus.py 'Does State include a Union territory?' \
+  --mode bm25 --code 'Code on Wages' --data-dir data/processed
 ```
 
-For generated answers, copy the tracked [chat configuration example](configs/chat.example.json) to your local configuration:
+### Configure and launch
+
+For generated answers, copy the configuration template and fill in the assigned endpoint, key path and CA certificate path:
 
 ```bash
 cp -n configs/chat.example.json configs/chat.local.json
 ```
 
-Edit `configs/chat.local.json` with the endpoint and CA certificate assigned to your group and the path to your key file. Git ignores the local configuration, key, and certificate.
+Alternatively set the four `CHAT_*` variables documented in [.env.example](.env.example) in the API process. They take precedence over the local JSON file; `.env` is not loaded automatically. Keep TLS verification enabled.
 
-Paths are relative to the repository root. Alternatively, all four `CHAT_*` environment variables in `.env.example` can be set in the API process; they take precedence over the local file. The application does not load `.env` automatically.
-
-Start the API, then start the UI in a second terminal from the repository root:
+Start the API and UI in separate terminals, from the repository root:
 
 ```bash
 PYTHONPATH=src .venv/bin/python -m uvicorn hr_navigator.server:app --reload --host 127.0.0.1 --port 8000
@@ -136,19 +110,28 @@ PYTHONPATH=src .venv/bin/python -m uvicorn hr_navigator.server:app --reload --ho
 .venv/bin/python -m streamlit run app.py
 ```
 
-Without chat settings, the UI displays candidate passages for review. With them, the chat model selects passages by ID and the server attaches the registered source text. The UI shows a draft only when support and question alignment checks pass. If a draft cannot be verified, the app can still show candidate passages for manual review. The corpus covers statutory documents. It does not have personal leave records or an employer handbook. Use fictional queries. The API masks common identifiers before sending a question to the configured hosted model and before recording it in local traces.
+Open the local URL printed by Streamlit. Select a fictional employee and ask “What is my leave balance?” for the synthetic demo, or ask an English document question after preparing the corpus. The **Evaluation & Telemetry** tab shows saved benchmarks and local request traces; the tab is not itself a publicly accessible dashboard.
 
-Name the Code in your question or select a **Document collection** to narrow the search. Plain keyword search can miss paraphrases or relevant text outside the indexed corpus.
+### Optional Langfuse trace dashboard
 
-**Trace dashboard:** set `LANGFUSE_PUBLIC_KEY` and `LANGFUSE_SECRET_KEY` to also send each chat trace to Langfuse, then run `python scripts/trace_dashboard.py --send-test` to get the dashboard link. See [`docs/trace_dashboard.md`](docs/trace_dashboard.md).
+Set `LANGFUSE_PUBLIC_KEY` and `LANGFUSE_SECRET_KEY` in the API terminal to send traces to Langfuse. Run `.venv/bin/python scripts/trace_dashboard.py --send-test` to check the connection and print the dashboard link. The app does not load `.env` automatically. To avoid sending question text, set `LANGFUSE_SEND_QUERY_TEXT=false`. See the [trace dashboard guide](docs/trace_dashboard.md).
 
-## Remaining work
+### Tests
 
-- The safety set and the grounding hold-out are frozen. Run the safety set against RAG and the chat API, and run the hold-out once, after the pipeline is fixed.
-- Improve and evaluate retrieval, source matching and grounded answers on questions not used to tune the workflow. Keep generated answers review-only until the evaluation supports a change.
-- Continue source-date, version, legal-status, sparse-page and redistribution checks. The user reported faculty acceptance of page counting; written confirmation and its scope are not attached.
-- Align the API/UI with the document-only scope, address trace handling and connect the retrieval workflow. Implement LangGraph and document-focused task completion in a later phase.
+```bash
+make test
+make lint
+```
 
-### Current language scope
+Some tests or full evaluation workflows need optional dependencies, corpus files or hosted services. See the test output and the [evaluation runner guide](docs/evaluation_runner_guide.md) for the scope and configuration of individual runs.
 
-The active document workflow supports English questions and English evidence. Passage filtering excludes Devanagari-containing and sparse chunks; it preserves eligible English chunks even on bilingual PDFs. This is a script heuristic, not a language guarantee: mixed-script English can be missed, and Romanized Hindi, other Latin-script languages and legacy-font text can pass. The document CLIs ask for English when input contains Devanagari. Historical sources and frozen evaluations are preserved. The offline `scripts/evaluate_relevance_english.py` reports the English-labeled subset of the assistant-reviewed pilot.
+## Repository guide
+
+| Path | Contents |
+| --- | --- |
+| `app.py`, `src/hr_navigator/server.py` | Streamlit interface and FastAPI endpoints |
+| `src/hr_navigator/ingestion/`, `src/hr_navigator/retrieval/` | PDF processing, search and review-draft workflow |
+| `src/hr_navigator/tools/`, `data/synthetic/` | Synthetic HR tools and fictional fixtures |
+| `src/hr_navigator/security/`, `src/hr_navigator/observability/` | Input checks and local tracing |
+| `evaluation/`, `reports/` | Evaluation sets, metrics, source audit and findings |
+| `scripts/`, `tests/`, `docs/` | Reproduction commands, tests and project documentation |
