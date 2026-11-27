@@ -1,5 +1,10 @@
 # Red-team report v1 — existing defences, before the agent
 
+> **Superseded on 26 November 2026 by [`redteam_v2_report.md`](redteam_v2_report.md).** The defences were
+> hardened and re-measured, including on a fresh held-out attack set: guardrail attacks blocked 6/24 → 23/24
+> (held-out 19/20), source filter 3/8 → 7/8 (held-out 6/6), API checks 1/9 → 8/9. This report is kept as the
+> record of the first run.
+
 Date: 21 November 2026. Owner: Member 4 (evaluation). Tested against `main` as of 21 November 2026.
 
 **Summary:** the current defences stop only a small share of deliberate attacks and also block some

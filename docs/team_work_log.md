@@ -477,3 +477,4 @@ Copy this heading and fill it in for each session:
 - Files / evidence: `src/hr_navigator/observability/langfuse_export.py`, `tests/test_langfuse_export.py`, `docs/trace_dashboard.md`.
 - Validation and results: payload checked against the official OpenTelemetry schema; `trace_dashboard.py --send-test` and chat requests through the API checked against a local stand-in server (old code reproduces the HTTP 410; new code is accepted). Live check with the project keys pending (evaluation).
 - Blockers / next action / owner: run `python scripts/trace_dashboard.py --send-test` with the project keys and record the dashboard link (evaluation).
+

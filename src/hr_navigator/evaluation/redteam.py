@@ -135,12 +135,14 @@ def server_checks() -> list[dict]:
             'SRV-03', 'Rate limit stops a burst from one session', 'medium', statuses[-1] == 429,
             f'Request 31 in 60 s from one session returned HTTP {statuses[-1]}.'))
 
-        _, client = fresh()
+        module, client = fresh()
+        address_limit = getattr(getattr(module, 'address_limiter', None), 'max_requests', 30)
+        attempts = address_limit + 10          # more than any per-address limit allows in a minute
         rotating = [client.post('/chat', json={'session_id': f'new-{n}', 'query': 'Holiday list?'}).status_code
-                    for n in range(40)]
+                    for n in range(attempts)]
         findings.append(_finding(
             'SRV-04', 'Rate limit cannot be bypassed by changing session_id', 'medium', 429 in rotating,
-            f'40 requests with a new client-chosen session_id each: {rotating.count(200)} accepted, '
+            f'{attempts} requests with a new client-chosen session_id each: {rotating.count(200)} accepted, '
             f'{rotating.count(429)} limited.'))
 
         Path('configs').mkdir(exist_ok=True)
@@ -150,12 +152,12 @@ def server_checks() -> list[dict]:
         findings.append(_finding(
             'SRV-05', 'Tracer cost uses the project price file', 'medium', priced > 0,
             f"With prices set in configs/pricing.json (project format), estimate_cost returned {priced} "
-            "for 100k+100k tokens (expected 3.0). It only reads a 'default.input_per_1k' layout."))
+            "for 100k+100k tokens (expected 3.0)."))
         Path('configs/pricing.json').unlink()
         unknown = tracer.estimate_cost('default', 100_000, 100_000, Path('configs/pricing.json'))
         findings.append(_finding(
             'SRV-06', 'Missing price is reported as unknown, not zero', 'low', unknown is None,
-            f'With no price file, estimate_cost returned {unknown!r} and traces log estimated_cost_usd=0.0.'))
+            f'With no price file, estimate_cost returned {unknown!r} (expected None, meaning unknown).'))
 
         module, client = fresh()
 
@@ -175,15 +177,14 @@ def server_checks() -> list[dict]:
         long_status = client.post('/chat', json={'session_id': 's4', 'query': 'leave ' * 20_000}).status_code
         findings.append(_finding(
             'SRV-08', 'Very long input is rejected before reaching the model', 'low', long_status != 200,
-            f'A 120,000-character question returned HTTP {long_status}; no length limit.'))
+            f'A 120,000-character question returned HTTP {long_status}.'))
 
         _, client = fresh()
         fields = set(client.post('/chat', json={'session_id': 's5', 'query': 'Holiday list?'}).json())
         missing = sorted({'decision', 'tool_actions', 'approval_required', 'sources'} - fields)
         findings.append(_finding(
             'SRV-09', 'API response carries the product_spec fields needed to verify behaviour', 'medium',
-            not missing, f'/chat returns {sorted(fields)}; missing {missing}, so refusals, tool use '
-            'and approvals cannot be checked through the API.'))
+            not missing, f'/chat returns {sorted(fields)}; missing {missing or "none"}.'))
     importlib.reload(server_module)
     return findings
 

@@ -8,7 +8,7 @@ from functools import lru_cache
 from pathlib import Path
 from threading import Event
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
@@ -32,6 +32,10 @@ from hr_navigator.demo import answer_leave_balance_question, is_leave_balance_qu
 ROOT = Path(__file__).resolve().parents[2]
 app = FastAPI(title="HR Policy Navigator API", version="0.2.0")
 rate_limiter = RateLimiter(max_requests=30, window_seconds=60)
+# A second limit per client address, so a new session_id per request cannot bypass the limit.
+address_limiter = RateLimiter(max_requests=int(os.environ.get('HR_RATE_LIMIT_PER_ADDRESS', '120')),
+                              window_seconds=60)
+MAX_QUERY_CHARS = 2_000
 _MINIMUM_WAGE = re.compile(r'\bminimum wages?\b', re.I)
 _PERSONAL_RATE = re.compile(
     r'\b(?:exact|applicable)\s+minimum wages?\b'
@@ -69,6 +73,23 @@ class ChatResponse(BaseModel):
     latency_ms: float
     simulated: bool = False
     status: str = "ok"
+    # Product-spec fields, so refusals, tool use and approvals can be checked through the API.
+    decision: str = "answer"
+    tool_actions: list[dict] = Field(default_factory=list)
+    approval_required: bool = False
+
+
+_DECISIONS = {'refused': 'refuse', 'clarification_required': 'clarify', 'escalate': 'escalate'}
+_ROUTE_TOOLS = {'document_review': [{'tool': 'search_policy', 'args': {'source_scope': 'statutory'}}],
+                'leave_balance_tool': [{'tool': 'get_leave_balance', 'args': {}}]}
+
+
+def with_contract(response: ChatResponse) -> ChatResponse:
+    """Fill decision, tool_actions and approval_required from the route and status."""
+    response.decision = _DECISIONS.get(response.status, 'answer')
+    response.tool_actions = [dict(action) for action in _ROUTE_TOOLS.get(response.route_taken, [])]
+    response.approval_required = False   # no consequential action is taken through /chat yet
+    return response
 
 
 @lru_cache(maxsize=1)
@@ -142,9 +163,9 @@ def health() -> dict[str, str]:
 
 
 @app.post('/chat', response_model=ChatResponse)
-def chat(payload: ChatRequest) -> ChatResponse:
+def chat(payload: ChatRequest, request: Request) -> ChatResponse:
     try:
-        return answer_chat(payload)
+        return answer_chat(payload, client_address=request.client.host if request.client else None)
     except HTTPException:
         raise                                   # already traced where it was raised
     except Exception:
@@ -156,10 +177,20 @@ def asks_for_personal_minimum_wage(question: str) -> bool:
     return bool(_MINIMUM_WAGE.search(question) and _PERSONAL_RATE.search(question))
 
 
-def answer_chat(payload: ChatRequest, progress=None) -> ChatResponse:
-    if not rate_limiter.is_allowed(payload.session_id):
+def answer_chat(payload: ChatRequest, progress=None, client_address: str | None = None) -> ChatResponse:
+    # Address first: once an address is over its limit, new session IDs from it are not recorded at all.
+    if (client_address and not address_limiter.is_allowed(f'address:{client_address}')) \
+            or not rate_limiter.is_allowed(payload.session_id):
         trace_outcome(payload, 'rate_limited', 'rate_limited')
         raise HTTPException(status_code=429, detail='Rate limit exceeded. Try again shortly.')
+    if len(payload.query) > MAX_QUERY_CHARS or len(payload.follow_up_to or '') > MAX_QUERY_CHARS:
+        trace_outcome(payload, 'input_too_long', 'refused')
+        raise HTTPException(status_code=413,
+                            detail=f'Question is too long; please keep it under {MAX_QUERY_CHARS:,} characters.')
+    return with_contract(_answer_chat(payload, progress))
+
+
+def _answer_chat(payload: ChatRequest, progress=None) -> ChatResponse:
     guard = validate_user_input(payload.query)
     trace_session_id = redact_personal_identifiers(payload.session_id)
     is_follow_up = bool(payload.follow_up_to and asks_for_personal_minimum_wage(payload.follow_up_to))
@@ -262,7 +293,9 @@ def answer_chat(payload: ChatRequest, progress=None) -> ChatResponse:
 
 
 @app.post('/chat/stream')
-async def chat_stream(payload: ChatRequest) -> StreamingResponse:
+async def chat_stream(payload: ChatRequest, request: Request) -> StreamingResponse:
+    client_address = request.client.host if request.client else None
+
     async def events():
         loop = asyncio.get_running_loop()
         queue = asyncio.Queue()
@@ -277,7 +310,7 @@ async def chat_stream(payload: ChatRequest) -> StreamingResponse:
 
         def run():
             try:
-                result = answer_chat(payload, progress)
+                result = answer_chat(payload, progress, client_address=client_address)
                 publish({'type': 'result', 'response': result.model_dump()})
             except HTTPException as exc:
                 publish({'type': 'error', 'message': exc.detail})
