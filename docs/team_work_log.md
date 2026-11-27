@@ -469,3 +469,12 @@ Copy this heading and fill it in for each session:
 - Files / evidence: [red-team report v2](../reports/redteam_v2_report.md), `security/guardrails.py`, `retrieval/draft_review.py`, `server.py`, `observability/tracer.py`, `evaluation/redteam.py`, `reports/redteam/2026-11-26*/`, `tests/test_security_hardening.py`.
 - Validation and results: held-out set, before → after: attacks blocked 1/20 → 19/20, normal questions wrongly blocked 0/10 → 0/10, planted passages caught 0/6 → 6/6, genuine passages flagged 0/6 → 0/6; real corpus pages flagged 0/1,766; API checks 8/9. All 120 genuine project questions pass the guardrail.
 - Blockers / next action / owner: the API still takes the employee ID from the request (SRV-01, high); fixing it changes demo employee selection, so it needs a team decision (Member 5 with the team). One held-out miss ("ru1es") is left unfixed so the held-out score stays honest.
+
+### 2026-11-26 — Evaluation: Langfuse export moved to OpenTelemetry
+
+- Owner: evaluation (prompting, baselines and safety testing), with an AI agent.
+- Work and decisions: the first live setup check failed with HTTP 410 because Langfuse Cloud removed its legacy ingestion API on 16 November 2026. The exporter now sends each trace as OpenTelemetry spans (OTLP HTTP/JSON) to `/api/public/otel/v1/traces` with `x-langfuse-ingestion-version: 4`. Same content as before: a `chat` trace, a span per route, a `chat-model` generation with token usage (cost only when the price is known); errors marked ERROR, rate limits WARNING; masking unchanged.
+- Files / evidence: `src/hr_navigator/observability/langfuse_export.py`, `tests/test_langfuse_export.py`, `docs/trace_dashboard.md`.
+- Validation and results: payload checked against the official OpenTelemetry schema; `trace_dashboard.py --send-test` and chat requests through the API checked against a local stand-in server (old code reproduces the HTTP 410; new code is accepted). Live check with the project keys pending (evaluation).
+- Blockers / next action / owner: run `python scripts/trace_dashboard.py --send-test` with the project keys and record the dashboard link (evaluation).
+
