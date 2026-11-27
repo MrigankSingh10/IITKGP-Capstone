@@ -46,7 +46,7 @@ The UI/API does not provide real employee authentication or a real HR integratio
 - Optional hosted chat and embedding services for generated drafts and dense/hybrid retrieval. Keep credentials and certificates local.
 - The Streamlit interface, Uvicorn, pandas and requests are installed separately from the package metadata.
 
-From the repository root:
+From the repository root, on macOS or Linux:
 
 ```bash
 python3 -m venv .venv
@@ -55,7 +55,20 @@ pip install -e '.[dev]'
 pip install uvicorn streamlit pandas requests
 ```
 
-For OCR tooling, install `pip install -e '.[ocr]'`. The supplied Docker Compose configuration runs a corpus-audit task; it is not an application deployment.
+On Windows, open PowerShell in the repository root and run:
+
+```powershell
+py -3.11 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -e '.[dev]'
+python -m pip install uvicorn streamlit pandas requests
+```
+
+If PowerShell blocks activation, run `Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned`
+in that terminal, then retry activation. Activate the environment in each new terminal. If Python is
+installed under another supported version, replace `py -3.11` with the appropriate launcher version.
+
+For OCR tooling, install `python -m pip install -e '.[ocr]'` in the activated environment. The supplied Docker Compose configuration runs a corpus-audit task; it is not an application deployment.
 
 ### Prepare the document corpus
 
@@ -65,6 +78,8 @@ Place the authorized corpus ZIP in `inputs/` and replace the placeholder below w
 python scripts/audit_corpus.py 'inputs/<corpus-archive>.zip'
 python scripts/build_pages.py
 ```
+
+The commands above also work in PowerShell after activating the environment.
 
 For the accepted-OCR corpus and embedding index, configure the authorized embedding endpoint and use your own local key and CA certificate paths:
 
@@ -83,11 +98,28 @@ python scripts/embed_ocr_candidate.py \
 python scripts/build_accepted_ocr_index.py
 ```
 
+On Windows PowerShell, use the same local key and certificate paths with PowerShell environment syntax:
+
+```powershell
+$env:EMBEDDING_BASE_URL = '<authorized-embedding-base-url>'
+python scripts/build_embeddings.py --key-file VM02_Embeddings_Access/shared-embedding-key.txt --ca-file VM02_Embeddings_Access/vm02-ca.crt --base-url $env:EMBEDDING_BASE_URL --model bge-small-en-v1.5
+python scripts/apply_reviewed_ocr.py
+python scripts/build_ocr_candidate.py
+python scripts/embed_ocr_candidate.py --key-file VM02_Embeddings_Access/shared-embedding-key.txt --ca-file VM02_Embeddings_Access/vm02-ca.crt --base-url $env:EMBEDDING_BASE_URL --model bge-small-en-v1.5
+python scripts/build_accepted_ocr_index.py
+```
+
 Inspect audit and extraction errors. Generated pages, indexes, caches, keys and certificates are local and excluded from Git. See `python scripts/search_corpus.py --help` for search modes and configuration. Local BM25 can search the original extracted corpus without a hosted API:
 
 ```bash
 python scripts/search_corpus.py 'Does State include a Union territory?' \
   --mode bm25 --code 'Code on Wages' --data-dir data/processed
+```
+
+The equivalent search in PowerShell is:
+
+```powershell
+python scripts/search_corpus.py 'Does State include a Union territory?' --mode bm25 --code 'Code on Wages' --data-dir data/processed
 ```
 
 ### Configure and launch
@@ -96,6 +128,12 @@ For generated answers, copy the configuration template and fill in the assigned 
 
 ```bash
 cp -n configs/chat.example.json configs/chat.local.json
+```
+
+On Windows PowerShell, create the local configuration only if it does not already exist:
+
+```powershell
+if (-not (Test-Path configs/chat.local.json)) { Copy-Item configs/chat.example.json configs/chat.local.json }
 ```
 
 Alternatively set the four `CHAT_*` variables documented in [.env.example](.env.example) in the API process. They take precedence over the local JSON file; `.env` is not loaded automatically. Keep TLS verification enabled.
@@ -110,17 +148,42 @@ PYTHONPATH=src .venv/bin/python -m uvicorn hr_navigator.server:app --reload --ho
 .venv/bin/python -m streamlit run app.py
 ```
 
+On Windows, activate the virtual environment in each of two PowerShell terminals. Start the API in
+the first and the UI in the second:
+
+```powershell
+$env:PYTHONPATH = 'src'
+python -m uvicorn hr_navigator.server:app --reload --host 127.0.0.1 --port 8000
+```
+
+```powershell
+python -m streamlit run app.py
+```
+
+Set environment variables in PowerShell with `$env:VARIABLE_NAME = 'value'`; they apply to that
+terminal and its child processes.
+
 Open the local URL printed by Streamlit. Select a fictional employee and ask “What is my leave balance?” for the synthetic demo, or ask an English document question after preparing the corpus. The **Evaluation & Telemetry** tab shows saved benchmarks and local request traces; the tab is not itself a publicly accessible dashboard.
 
 ### Optional Langfuse trace dashboard
 
-Set `LANGFUSE_PUBLIC_KEY` and `LANGFUSE_SECRET_KEY` in the API terminal to send traces to Langfuse. Run `.venv/bin/python scripts/trace_dashboard.py --send-test` to check the connection and print the dashboard link. The app does not load `.env` automatically. To avoid sending question text, set `LANGFUSE_SEND_QUERY_TEXT=false`. See the [trace dashboard guide](docs/trace_dashboard.md).
+Set `LANGFUSE_PUBLIC_KEY` and `LANGFUSE_SECRET_KEY` in the API terminal to send traces to Langfuse. Run `.venv/bin/python scripts/trace_dashboard.py --send-test` to check the connection and print the dashboard link. Windows PowerShell users can set the keys using `$env:LANGFUSE_PUBLIC_KEY = '...'` and
+`$env:LANGFUSE_SECRET_KEY = '...'`, then run `python scripts/trace_dashboard.py --send-test` in the
+activated environment. The app also reads the ignored `.env.langfuse` file described in the guide;
+it does not load `.env` automatically. To avoid sending question text, set `LANGFUSE_SEND_QUERY_TEXT=false`. See the [trace dashboard guide](docs/trace_dashboard.md).
 
 ### Tests
 
 ```bash
 make test
 make lint
+```
+
+On Windows PowerShell, without `make`, use:
+
+```powershell
+python -m pytest
+python -m ruff check .
 ```
 
 Some tests or full evaluation workflows need optional dependencies, corpus files or hosted services. See the test output and the [evaluation runner guide](docs/evaluation_runner_guide.md) for the scope and configuration of individual runs.
