@@ -56,6 +56,24 @@ def test_disabled_without_keys():
     assert lf.export_trace(event(), env={}) is False
 
 
+def test_local_settings_and_environment_precedence(tmp_path, monkeypatch):
+    path = tmp_path / '.env.langfuse'
+    path.write_text("export LANGFUSE_PUBLIC_KEY='local-public'\n"
+                    "export LANGFUSE_SECRET_KEY='local-secret'\n"
+                    'export LANGFUSE_SEND_QUERY_TEXT=false\n'
+                    'OTHER_SETTING=ignored\n')
+    values = lf.local_settings(path)
+    assert values['LANGFUSE_SECRET_KEY'] == 'local-secret'
+    assert 'OTHER_SETTING' not in values
+    monkeypatch.setattr(lf, 'local_settings', lambda: values)
+    monkeypatch.setenv('LANGFUSE_PUBLIC_KEY', 'environment-public')
+    monkeypatch.delenv('LANGFUSE_SECRET_KEY', raising=False)
+    config = lf.LangfuseConfig.from_env()
+    assert config.public_key == 'environment-public' and config.secret_key == 'local-secret'
+    assert config.send_query_text is False
+    assert lf.LangfuseConfig.from_env({}) is None
+
+
 def test_host_must_be_https_except_localhost():
     assert lf.LangfuseConfig.from_env(ENV).host == 'https://cloud.langfuse.com'
     assert lf.LangfuseConfig.from_env({**ENV, 'LANGFUSE_HOST': 'http://localhost:3000/'}).host == 'http://localhost:3000'
@@ -133,6 +151,7 @@ def test_send_uses_the_opentelemetry_endpoint_and_reports_failures_without_raisi
 
 def test_log_trace_still_writes_locally_and_exports_only_when_configured(tmp_path, monkeypatch):
     sent = []
+    monkeypatch.setattr(lf, 'local_settings', lambda: {})
     monkeypatch.setattr(lf, 'send', lambda ev, config, client=None: sent.append((ev, config)) or True)
     monkeypatch.delenv('LANGFUSE_PUBLIC_KEY', raising=False)
     monkeypatch.delenv('LANGFUSE_SECRET_KEY', raising=False)

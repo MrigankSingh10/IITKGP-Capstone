@@ -23,8 +23,10 @@ import logging
 import os
 import queue
 import re
+import shlex
 import threading
 import time
+from pathlib import Path
 from urllib.parse import urlparse
 import uuid
 
@@ -34,6 +36,9 @@ from hr_navigator.security.guardrails import redact_personal_identifiers
 
 log = logging.getLogger(__name__)
 DEFAULT_HOST = 'https://cloud.langfuse.com'
+LOCAL_CONFIG = Path(__file__).resolve().parents[3] / '.env.langfuse'
+LOCAL_KEYS = frozenset({'LANGFUSE_PUBLIC_KEY', 'LANGFUSE_SECRET_KEY', 'LANGFUSE_HOST',
+                        'LANGFUSE_SEND_QUERY_TEXT', 'LANGFUSE_ENVIRONMENT'})
 TIMEOUT_SECONDS = 5.0
 FLUSH_SECONDS = 10.0
 _VALID_ENVIRONMENT = re.compile(r'^(?!langfuse)[a-z0-9_-]{1,40}$')
@@ -43,6 +48,35 @@ _queue: 'queue.Queue[tuple]' = queue.Queue(maxsize=QUEUE_SIZE)
 _workers: list[threading.Thread] = []
 _workers_lock = threading.Lock()
 _dropped = 0
+
+
+def local_settings(path: Path = LOCAL_CONFIG) -> dict[str, str]:
+    """Read literal Langfuse assignments without executing shell code."""
+    try:
+        lines = path.read_text(encoding='utf-8').splitlines()
+    except FileNotFoundError:
+        return {}
+    except OSError:
+        log.warning('Could not read local Langfuse configuration')
+        return {}
+    settings = {}
+    for line in lines:
+        line = line.strip()
+        if not line or line.startswith('#'):
+            continue
+        if line.startswith('export '):
+            line = line[7:].lstrip()
+        key, separator, raw = line.partition('=')
+        if not separator or key not in LOCAL_KEYS:
+            continue
+        try:
+            parts = shlex.split(raw, comments=True)
+        except ValueError:
+            log.warning('Ignoring invalid local Langfuse configuration line')
+            continue
+        if len(parts) <= 1:
+            settings[key] = parts[0] if parts else ''
+    return settings
 
 
 def environment_name(value: str | None) -> str:
@@ -66,7 +100,8 @@ class LangfuseConfig:
     @classmethod
     def from_env(cls, env=None) -> 'LangfuseConfig | None':
         """Return a config when both keys are set, otherwise None (export disabled)."""
-        env = os.environ if env is None else env
+        if env is None:
+            env = {**local_settings(), **os.environ}
         public, secret = env.get('LANGFUSE_PUBLIC_KEY', '').strip(), env.get('LANGFUSE_SECRET_KEY', '').strip()
         if not public or not secret:
             return None

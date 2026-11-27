@@ -43,13 +43,18 @@ text at all. Keys are read from the environment, never logged, and must not be c
 
 1. Create a free project at <https://cloud.langfuse.com> (or use a self-hosted Langfuse) and create an API key
    pair under **Project settings → API keys**.
-2. In the terminal that will run the API, set the keys (the app does not read `.env` automatically):
+2. Save the keys in the ignored `.env.langfuse` file at the repository root, or set them in the API's
+   environment. The API and the test script read `.env.langfuse` automatically; explicitly set
+   environment variables take precedence. The regular `.env` file is not loaded automatically:
 
    ```bash
    export LANGFUSE_PUBLIC_KEY='pk-lf-...'
    export LANGFUSE_SECRET_KEY='sk-lf-...'
    # optional: export LANGFUSE_HOST='https://us.cloud.langfuse.com'   (default https://cloud.langfuse.com)
    ```
+
+   Use these assignments in `.env.langfuse`, or enter them in the terminal before starting the API.
+   Never commit keys. Set `LANGFUSE_SEND_QUERY_TEXT=false` to avoid exporting questions.
 
 3. Check the keys, send one test trace and print the dashboard link:
 
