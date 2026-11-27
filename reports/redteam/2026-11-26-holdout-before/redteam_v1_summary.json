@@ -1,0 +1,63 @@
+{
+  "guardrail_attacks_blocked": {
+    "pass": 1,
+    "fail": 19,
+    "total": 20
+  },
+  "guardrail_false_positives": {
+    "blocked": 0,
+    "total": 10
+  },
+  "source_injections_flagged": {
+    "pass": 0,
+    "fail": 6,
+    "total": 6
+  },
+  "source_false_positives": {
+    "flagged": 0,
+    "total": 6
+  },
+  "attacks_by_category": {
+    "jailbreak": {
+      "pass": 0,
+      "fail": 4,
+      "total": 4
+    },
+    "obfuscated_injection": {
+      "pass": 1,
+      "fail": 3,
+      "total": 4
+    },
+    "out_of_scope": {
+      "pass": 0,
+      "fail": 3,
+      "total": 3
+    },
+    "paraphrased_injection": {
+      "pass": 0,
+      "fail": 5,
+      "total": 5
+    },
+    "prompt_extraction": {
+      "pass": 0,
+      "fail": 4,
+      "total": 4
+    },
+    "source_injection": {
+      "pass": 0,
+      "fail": 6,
+      "total": 6
+    }
+  },
+  "agent_attacks": {
+    "deferred": 0,
+    "pass": 0,
+    "fail": 0,
+    "total": 0
+  },
+  "server_checks": {
+    "pass": 0,
+    "fail": 0,
+    "not_run": 0
+  }
+}

@@ -1,4 +1,5 @@
 import json
+import math
 import uuid
 from pathlib import Path
 from typing import Any
@@ -114,6 +115,33 @@ def load_traces(path: Path) -> pd.DataFrame:
             except json.JSONDecodeError:
                 continue
     return pd.DataFrame(rows) if rows else pd.DataFrame()
+
+
+def cost_metric(rows: list[dict[str, Any]]) -> tuple[str, str]:
+    """Cost for the dashboard, never showing an unknown price as $0.
+
+    Only requests that called the model (tokens > 0) can have a cost. A missing, null or zero cost on
+    such a request means no price was configured (older traces stored 0.0 for that).
+    """
+    def number(value: Any) -> float:
+        try:
+            result = float(value)
+        except (TypeError, ValueError):
+            return 0.0
+        return 0.0 if math.isnan(result) else result     # NaN from pandas means missing
+
+    model_rows = [r for r in rows if number(r.get("prompt_tokens")) + number(r.get("completion_tokens")) > 0]
+    priced = [number(r.get("estimated_cost_usd")) for r in model_rows if number(r.get("estimated_cost_usd")) > 0]
+    if not model_rows:
+        return "$0", "No requests called the chat model yet."
+    if not priced:
+        return "Unavailable", ("No price is configured (configs/pricing.json), so the cost of "
+                               f"{len(model_rows)} model request(s) is unknown.")
+    total = f"${round(sum(priced), 5)}"
+    if len(priced) < len(model_rows):
+        return f"{total} (incomplete)", (f"Only {len(priced)} of {len(model_rows)} model requests have a price; "
+                                         "the total leaves out the rest.")
+    return total, f"All {len(model_rows)} model requests priced."
 
 
 def format_citation_label(item: Any) -> str:
@@ -375,8 +403,8 @@ with tab_eval:
         m2.metric("Avg Latency", f"{avg_lat} ms")
         refusals = int((df["status"] == "refused").sum()) if "status" in df.columns else 0
         m3.metric("Guardrail Refusals", refusals)
-        total_cost = round(float(df["estimated_cost_usd"].sum()), 5) if "estimated_cost_usd" in df.columns else 0.0
-        m4.metric("Est. Session Cost", f"${total_cost}")
+        cost_label, cost_help = cost_metric(df.to_dict("records"))
+        m4.metric("Est. Session Cost", cost_label, help=cost_help)
 
         if "route_taken" in df.columns:
             route_summary = (

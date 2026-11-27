@@ -1,0 +1,65 @@
+[
+  {
+    "id": "SRV-01",
+    "check": "Identity comes from the signed-in session, not the request body",
+    "severity": "high",
+    "status": "fail",
+    "evidence": "One session sent employee_id demo-001 then demo-003; both accepted (HTTP [200, 200]). The client chooses its own identity; there is no authentication."
+  },
+  {
+    "id": "SRV-02",
+    "check": "Traces mask personal data (PAN, phone, employee ID)",
+    "severity": "high",
+    "status": "pass",
+    "evidence": "No personal values found in the trace."
+  },
+  {
+    "id": "SRV-03",
+    "check": "Rate limit stops a burst from one session",
+    "severity": "medium",
+    "status": "pass",
+    "evidence": "Request 31 in 60 s from one session returned HTTP 429."
+  },
+  {
+    "id": "SRV-04",
+    "check": "Rate limit cannot be bypassed by changing session_id",
+    "severity": "medium",
+    "status": "pass",
+    "evidence": "130 requests with a new client-chosen session_id each: 120 accepted, 10 limited."
+  },
+  {
+    "id": "SRV-05",
+    "check": "Tracer cost uses the project price file",
+    "severity": "medium",
+    "status": "pass",
+    "evidence": "With prices set in configs/pricing.json (project format), estimate_cost returned 3.0 for 100k+100k tokens (expected 3.0)."
+  },
+  {
+    "id": "SRV-06",
+    "check": "Missing price is reported as unknown, not zero",
+    "severity": "low",
+    "status": "pass",
+    "evidence": "With no price file, estimate_cost returned None (expected None, meaning unknown)."
+  },
+  {
+    "id": "SRV-07",
+    "check": "Internal error details are not shown to the user",
+    "severity": "medium",
+    "status": "pass",
+    "evidence": "An agent error containing a secret produced HTTP 500 with body: Internal Server Error"
+  },
+  {
+    "id": "SRV-08",
+    "check": "Very long input is rejected before reaching the model",
+    "severity": "low",
+    "status": "pass",
+    "evidence": "A 120,000-character question returned HTTP 413."
+  },
+  {
+    "id": "SRV-09",
+    "check": "API response carries the product_spec fields needed to verify behaviour",
+    "severity": "medium",
+    "status": "pass",
+    "evidence": "/chat returns ['answer', 'approval_required', 'citations', 'decision', 'latency_ms', 'route_taken', 'simulated', 'sources', 'status', 'tool_actions']; missing none."
+  }
+]
