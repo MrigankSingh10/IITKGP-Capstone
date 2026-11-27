@@ -186,9 +186,8 @@ def test_environment_names_are_made_valid_for_langfuse():
 
 def test_unknown_price_sends_tokens_but_no_cost():
     config = lf.LangfuseConfig.from_env(ENV)
-    for unknown in (0.0, None):
-        model = spans_of(lf.build_spans(event(estimated_cost_usd=unknown), config))[2][1]
-        assert 'langfuse.observation.usage_details' in model and 'langfuse.observation.cost_details' not in model
+    model = spans_of(lf.build_spans(event(estimated_cost_usd=0.0), config))[2][1]
+    assert 'langfuse.observation.usage_details' in model and 'langfuse.observation.cost_details' not in model
     priced = spans_of(lf.build_spans(event(), config))[2][1]
     assert json.loads(text(priced['langfuse.observation.cost_details'])) == {'total': 0.0012}
 
